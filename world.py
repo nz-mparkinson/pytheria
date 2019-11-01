@@ -9,9 +9,9 @@ from terrain import *
 
 #Define a class for World, which manages all Nodes in a locale
 class World:
-    FRICTION_DEFAULT = 49.5
-    GRAVITY_DEFAULT = 100
-    MAX_SPEED_DEFAULT = 100 #TODO implement
+    FRICTION_DEFAULT = 50
+    GRAVITY_DEFAULT = 200
+    MAX_SPEED_DEFAULT = 400 #TODO implement
     WORLD_HEIGHT_DEFAULT = 16
     WORLD_HEIGHT_DEFAULT_WIDTH = 4
     WORLD_HEIGHT_MAX = 24 #TODO not used
@@ -64,26 +64,32 @@ class World:
         #Add an Entity
         self.entitys.append(Entity(Entity.WIDTH_DEFAULT, Entity.HEIGHT_DEFAULT, 50, 0, 0, 0, 0, "../resources/mine/circle.png", 1))
 
+    #Run Entity AI
+    def entityAI(self, entity, frameDeltaTime):
+        self.entityMove(entity, -25 * frameDeltaTime, 0)
+        if self.isEntityOnTerrain(entity):
+                self.entityJump(entity)
+                #pass
+
     #Apply gravity to an Entity depending on what if any Terrain it is on
-    def entityApplyGravity(self, entity, frameDeltaTime):
+    def entityGravity(self, entity, frameDeltaTime):
         #Get the Terrain the Entity is on if any
         onTerrain = None
         onTerrain = self.isEntityOnTerrain(entity)
 
-        #If the Entity is on Terrain, ensure the Entitys height
+        #If the Entity is on Terrain, ensure the Entitys vertical position and direction
         if onTerrain:
             entity.position.y = onTerrain.position.y - entity.height
-            entity.direction = Vector2f(0, 0)
-            entity.state = EntityState.MOVING
+            entity.direction.y = 0
         #Otherwise, apply gravity to the Entity
         else:
             entity.accelerate(0, self.GRAVITY_DEFAULT * frameDeltaTime)
 
-    #Run AI
-    def entityAI(self, entity, frameDeltaTime):
-        self.entityMove(entity, -25 * frameDeltaTime, 0)
-        if self.isEntityOnTerrain(entity):
-                self.entityMove(entity, 0, -25)
+    #Jump an Entity
+    def entityJump(self, entity):
+        self.entityMove(entity, 0, -entity.getJumpHeight())
+        entity.direction.y = 0
+        #entity.jump()
 
     #Move an Entity
     def entityMove(self, entity, x, y):
@@ -109,18 +115,22 @@ class World:
                 pass
             #Otherwise the Entity will collide with the Terrain, handle accordlingly, note: setting values exactly due to float rounding
             else:
-                #If the Entity is moving too far left
+                #If the Entity is moving too far left, set its horizontal position and direction
                 if node.position.x + node.width > entityXLeft and x < 0:
                     x = node.position.x + node.width - entity.position.x
-                #If the Entity is moving too far right
+                    entity.direction.x = 0
+                #If the Entity is moving too far right, set its horizontal position and direction
                 elif node.position.x < entityXRight and x > 0:
                     x = node.position.x - entity.position.x - entity.width
-                #If the Entity is moving too far up
+                    entity.direction.x = 0
+                #If the Entity is moving too far up, set its vertical position and direction
                 elif node.position.y + node.height > entityYTop and y < 0:
                     y = node.position.y + node.height - entity.position.y
-                #If the Entity is moving too far down
+                    entity.direction.y = 0
+                #If the Entity is moving too far down, set its vertical position and direction
                 elif node.position.y < entityYBottom and y > 0:
                     y = node.position.y - entity.position.y - entity.height
+                    entity.direction.y = 0
 
         #If x or y are non 0, move the Entity
         if x != 0 or y != 0:
@@ -128,12 +138,12 @@ class World:
 
     #Test whether the Entity is on Terrain, returns the Terrain if it is, else None
     def isEntityOnTerrain(self, entity):
-        #Calculate facts about the Entity position used for detecting whether the Entity is on solid Terrain
+        #Calculate facts about the Entity position used for detecting whether the Entity is on solid Terrain, note: +/- 1 because of floating points
         #TODO magic values
-        entityYTop = entity.position.y + entity.height * 0.5
-        entityYBottom = entity.position.y + entity.height
-        entityXLeft = entity.position.x + entity.width * 0.25
-        entityXRight = entity.position.x + entity.width * 0.75
+        entityYTop = entity.position.y + entity.height * 0.5 -1
+        entityYBottom = entity.position.y + entity.height +1
+        entityXLeft = entity.position.x + entity.width * 0.25 -1
+        entityXRight = entity.position.x + entity.width * 0.75 +1
 
         #For all Terrain
         for node in self.terrain:
@@ -159,7 +169,7 @@ class World:
     def update(self, player, frameDeltaTime):
         #For all Entitys, apply Gravity, apply Direction, Update
         for node in self.entitys:
-            self.entityApplyGravity(node, frameDeltaTime)
+            self.entityGravity(node, frameDeltaTime)
             self.entityMove(node, node.direction.x * frameDeltaTime, node.direction.y * frameDeltaTime)
             node.update(frameDeltaTime)
             if node is not player:

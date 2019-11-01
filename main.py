@@ -67,11 +67,9 @@ class Game:
             #If down key pressed, move the player down
             elif keys[pygame.K_DOWN]:
                 self.world.entityMove(self.player, 0, 5)
-            #TODO sometimes can't jump
             #If space key pressed and the Player is on Terrain, move the player up
             if keys[pygame.K_SPACE] and self.world.isEntityOnTerrain(self.player):
-                self.world.entityMove(self.player, 0, -25)
-                self.player.state = EntityState.JUMPING
+                self.world.entityJump(self.player)
 
     #Define a function for Game logic
     def on_loop(self):
