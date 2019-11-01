@@ -14,10 +14,10 @@ class EntityState(Enum):
 #Define a class for Entitys
 class Entity(Node):
     HEIGHT_DEFAULT = 48
-    WIDTH_DEFAULT = 32
+    WIDTH_DEFAULT = 24
     #Define the constructor
-    def __init__(self, width, height, top, left, rotation, dirX, dirY, imageString):
-        super().__init__(NodeType.ENTITY, width, height, top, left, rotation, dirX, dirY, imageString) 
+    def __init__(self, width, height, posX, posY, rotation, dirX, dirY, imageString):
+        super().__init__(NodeType.ENTITY, width, height, posX, posY, rotation, dirX, dirY, imageString) 
 
         self.state = EntityState.JUMPING
 

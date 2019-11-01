@@ -62,7 +62,7 @@ class World:
                 self.terrain.append(Terrain(i * Terrain.TERRAIN_SIZE, -j * Terrain.TERRAIN_SIZE, "../resources/mine2/test.png"))
 
         #Add an Entity
-        self.entitys.append(Entity(100, 100, 0, 0, 0, 0, 0, "../resources/mine/circle.png"))
+        self.entitys.append(Entity(Entity.WIDTH_DEFAULT, Entity.HEIGHT_DEFAULT, 50, 0, 0, 0, 0, "../resources/mine/circle.png"))
 
     #Apply gravity to an Entity depending on what if any Terrain it is on
     def entityApplyGravity(self, entity, frameDeltaTime):

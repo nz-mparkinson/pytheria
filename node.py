@@ -16,7 +16,7 @@ class NodeType(Enum):
 #Define a class for Nodes, objects within the game
 class Node:
     #Define the constructor
-    def __init__(self, nodeType, width, height, top, left, rotation, dirX, dirY, imageString):
+    def __init__(self, nodeType, width, height, posX, posY, rotation, dirX, dirY, imageString):
         #Load the image, note: keeping a copy of the original as rotating the image looses quality
         self.imageOriginal = pygame.image.load(imageString)
         self.image = self.imageOriginal
@@ -24,7 +24,7 @@ class Node:
         self.nodeType = nodeType
         self.width = width
         self.height = height
-        self.position = Vector2f(top, left)
+        self.position = Vector2f(posX, posY)
         self.rotation = rotation
         self.direction = Vector2f(dirX, dirY)
 
