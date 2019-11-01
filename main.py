@@ -77,6 +77,12 @@ class Game:
             pressed1, pressed2, pressed3 = pygame.mouse.get_pressed()
 
             #If the left mouse pressed, fire
+            if pressed3:
+                self.world.entityAttackMelee(self.player)
+            #If the left mouse pressed, fire
+            if pressed2:
+                self.world.entityAttackRanged(self.player, pos[0] - self.width // 2, pos[1] - self.height // 2)
+            #If the left mouse pressed, fire
             if pressed1:
                 self.world.entityAttackSpell(self.player, pos[0] - self.width // 2, pos[1] - self.height // 2)
 

@@ -40,6 +40,18 @@ class Node:
     def deccelerate(self, speedToRemove):
         self.direction.removeMagnitude(speedToRemove)
 
+    #Get centre positon
+    def getCentre(self):
+        return Vector2f(self.position.x + self.width / 2, self.position.y + self.height / 2)
+
+    #Get centre positon x
+    def getCentreX(self):
+        return self.position.x + self.width / 2
+
+    #Get centre positon
+    def getCentreY(self):
+        return self.position.y + self.height / 2
+
     #Get whether a Node is inside another Node
     def isInside(self, other):
         if self.position.x + self.width < other.position.x:

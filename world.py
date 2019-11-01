@@ -95,11 +95,11 @@ class World:
 
     #Have an Entity Attack using Ranged TODO
     def entityAttackRanged(self, entity, xPos, yPos):
-        self.ammo.append(Ammo(5, 5, entity.position.x, entity.position.y, 0, xPos, yPos, "../resources/mine/circle.png", entity.team))
+        self.ammo.append(Ammo(5, 5, entity.getCentreX(), entity.getCentreY(), 0, xPos, yPos, "../resources/mine/circle.png", entity.team))
 
     #Have an Entity Attack using Spell TODO
     def entityAttackSpell(self, entity, xPos, yPos):
-        self.ammo.append(Ammo(5, 5, entity.position.x, entity.position.y, 0, xPos, yPos, "../resources/mine/circle.png", entity.team))
+        self.ammo.append(Ammo(5, 5, entity.getCentreX(), entity.getCentreY(), 0, xPos, yPos, "../resources/mine/circle.png", entity.team))
 
     #Apply Damage to an Entity
     def entityDamage(self, entity, damage):
