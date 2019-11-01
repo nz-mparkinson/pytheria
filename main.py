@@ -31,6 +31,9 @@ class Game:
         self.screen = None
         self.world = None
 
+        self.playerPosTop = None
+        self.playerPosLeft = None
+
     #Define a function for initializing the Game
     def on_init(self):
         #Initialize PyGame
@@ -81,10 +84,14 @@ class Game:
                 self.world.entityAttackMelee(self.player)
             #If the left mouse pressed, fire
             if pressed2:
-                self.world.entityAttackRanged(self.player, pos[0] - self.width // 2, pos[1] - self.height // 2)
+                self.world.entityAttackRanged(self.player, pos[0] - self.width / 2, pos[1] - self.height / 2)
             #If the left mouse pressed, fire
             if pressed1:
-                self.world.entityAttackSpell(self.player, pos[0] - self.width // 2, pos[1] - self.height // 2)
+                self.world.entityAttackSpell(self.player, pos[0] - self.width / 2, pos[1] - self.height / 2)
+        #If the event is a mouse move, get the mouse position
+        if event.type == pygame.MOUSEMOTION:
+            pos = pygame.mouse.get_pos()
+            #TODO hover for target info
 
     #Define a function for Game logic
     def on_loop(self):
@@ -97,7 +104,7 @@ class Game:
         self.screen.blit(self.background, (0, 0))
 
         #Calculate the Player position relative to the centre of the screen
-        xPos, yPos = self.player.position.x - self.width // 2, self.player.position.y - self.height // 2
+        xPos, yPos = self.player.position.x - self.width / 2, self.player.position.y - self.height / 2
 
         #Draw all Terrain
         for node in self.world.terrain:

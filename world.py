@@ -114,13 +114,25 @@ class World:
 
     #Have an Entity Attack using Ranged
     def entityAttackRanged(self, entity, dirX, dirY):
-        #TODO when using Entity centre, the targeting is off
-        self.addAmmo(Ammo(entity.getCentreX(), entity.getCentreY(), dirX, dirY, "../resources/mine/circle.png", entity.team, AmmoType.RANGED, entity.rangedDamage, entity.rangedRange, entity.rangedSpeed))
+        #Because position tracks the top left corner of the object the following calculatings are required
+        dirX = dirX - entity.width / 2 - Ammo.AMMO_SIZE / 2
+        dirY = dirY - entity.height / 2 - Ammo.AMMO_SIZE / 2
+        posX = entity.position.x + entity.width / 2
+        posY = entity.position.y + entity.height / 2
+
+        #Create the Ammo
+        self.addAmmo(Ammo(posX, posY, dirX, dirY, "../resources/mine/circle.png", entity.team, AmmoType.RANGED, entity.rangedDamage, entity.rangedRange, entity.rangedSpeed))
 
     #Have an Entity Attack using Spell
     def entityAttackSpell(self, entity, dirX, dirY):
-        #TODO when using Entity centre, the targeting is off
-        self.addAmmo(Ammo(entity.position.x, entity.position.y, dirX, dirY, "../resources/mine/circle.png", entity.team, AmmoType.SPELL, entity.spellDamage, entity.spellRange, entity.spellSpeed))
+        #Because position tracks the top left corner of the object the following calculatings are required
+        dirX = dirX - entity.width / 2 - Ammo.AMMO_SIZE / 2
+        dirY = dirY - entity.height / 2 - Ammo.AMMO_SIZE / 2
+        posX = entity.position.x + entity.width / 2
+        posY = entity.position.y + entity.height / 2
+
+        #Create the Ammo
+        self.addAmmo(Ammo(posX, posY, dirX, dirY, "../resources/mine/circle.png", entity.team, AmmoType.SPELL, entity.spellDamage, entity.spellRange, entity.spellSpeed))
 
     #Apply Damage to an Entity
     def entityDamage(self, entity, damage):
@@ -299,6 +311,7 @@ class World:
             #If the Entity has expired, remove it
             if node.update(frameDeltaTime):
                 self.removeEntity(node)
+                pass
 
             #Apply Gravity, Direction
             self.entityGravity(node, frameDeltaTime)
@@ -313,6 +326,7 @@ class World:
             #If the Ammo has expired, remove it
             if node.update(frameDeltaTime):
                 self.removeAmmo(node)
+                pass
 
             #If the Ammo type is Ranged, apply Gravity
             if node.type is AmmoType.RANGED:
