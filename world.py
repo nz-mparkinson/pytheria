@@ -7,18 +7,14 @@ from terrain import *
 
 #Define a class for World, which manages all Nodes in a locale
 class World:
-    FRICTION = 49.5
-    GRAVITY = 100
-    MAX_SPEED = 100 #TODO
+    FRICTION_DEFAULT = 49.5
+    GRAVITY_DEFAULT = 100
+    MAX_SPEED_DEFAULT = 100 #TODO implement
 
     #Define the constructor
     def __init__(self, name, seedValue):
         self.name = name
         self.seedValue = seedValue
-
-        self.friction = 100
-        self.gravity = 100
-        self.maxSpeed = 100
 
         self.ammo = []
         self.entitys = []
@@ -29,6 +25,11 @@ class World:
     #Create a World based on the seedValue
     def createWorld(self):
         #TODO implement properly
+
+        #Set physics values
+        self.friction = self.FRICTION_DEFAULT
+        self.gravity = self.GRAVITY_DEFAULT
+        self.maxSpeed = self.MAX_SPEED_DEFAULT
 
         #Add some Terrain
         for i in range(-5, 6):
@@ -54,7 +55,7 @@ class World:
             entity.state = EntityState.MOVING
         #Otherwise, apply gravity to the Entity
         else:
-            entity.accelerate(0, self.GRAVITY * frameDeltaTime)
+            entity.accelerate(0, self.GRAVITY_DEFAULT * frameDeltaTime)
 
     #Move an Entity
     def entityMove(self, entity, x, y):
