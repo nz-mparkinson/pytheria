@@ -76,7 +76,7 @@ class Game:
     #Define a function for Game logic
     def on_loop(self):
         #Update the World, apply Gravity, Direction etc.
-        self.world.update(self.frameDeltaTime)
+        self.world.update(self.player, self.frameDeltaTime)
 
     #Define a function for rendering the Game state
     def on_render(self):
@@ -120,7 +120,7 @@ class Game:
         self.world = World("Test", 11)
 
         #Create the Player and add it to the World
-        self.player = Entity(Entity.WIDTH_DEFAULT, Entity.HEIGHT_DEFAULT, 0, 0, 0, 0, 0, "../resources/mine/circle.png")
+        self.player = Entity(Entity.WIDTH_DEFAULT, Entity.HEIGHT_DEFAULT, 0, 0, 0, 0, 0, "../resources/mine/circle.png", 0)
         self.world.entitys.append(self.player)
 
         #While the Game is running

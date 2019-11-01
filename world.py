@@ -62,7 +62,7 @@ class World:
                 self.terrain.append(Terrain(i * Terrain.TERRAIN_SIZE, -j * Terrain.TERRAIN_SIZE, "../resources/mine2/test.png"))
 
         #Add an Entity
-        self.entitys.append(Entity(Entity.WIDTH_DEFAULT, Entity.HEIGHT_DEFAULT, 50, 0, 0, 0, 0, "../resources/mine/circle.png"))
+        self.entitys.append(Entity(Entity.WIDTH_DEFAULT, Entity.HEIGHT_DEFAULT, 50, 0, 0, 0, 0, "../resources/mine/circle.png", 1))
 
     #Apply gravity to an Entity depending on what if any Terrain it is on
     def entityApplyGravity(self, entity, frameDeltaTime):
@@ -78,6 +78,12 @@ class World:
         #Otherwise, apply gravity to the Entity
         else:
             entity.accelerate(0, self.GRAVITY_DEFAULT * frameDeltaTime)
+
+    #Run AI
+    def entityAI(self, entity, frameDeltaTime):
+        self.entityMove(entity, -25 * frameDeltaTime, 0)
+        if self.isEntityOnTerrain(entity):
+                self.entityMove(entity, 0, -25)
 
     #Move an Entity
     def entityMove(self, entity, x, y):
@@ -150,12 +156,14 @@ class World:
         return None
 
     #Update the World, apply Gravity, Direction etc.
-    def update(self, frameDeltaTime):
+    def update(self, player, frameDeltaTime):
         #For all Entitys, apply Gravity, apply Direction, Update
         for node in self.entitys:
             self.entityApplyGravity(node, frameDeltaTime)
             self.entityMove(node, node.direction.x * frameDeltaTime, node.direction.y * frameDeltaTime)
             node.update(frameDeltaTime)
+            if node is not player:
+                self.entityAI(node, frameDeltaTime)
 
 
 
