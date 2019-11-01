@@ -110,19 +110,12 @@ class Game:
         if self.on_init() == False:
             self.running = False
 
-        self.world = World()
+        #Create the World
+        self.world = World("Test", 7)
+
+        #Create the Player and add it to the World
         self.player = Entity(10, 10, 0, 0, 0, 0, 0, "../resources/mine/circle.png")
-
-        self.world.entitys.append(Entity(100, 100, 0, 0, 0, 0, 0, "../resources/mine/circle.png"))
-
         self.world.entitys.append(self.player)
-
-        for i in range(-5, 6):
-            self.world.terrain.append(Terrain(i * Terrain.TERRAIN_SIZE, Terrain.TERRAIN_SIZE, "../resources/mine2/test.png"))
-        for i in range(3, 6):
-            self.world.terrain.append(Terrain(i * Terrain.TERRAIN_SIZE, - 2 * Terrain.TERRAIN_SIZE, "../resources/mine2/test.png"))
-        self.world.terrain.append(Terrain(-5 * Terrain.TERRAIN_SIZE, 0, "../resources/mine2/test.png"))
-        self.world.terrain.append(Terrain(5 * Terrain.TERRAIN_SIZE, 0, "../resources/mine2/test.png"))
 
         #While the Game is running
         while(self.running):

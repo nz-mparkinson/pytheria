@@ -12,10 +12,34 @@ class World:
     MAX_SPEED = 100 #TODO
 
     #Define the constructor
-    def __init__(self):
+    def __init__(self, name, seedValue):
+        self.name = name
+        self.seedValue = seedValue
+
+        self.friction = 100
+        self.gravity = 100
+        self.maxSpeed = 100
+
         self.ammo = []
         self.entitys = []
         self.terrain = []
+
+        self.createWorld()
+
+    #Create a World based on the seedValue
+    def createWorld(self):
+        #TODO implement properly
+
+        #Add some Terrain
+        for i in range(-5, 6):
+            self.terrain.append(Terrain(i * Terrain.TERRAIN_SIZE, Terrain.TERRAIN_SIZE, "../resources/mine2/test.png"))
+        for i in range(3, 6):
+            self.terrain.append(Terrain(i * Terrain.TERRAIN_SIZE, - 2 * Terrain.TERRAIN_SIZE, "../resources/mine2/test.png"))
+        self.terrain.append(Terrain(-5 * Terrain.TERRAIN_SIZE, 0, "../resources/mine2/test.png"))
+        self.terrain.append(Terrain(5 * Terrain.TERRAIN_SIZE, 0, "../resources/mine2/test.png"))
+
+        #Add an Entity
+        self.world.entitys.append(Entity(100, 100, 0, 0, 0, 0, 0, "../resources/mine/circle.png"))
 
     #Apply gravity to an Entity depending on what if any Terrain it is on
     def entityApplyGravity(self, entity, frameDeltaTime):
