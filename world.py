@@ -94,12 +94,13 @@ class World:
             self.entityDamage(enemy, entity.attackDamage)
 
     #Have an Entity Attack using Ranged TODO
-    def entityAttackRanged(self, entity, xPos, yPos):
-        self.ammo.append(Ammo(5, 5, entity.getCentreX(), entity.getCentreY(), 0, xPos, yPos, "../resources/mine/circle.png", entity.team))
+    def entityAttackRanged(self, entity, dirX, dirY):
+        self.ammo.append(Ammo(entity.getCentreX(), entity.getCentreY(), dirX, dirY, "../resources/mine/circle.png", AmmoType.RANGED, entity.team, entity.rangedSpeed))
 
     #Have an Entity Attack using Spell TODO
-    def entityAttackSpell(self, entity, xPos, yPos):
-        self.ammo.append(Ammo(5, 5, entity.getCentreX(), entity.getCentreY(), 0, xPos, yPos, "../resources/mine/circle.png", entity.team))
+    def entityAttackSpell(self, entity, dirX, dirY):
+        #TODO when using Entity centre, the targeting is off
+        self.ammo.append(Ammo(entity.position.x, entity.position.y, dirX, dirY, "../resources/mine/circle.png", AmmoType.SPELL, entity.team, entity.spellSpeed))
 
     #Apply Damage to an Entity
     def entityDamage(self, entity, damage):
@@ -228,7 +229,8 @@ class World:
 
         #For all Ammo, apply Gravity, apply Direction, Update
         for node in self.ammo:
-            self.entityGravity(node, frameDeltaTime)
+            if node.type is AmmoType.RANGED:
+                self.entityGravity(node, frameDeltaTime)
             self.entityMove(node, node.direction.x * frameDeltaTime, node.direction.y * frameDeltaTime)
             node.update(frameDeltaTime)
 

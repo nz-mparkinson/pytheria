@@ -33,12 +33,12 @@ class Entity(Node):
         self.rangedDamage = 1
         self.rangedRange = 50
         self.rangedRateOfFire = 1
-        self.rangedSpeed = 50
+        self.rangedSpeed = 200
         self.speed = 25
         self.spellDamage = 1
         self.spellRange = 100
         self.spellRateOfFire = 1
-        self.spellSpeed = 100
+        self.spellSpeed = 300
 
     #Damage the Entity, return true if the Entity dies
     def damage(self, damage):
