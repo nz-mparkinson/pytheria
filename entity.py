@@ -70,5 +70,7 @@ class Entity(Node):
         if self.manaCurrent > self.manaMax:
             self.manaCurrent = self.manaMax
 
-    
+        return False
+
+
 

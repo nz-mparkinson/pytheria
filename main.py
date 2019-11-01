@@ -59,16 +59,16 @@ class Game:
                 self.running = False
             #If left key pressed, move the player left
             if keys[pygame.K_LEFT]:
-                self.world.entityMove(self.player, -5, 0)
+                self.world.nodeMove(self.player, -5, 0)
             #If right key pressed, move the player right
             elif keys[pygame.K_RIGHT]:
-                self.world.entityMove(self.player, 5, 0)
+                self.world.nodeMove(self.player, 5, 0)
             #If up key pressed, move the player up
             if keys[pygame.K_UP]:
-                self.world.entityMove(self.player, 0, -5)
+                self.world.nodeMove(self.player, 0, -5)
             #If down key pressed, move the player down
             elif keys[pygame.K_DOWN]:
-                self.world.entityMove(self.player, 0, 5)
+                self.world.nodeMove(self.player, 0, 5)
             #If space key pressed, move the player up
             if keys[pygame.K_SPACE]:
                 self.world.entityJump(self.player)
@@ -135,6 +135,7 @@ class Game:
 
         #Create the Player and add it to the World
         self.player = Entity(Entity.WIDTH_DEFAULT, Entity.HEIGHT_DEFAULT, 0, 0, 0, 0, 0, "../resources/mine/circle.png", 0)
+        self.player.state = EntityType.IMMORTAL
         self.world.entitys.append(self.player)
 
         #While the Game is running

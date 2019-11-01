@@ -63,6 +63,11 @@ class World:
         #Add an enemy Entity
         self.entitys.append(Entity(Entity.WIDTH_DEFAULT, Entity.HEIGHT_DEFAULT, 50, 0, 0, 0, 0, "../resources/mine/circle.png", 1))
 
+    #Check for Ammo collisions
+    def ammoCollisionCheck(self, ammo):
+        pass
+        #TODO use nodeMove()?
+
     #Run Entity AI
     def entityAI(self, entity, frameDeltaTime):
         #Find the closest enemy
@@ -75,9 +80,9 @@ class World:
 
             #Move towards it
             if relativePosition.x < 0:
-                self.entityMove(entity, -entity.speed * frameDeltaTime, 0)
+                self.nodeMove(entity, -entity.speed * frameDeltaTime, 0)
             else:
-                self.entityMove(entity, entity.speed * frameDeltaTime, 0)
+                self.nodeMove(entity, entity.speed * frameDeltaTime, 0)
 
             #TODO if in range
             self.entityAttackMelee(entity)
@@ -125,60 +130,9 @@ class World:
     def entityJump(self, entity):
         #If the Entity is on Terrain, jump
         if self.isEntityOnTerrain(entity):
-            self.entityMove(entity, 0, -entity.getJumpHeight())
+            self.nodeMove(entity, entity.direction.x, -entity.getJumpHeight())
             entity.direction.y = 0
             #entity.jump()
-
-    #Move an Entity
-    def entityMove(self, entity, x, y):
-        #Calculate facts about the Entity position used for detecting whether the Entity will collide with solid Terrain
-        entityYTop = y + entity.position.y
-        entityYBottom = y + entity.position.y + entity.height
-        entityXLeft = x + entity.position.x
-        entityXRight = x + entity.position.x + entity.width
-
-        #For all Terrain
-        for node in self.terrain:
-            #Skip if the Entity is too far left
-            if node.position.x + node.width <= entityXLeft:
-                pass
-            #Skip if the Entity is too far right
-            elif node.position.x >= entityXRight:
-                pass
-            #Skip if the Entity is too far down
-            elif node.position.y + node.height <= entityYTop:
-                pass
-            #Skip if the Entity is too far up
-            elif node.position.y >= entityYBottom:
-                pass
-            #Otherwise the Entity will collide with the Terrain, handle accordlingly, note: setting values exactly due to float rounding
-            else:
-                #Calculate how close the Entity is to each edge of the Node
-                leftDelta = abs(node.position.x + node.width - entity.position.x)
-                rightDelta = abs(node.position.x - entity.position.x - entity.width)
-                upDelta = abs(node.position.y + node.height - entity.position.y)
-                downDelta = abs(node.position.y - entity.position.y - entity.height)
-
-                #If the Entity is moving too far left, set its horizontal position and direction
-                if leftDelta < rightDelta and leftDelta < upDelta and leftDelta < downDelta:
-                    x = node.position.x + node.width - entity.position.x
-                    entity.direction.x = 0
-                #If the Entity is moving too far right, set its horizontal position and direction
-                elif rightDelta < leftDelta and rightDelta < upDelta and rightDelta < downDelta:
-                    x = node.position.x - entity.position.x - entity.width
-                    entity.direction.x = 0
-                #If the Entity is moving too far up, set its vertical position and direction
-                elif upDelta < leftDelta and upDelta < rightDelta and upDelta < downDelta:
-                    y = node.position.y + node.height - entity.position.y
-                    entity.direction.y = 0
-                #If the Entity is moving too far down, set its vertical position and direction
-                elif downDelta < leftDelta and downDelta < rightDelta and downDelta < upDelta:
-                    y = node.position.y - entity.position.y - entity.height
-                    entity.direction.y = 0
-
-        #If x or y are non 0, move the Entity
-        if x != 0 or y != 0:
-            entity.move(x, y)
 
     #Get the closest Entity optionally with range and not belonging to the same team
     def getClosestEntity(self, entity, range, team):
@@ -238,24 +192,91 @@ class World:
 
         return None
 
+    #Move a Node
+    def nodeMove(self, node, x, y):
+        #Calculate facts about the Node position used for detecting whether the Node will collide with solid Terrain
+        nodeYTop = y + node.position.y
+        nodeYBottom = y + node.position.y + node.height
+        nodeXLeft = x + node.position.x
+        nodeXRight = x + node.position.x + node.width
+
+        #For all Terrain
+        for terrain in self.terrain:
+            #Skip if the Node is too far left
+            if terrain.position.x + terrain.width <= nodeXLeft:
+                pass
+            #Skip if the Node is too far right
+            elif terrain.position.x >= nodeXRight:
+                pass
+            #Skip if the Node is too far down
+            elif terrain.position.y + terrain.height <= nodeYTop:
+                pass
+            #Skip if the Node is too far up
+            elif terrain.position.y >= nodeYBottom:
+                pass
+            #Otherwise the Node will collide with the Terrain, handle accordlingly, note: setting values exactly due to float rounding
+            else:
+                #Calculate how close the Node is to each edge of the Node
+                leftDelta = abs(terrain.position.x + terrain.width - node.position.x)
+                rightDelta = abs(terrain.position.x - node.position.x - node.width)
+                upDelta = abs(terrain.position.y + terrain.height - node.position.y)
+                downDelta = abs(terrain.position.y - node.position.y - node.height)
+
+                #If the Node is moving too far left, set its horizontal position and direction
+                if leftDelta < rightDelta and leftDelta < upDelta and leftDelta < downDelta:
+                    x = terrain.position.x + terrain.width - node.position.x
+                    node.direction.x = 0
+                #If the Node is moving too far right, set its horizontal position and direction
+                elif rightDelta < leftDelta and rightDelta < upDelta and rightDelta < downDelta:
+                    x = terrain.position.x - node.position.x - node.width
+                    node.direction.x = 0
+                #If the Node is moving too far up, set its vertical position and direction
+                elif upDelta < leftDelta and upDelta < rightDelta and upDelta < downDelta:
+                    y = terrain.position.y + terrain.height - node.position.y
+                    node.direction.y = 0
+                #If the Node is moving too far down, set its vertical position and direction
+                elif downDelta < leftDelta and downDelta < rightDelta and downDelta < upDelta:
+                    y = terrain.position.y - node.position.y - node.height
+                    node.direction.y = 0
+
+        #If x or y are non 0, move the Node
+        if x != 0 or y != 0:
+            node.move(x, y)
+
     #Update the World, apply Gravity, Direction etc.
     def update(self, player, frameDeltaTime):
-        #For all Entitys, apply Gravity, apply Direction, Update
+        #For all Entitys
         for node in self.entitys:
+            #If the Entity has expired, remove it
+            if node.update(frameDeltaTime):
+                self.entitys.remove(node)
+
+            #Apply Gravity, Direction
             self.entityGravity(node, frameDeltaTime)
-            self.entityMove(node, node.direction.x * frameDeltaTime, node.direction.y * frameDeltaTime)
-            node.update(frameDeltaTime)
+            self.nodeMove(node, node.direction.x * frameDeltaTime, node.direction.y * frameDeltaTime)
+
+            #If the Entity isn't the Player, runAI
             if node is not player:
                 self.entityAI(node, frameDeltaTime)
 
-        #For all Ammo, apply Gravity, apply Direction, Update
+        #For all Ammo
         for node in self.ammo:
-            if node.type is AmmoType.RANGED:
-                self.entityGravity(node, frameDeltaTime)
-            self.entityMove(node, node.direction.x * frameDeltaTime, node.direction.y * frameDeltaTime)
-
+            #If the Ammo has expired, remove it
             if node.update(frameDeltaTime):
                 self.ammo.remove(node)
+
+            #If the Ammo type is Ranged, apply Gravity
+            if node.type is AmmoType.RANGED:
+                self.entityGravity(node, frameDeltaTime)
+            #Apply Direction
+            self.nodeMove(node, node.direction.x * frameDeltaTime, node.direction.y * frameDeltaTime)
+
+            #TODO use nodeMove()?
+            self.ammoCollisionCheck(node)
+
+        #For all Terrain, Update
+        for node in self.terrain:
+            node.update(frameDeltaTime)
 
 
 
