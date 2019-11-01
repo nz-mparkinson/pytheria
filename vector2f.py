@@ -80,6 +80,10 @@ class Vector2f:
 
         return False
 
+    #Get the Vector angle
+    def getAngle(self):
+        return math.atan2(self.y, self.x) * 180 / math.pi;
+
     #Get the Vector length
     def getLength(self):
         return math.sqrt(self.x * self.x + self.y * self.y)

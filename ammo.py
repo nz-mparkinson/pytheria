@@ -14,13 +14,10 @@ class Ammo(Node):
 
     #Define the constructor
     def __init__(self, posX, posY, dirX, dirY, imageString, type, team, speed):
-        super().__init__(NodeType.AMMO, self.AMMO_SIZE, self.AMMO_SIZE, posX, posY, 0, dirX, dirY, imageString)
+        super().__init__(NodeType.AMMO, self.AMMO_SIZE, self.AMMO_SIZE, posX, posY, Vector2f(dirX, dirY).getAngle(), dirX, dirY, imageString)
 
         self.team = team
         self.type = type
-
-
-        #TODO derive rotation
 
         #Set the Ammo speed
         self.direction.setLength(speed)
