@@ -13,6 +13,8 @@ class EntityState(Enum):
 
 #Define a class for Entitys
 class Entity(Node):
+    HEIGHT_DEFAULT = 48
+    WIDTH_DEFAULT = 32
     #Define the constructor
     def __init__(self, width, height, top, left, rotation, dirX, dirY, imageString):
         super().__init__(NodeType.ENTITY, width, height, top, left, rotation, dirX, dirY, imageString) 

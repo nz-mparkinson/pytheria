@@ -67,6 +67,7 @@ class Game:
             #If down key pressed, move the player down
             elif keys[pygame.K_DOWN]:
                 self.world.entityMove(self.player, 0, 5)
+            #TODO sometimes can't jump
             #If space key pressed and the Player is on Terrain, move the player up
             if keys[pygame.K_SPACE] and self.world.isEntityOnTerrain(self.player):
                 self.world.entityMove(self.player, 0, -25)
@@ -116,10 +117,10 @@ class Game:
             self.running = False
 
         #Create the World
-        self.world = World("Test", 7)
+        self.world = World("Test", 11)
 
         #Create the Player and add it to the World
-        self.player = Entity(10, 10, 0, 0, 0, 0, 0, "../resources/mine/circle.png")
+        self.player = Entity(Entity.WIDTH_DEFAULT, Entity.HEIGHT_DEFAULT, 0, 0, 0, 0, 0, "../resources/mine/circle.png")
         self.world.entitys.append(self.player)
 
         #While the Game is running
