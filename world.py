@@ -311,7 +311,7 @@ class World:
             #If the Entity has expired, remove it
             if node.update(frameDeltaTime):
                 self.removeEntity(node)
-                pass
+                continue
 
             #Apply Gravity, Direction
             self.entityGravity(node, frameDeltaTime)
@@ -326,7 +326,7 @@ class World:
             #If the Ammo has expired, remove it
             if node.update(frameDeltaTime):
                 self.removeAmmo(node)
-                pass
+                continue
 
             #If the Ammo type is Ranged, apply Gravity
             if node.type is AmmoType.RANGED:
