@@ -35,6 +35,7 @@ class Game:
         #Initialize PyGame
         pygame.init()
         pygame.key.set_repeat(True)
+        #pygame.mouse.set_repeat(True) TODO
         
         self.clock = pygame.time.Clock()
         self.font = pygame.font.SysFont('mono', 20, bold=True)
@@ -49,7 +50,7 @@ class Game:
         if event.type == pygame.QUIT:
             self.running = False
         #If the event is a key down, get all keys and react accordingly
-        elif event.type == pygame.KEYDOWN:
+        if event.type == pygame.KEYDOWN:
             keys = pygame.key.get_pressed()
 
             #If escape key pressed, exit the Game
@@ -70,6 +71,14 @@ class Game:
             #If space key pressed, move the player up
             if keys[pygame.K_SPACE]:
                 self.world.entityJump(self.player)
+        #If the event is a mouse press, get the mouse position and all mouse buttons and react accordingly
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            pos = pygame.mouse.get_pos()
+            pressed1, pressed2, pressed3 = pygame.mouse.get_pressed()
+
+            #If the left mouse pressed, fire
+            if pressed1:
+                self.world.entityAttackSpell(self.player, pos[0] - self.width // 2, pos[1] - self.height // 2)
 
     #Define a function for Game logic
     def on_loop(self):

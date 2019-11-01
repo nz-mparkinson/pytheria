@@ -49,7 +49,6 @@ class World:
         terrainHeight = 0
         for i in range(self.WORLD_HEIGHT_DEFAULT_WIDTH, self.WORLD_WIDTH):
             terrainHeight = terrainHeight + random.randrange(-self.WORLD_HEIGHT_STEP_MAX, self.WORLD_HEIGHT_STEP_MAX+1)
-            print(terrainHeight)
             for j in range(-self.WORLD_HEIGHT_DEFAULT, terrainHeight):
                 self.terrain.append(Terrain(i * Terrain.TERRAIN_SIZE, -j * Terrain.TERRAIN_SIZE, "../resources/mine2/test.png"))
 
@@ -57,17 +56,16 @@ class World:
         terrainHeight = 0
         for i in reversed(range(-self.WORLD_WIDTH, -self.WORLD_HEIGHT_DEFAULT_WIDTH)):
             terrainHeight = terrainHeight + random.randrange(-self.WORLD_HEIGHT_STEP_MAX, self.WORLD_HEIGHT_STEP_MAX+1)
-            #print(terrainHeight)
             for j in range(-self.WORLD_HEIGHT_DEFAULT, terrainHeight):
                 self.terrain.append(Terrain(i * Terrain.TERRAIN_SIZE, -j * Terrain.TERRAIN_SIZE, "../resources/mine2/test.png"))
 
-        #Add an Entity
+        #Add an enemy Entity
         self.entitys.append(Entity(Entity.WIDTH_DEFAULT, Entity.HEIGHT_DEFAULT, 50, 0, 0, 0, 0, "../resources/mine/circle.png", 1))
 
     #Run Entity AI
     def entityAI(self, entity, frameDeltaTime):
         #Find the closest enemy
-        enemy = self.getClosestEntity(entity, entity.team)
+        enemy = self.getClosestEntity(entity, None, entity.team)
 
         #If an enemy was found
         if enemy:
@@ -76,14 +74,38 @@ class World:
 
             #Move towards it
             if relativePosition.x < 0:
-                self.entityMove(entity, -25 * frameDeltaTime, 0)
+                self.entityMove(entity, -entity.speed * frameDeltaTime, 0)
             else:
-                self.entityMove(entity, 25 * frameDeltaTime, 0)
+                self.entityMove(entity, entity.speed * frameDeltaTime, 0)
+
+            #TODO if in range
+            self.entityAttackMelee(entity)
 
             #Jump
             self.entityJump(entity)
 
-    #Apply gravity to an Entity depending on what if any Terrain it is on
+    #Have an Entity Attack using Melee TODO
+    def entityAttackMelee(self, entity):
+        #Find the closest enemy
+        enemy = self.getClosestEntity(entity, entity.attackRange, entity.team)
+
+        #TODO if hit
+        if enemy:
+            self.entityDamage(enemy, entity.attackDamage)
+
+    #Have an Entity Attack using Ranged TODO
+    def entityAttackRanged(self, entity, xPos, yPos):
+        self.ammo.append(Ammo(5, 5, entity.position.x, entity.position.y, 0, xPos, yPos, "../resources/mine/circle.png", entity.team))
+
+    #Have an Entity Attack using Spell TODO
+    def entityAttackSpell(self, entity, xPos, yPos):
+        self.ammo.append(Ammo(5, 5, entity.position.x, entity.position.y, 0, xPos, yPos, "../resources/mine/circle.png", entity.team))
+
+    #Apply Damage to an Entity
+    def entityDamage(self, entity, damage):
+        entity.damage(damage)
+
+    #Apply Gravity to an Entity depending on what if any Terrain it is on
     def entityGravity(self, entity, frameDeltaTime):
         #Get the Terrain the Entity is on if any
         onTerrain = None
@@ -97,7 +119,7 @@ class World:
         else:
             entity.accelerate(0, self.GRAVITY_DEFAULT * frameDeltaTime)
 
-    #Jump an Entity
+    #Have an Entity Jump
     def entityJump(self, entity):
         #If the Entity is on Terrain, jump
         if self.isEntityOnTerrain(entity):
@@ -150,8 +172,8 @@ class World:
         if x != 0 or y != 0:
             entity.move(x, y)
 
-    #Get the closest Entity optionally not belonging to a team
-    def getClosestEntity(self, entity, team):
+    #Get the closest Entity optionally with range and not belonging to the same team
+    def getClosestEntity(self, entity, range, team):
         closestDistanceSQ = 0
         closestEntity = None
 
@@ -159,8 +181,9 @@ class World:
         for node in self.entitys:
             if team is None or node.team != team:
                 if closestEntity is None or closestDistanceSQ > entity.position.getLengthToSQ(node.position):
-                    closestEntity = node
-                    closestDistanceSQ = entity.position.getLengthToSQ(node.position)
+                    if range is None or range * range >= entity.position.getLengthToSQ(node.position):
+                        closestEntity = node
+                        closestDistanceSQ = entity.position.getLengthToSQ(node.position)
 
         return closestEntity
 
@@ -202,6 +225,12 @@ class World:
             node.update(frameDeltaTime)
             if node is not player:
                 self.entityAI(node, frameDeltaTime)
+
+        #For all Ammo, apply Gravity, apply Direction, Update
+        for node in self.ammo:
+            self.entityGravity(node, frameDeltaTime)
+            self.entityMove(node, node.direction.x * frameDeltaTime, node.direction.y * frameDeltaTime)
+            node.update(frameDeltaTime)
 
 
 

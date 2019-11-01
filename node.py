@@ -76,14 +76,7 @@ class Node:
 
     #Update the Node
     def update(self, frameDeltaTime):
-        #self.position += self.direction * frameDeltaTime
         pass
-
-
-
-
-
-
 
 
 
