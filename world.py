@@ -1,6 +1,8 @@
 #!/usr/bin/python
 
 #Import libraries
+import random
+
 from ammo import *
 from entity import *
 from terrain import *
@@ -10,6 +12,9 @@ class World:
     FRICTION_DEFAULT = 49.5
     GRAVITY_DEFAULT = 100
     MAX_SPEED_DEFAULT = 100 #TODO implement
+    WORLD_HEIGHT_MAX = 20
+    WORLD_HEIGHT_MIN = 12
+    WORLD_WIDTH = 16
 
     #Define the constructor
     def __init__(self, name, seedValue):
@@ -24,20 +29,20 @@ class World:
 
     #Create a World based on the seedValue
     def createWorld(self):
-        #TODO implement properly
+        #TODO implement properly using the seedValue
 
         #Set physics values
         self.friction = self.FRICTION_DEFAULT
         self.gravity = self.GRAVITY_DEFAULT
         self.maxSpeed = self.MAX_SPEED_DEFAULT
 
+        #Seed the random number generator
+        random.seed(self.seedValue)
+
         #Add some Terrain
-        for i in range(-5, 6):
-            self.terrain.append(Terrain(i * Terrain.TERRAIN_SIZE, Terrain.TERRAIN_SIZE, "../resources/mine2/test.png"))
-        for i in range(3, 6):
-            self.terrain.append(Terrain(i * Terrain.TERRAIN_SIZE, - 2 * Terrain.TERRAIN_SIZE, "../resources/mine2/test.png"))
-        self.terrain.append(Terrain(-5 * Terrain.TERRAIN_SIZE, 0, "../resources/mine2/test.png"))
-        self.terrain.append(Terrain(5 * Terrain.TERRAIN_SIZE, 0, "../resources/mine2/test.png"))
+        for i in range(-self.WORLD_WIDTH, self.WORLD_WIDTH):
+            for j in range(-self.WORLD_WIDTH, random.randrange(-4, 4)):
+                self.terrain.append(Terrain(i * Terrain.TERRAIN_SIZE, -j * Terrain.TERRAIN_SIZE, "../resources/mine2/test.png"))
 
         #Add an Entity
         self.entitys.append(Entity(100, 100, 0, 0, 0, 0, 0, "../resources/mine/circle.png"))
