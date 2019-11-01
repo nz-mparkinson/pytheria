@@ -4,6 +4,7 @@
 import random
 
 from ammo import *
+from effect import *
 from entity import *
 from terrain import *
 
@@ -25,6 +26,7 @@ class World:
         self.seedValue = seedValue
 
         self.ammo = []
+        self.effects = []
         self.entitys = []
         self.terrain = []
 
@@ -68,6 +70,10 @@ class World:
     #Add an Ammo to the World
     def addAmmo(self, node):
         self.ammo.append(node)
+
+    #Add an Effect to the World
+    def addEffect(self, node):
+        self.effects.append(node)
 
     #Add an Entity to the World
     def addEntity(self, node):
@@ -137,6 +143,8 @@ class World:
     #Apply Damage to an Entity
     def entityDamage(self, entity, damage):
         entity.damage(damage)
+        #TODO add healthbar, make it follow the Entity
+        self.addEffect(Effect(int(entity.width * entity.getHealthPercentage()), entity.height, entity.position.x, entity.position.y, "../resources/mine/healthbar.png", EffectType.HEALTH_BAR))
 
     #Apply Gravity to an Entity depending on what if any Terrain it is on
     def entityGravity(self, entity, frameDeltaTime):
@@ -292,6 +300,10 @@ class World:
     def removeAmmo(self, node):
         self.ammo.remove(node)
 
+    #Remove an Effect from the World
+    def removeEffect(self, node):
+        self.effects.remove(node)
+
     #Remove an Entity from the World
     def removeEntity(self, node):
         self.entitys.remove(node)
@@ -331,6 +343,16 @@ class World:
             #If the Ammo type is Ranged, apply Gravity
             if node.type is AmmoType.RANGED:
                 self.entityGravity(node, frameDeltaTime)
+            #Apply Direction
+            self.nodeMove(node, node.direction.x * frameDeltaTime, node.direction.y * frameDeltaTime)
+
+        #For all Effects
+        for node in self.effects:
+            #If the Effect has expired, remove it
+            if node.update(frameDeltaTime):
+                self.removeEffect(node)
+                continue
+
             #Apply Direction
             self.nodeMove(node, node.direction.x * frameDeltaTime, node.direction.y * frameDeltaTime)
 

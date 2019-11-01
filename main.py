@@ -111,9 +111,13 @@ class Game:
             self.screen.blit(node.image, (node.position.x - xPos, node.position.y - yPos))
         #Draw all Entitys
         for node in self.world.entitys:
-            self.screen.blit(node.image, (node.position.x - xPos, node.position.y - yPos))
+            if node is not self.player:
+                self.screen.blit(node.image, (node.position.x - xPos, node.position.y - yPos))
         #Draw all Ammo
         for node in self.world.ammo:
+            self.screen.blit(node.image, (node.position.x - xPos, node.position.y - yPos))
+        #Draw all Effects
+        for node in self.world.effects:
             self.screen.blit(node.image, (node.position.x - xPos, node.position.y - yPos))
 
         #Draw the Player in the centre of the screen
@@ -142,7 +146,7 @@ class Game:
         #Create the Player and add it to the World
         self.player = Entity(Entity.WIDTH_DEFAULT, Entity.HEIGHT_DEFAULT, 0, 0, 0, 0, 0, "../resources/mine/circle.png", 0)
         self.player.spellDamage = 5
-        self.player.state = EntityType.IMMORTAL
+        self.player.type = EntityType.IMMORTAL
         self.world.addEntity(self.player)
 
         #While the Game is running

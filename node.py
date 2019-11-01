@@ -12,6 +12,7 @@ class NodeType(Enum):
     TERRAIN = 1
     ENTITY = 2
     AMMO = 3
+    EFFECT = 4
 
 #Define a class for Nodes, objects within the game
 class Node:

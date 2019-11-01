@@ -48,6 +48,13 @@ class Entity(Node):
     def getJumpHeight(self):
         return self.height * self.JUMP_HEIGHT_MOD
 
+    #Get the Entitys health percentage
+    def getHealthPercentage(self):
+        if self.healthCurrent <= 0:
+            return 0
+
+        return self.healthCurrent / self.healthMax
+
     #Have the Entity jump
     def jump(self):
         self.direction.y -= self.height * self.JUMP_HEIGHT_MOD
