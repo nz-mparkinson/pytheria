@@ -72,19 +72,14 @@ class World:
     #Add an Entity to the World
     def addEntity(self, node):
         self.entitys.append(node)
-        self.collidables.append(node)   #TODO doesn't work
-        self.selectables.append(node)   #TODO doesn't work
+        self.collidables.append(node)
+        self.selectables.append(node)
 
     #Add an Terrain to the World
     def addTerrain(self, node):
         self.terrain.append(node)
-        self.collidables.append(node)   #TODO doesn't work
-        self.selectables.append(node)   #TODO doesn't work
-
-    #Handle a Ammo collision with an enemy 
-    def ammoCollisionEnemy(self, ammo, enemy):
-        #TODO handle ammo collision with En
-        pass
+        self.collidables.append(node)
+        self.selectables.append(node)
 
     #Run Entity AI
     def entityAI(self, entity, frameDeltaTime):
@@ -117,11 +112,12 @@ class World:
         if enemy:
             self.entityDamage(enemy, entity.attackDamage)
 
-    #Have an Entity Attack using Ranged TODO
+    #Have an Entity Attack using Ranged
     def entityAttackRanged(self, entity, dirX, dirY):
+        #TODO when using Entity centre, the targeting is off
         self.addAmmo(Ammo(entity.getCentreX(), entity.getCentreY(), dirX, dirY, "../resources/mine/circle.png", entity.team, AmmoType.RANGED, entity.rangedDamage, entity.rangedRange, entity.rangedSpeed))
 
-    #Have an Entity Attack using Spell TODO
+    #Have an Entity Attack using Spell
     def entityAttackSpell(self, entity, dirX, dirY):
         #TODO when using Entity centre, the targeting is off
         self.addAmmo(Ammo(entity.position.x, entity.position.y, dirX, dirY, "../resources/mine/circle.png", entity.team, AmmoType.SPELL, entity.spellDamage, entity.spellRange, entity.spellSpeed))

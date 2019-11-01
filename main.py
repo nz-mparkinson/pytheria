@@ -36,7 +36,6 @@ class Game:
         #Initialize PyGame
         pygame.init()
         pygame.key.set_repeat(True)
-        #pygame.mouse.set_repeat(True) TODO
         
         self.clock = pygame.time.Clock()
         self.font = pygame.font.SysFont('mono', 20, bold=True)
