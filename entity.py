@@ -16,9 +16,8 @@ class Entity(Node):
     WIDTH_DEFAULT = 24
     #Define the constructor
     def __init__(self, width, height, posX, posY, rotation, dirX, dirY, imageString, team):
-        super().__init__(NodeType.ENTITY, width, height, posX, posY, rotation, dirX, dirY, imageString)
+        super().__init__(NodeType.ENTITY, width, height, posX, posY, rotation, dirX, dirY, imageString, team)
 
-        self.team = team
         self.type = EntityType.NORMAL
 
         self.attackDamage = 1
@@ -45,11 +44,6 @@ class Entity(Node):
         if self.type is EntityType.NORMAL:
             self.healthCurrent -= damage
 
-        if self.healthCurrent <= 0:
-            return True
-
-        return False
-
     #Get the Entitys jump height
     def getJumpHeight(self):
         return self.height * self.JUMP_HEIGHT_MOD
@@ -60,6 +54,10 @@ class Entity(Node):
 
     #Update the Entity status
     def update(self, frameDeltaTime):
+        #If the Entity is dead, return True
+        if self.healthCurrent <= 0:
+            return True
+
         #Regen health
         self.healthCurrent += self.healthRegen * frameDeltaTime
         if self.healthCurrent > self.healthMax:

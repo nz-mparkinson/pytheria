@@ -119,12 +119,12 @@ class World:
 
     #Have an Entity Attack using Ranged TODO
     def entityAttackRanged(self, entity, dirX, dirY):
-        self.addAmmo(Ammo(entity.getCentreX(), entity.getCentreY(), dirX, dirY, "../resources/mine/circle.png", AmmoType.RANGED, entity.team, entity.rangedRange, entity.rangedSpeed))
+        self.addAmmo(Ammo(entity.getCentreX(), entity.getCentreY(), dirX, dirY, "../resources/mine/circle.png", entity.team, AmmoType.RANGED, entity.rangedDamage, entity.rangedRange, entity.rangedSpeed))
 
     #Have an Entity Attack using Spell TODO
     def entityAttackSpell(self, entity, dirX, dirY):
         #TODO when using Entity centre, the targeting is off
-        self.addAmmo(Ammo(entity.position.x, entity.position.y, dirX, dirY, "../resources/mine/circle.png", AmmoType.SPELL, entity.team, entity.spellRange, entity.spellSpeed))
+        self.addAmmo(Ammo(entity.position.x, entity.position.y, dirX, dirY, "../resources/mine/circle.png", entity.team, AmmoType.SPELL, entity.spellDamage, entity.spellRange, entity.spellSpeed))
 
     #Apply Damage to an Entity
     def entityDamage(self, entity, damage):
@@ -219,12 +219,15 @@ class World:
         nodeXRight = x + node.position.x + node.width
 
         #For all Collidable nodes
-        for collidable in self.terrain:
-            #Skip if the Node is a Entity
-            #if collidable.nodeType is NodeType.ENTITY and node.nodeType is NodeType.ENTITY:
-            #    pass
+        for collidable in self.collidables:
+            #Skip if the Node and Collidable are on the same team
+            if collidable.team == node.team:
+                pass
+            #Skip if the Node and Collidable are both Entitys
+            elif collidable.nodeType == NodeType.ENTITY and node.nodeType == NodeType.ENTITY:
+                pass
             #Skip if the Node is too far left
-            if collidable.position.x + collidable.width <= nodeXLeft:
+            elif collidable.position.x + collidable.width <= nodeXLeft:
                 pass
             #Skip if the Node is too far right
             elif collidable.position.x >= nodeXRight:
@@ -235,6 +238,19 @@ class World:
             #Skip if the Node is too far up
             elif collidable.position.y >= nodeYBottom:
                 pass
+            #If the Node is an Ammo
+            elif node.nodeType == NodeType.AMMO:
+                #Move the Ammo and explode
+                node.move(x, y)
+                #TODO sound/animation
+
+                #If the Collidable is an Entity, damage the Entity
+                if collidable.nodeType == NodeType.ENTITY:
+                    collidable.damage(node.damage)
+
+                #Remove the Ammo and return
+                self.removeAmmo(node)
+                return
             #Otherwise the Node will collide with the Collidable, handle accordlingly, note: setting values exactly due to float rounding
             else:
                 #Calculate how close the Node is to each edge of the Node
