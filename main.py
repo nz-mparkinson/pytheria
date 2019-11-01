@@ -52,18 +52,23 @@ class Game:
         elif event.type == pygame.KEYDOWN:
             keys = pygame.key.get_pressed()
 
+            #If escape key pressed, exit the Game
             if keys[pygame.K_ESCAPE]:
                 self.running = False
+            #If left key pressed, move the player left
             if keys[pygame.K_LEFT]:
                 self.world.entityMove(self.player, -5, 0)
+            #If right key pressed, move the player right
             elif keys[pygame.K_RIGHT]:
                 self.world.entityMove(self.player, 5, 0)
+            #If up key pressed, move the player up
             if keys[pygame.K_UP]:
                 self.world.entityMove(self.player, 0, -5)
+            #If down key pressed, move the player down
             elif keys[pygame.K_DOWN]:
                 self.world.entityMove(self.player, 0, 5)
-            #TODO jump space, only while on ground
-            if keys[pygame.K_SPACE]:
+            #If space key pressed and the Player is on Terrain, move the player up
+            if keys[pygame.K_SPACE] and self.world.isEntityOnTerrain(self.player):
                 self.world.entityMove(self.player, 0, -25)
                 self.player.state = EntityState.JUMPING
 

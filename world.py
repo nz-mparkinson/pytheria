@@ -39,42 +39,21 @@ class World:
         self.terrain.append(Terrain(5 * Terrain.TERRAIN_SIZE, 0, "../resources/mine2/test.png"))
 
         #Add an Entity
-        self.world.entitys.append(Entity(100, 100, 0, 0, 0, 0, 0, "../resources/mine/circle.png"))
+        self.entitys.append(Entity(100, 100, 0, 0, 0, 0, 0, "../resources/mine/circle.png"))
 
     #Apply gravity to an Entity depending on what if any Terrain it is on
     def entityApplyGravity(self, entity, frameDeltaTime):
-        onTerrain = False
+        #Get the Terrain the Entity is on if any
+        onTerrain = None
+        onTerrain = self.isEntityOnTerrain(entity)
 
-        #Calculate facts about the Entity position used for detecting whether the Entity is on solid Terrain
-        entityYTop = entity.position.y + entity.height * 0.5
-        entityYBottom = entity.position.y + entity.height
-        entityXLeft = entity.position.x + entity.width * 0.25
-        entityXRight = entity.position.x + entity.width * 0.75
-
-        #For all Terrain
-        for node in self.terrain:
-            #Skip if the Entity is too far left
-            if node.position.x + node.width < entityXLeft:
-                pass
-            #Skip if the Entity is too far right
-            elif node.position.x > entityXRight:
-                pass
-            #Skip if the Entity is too far up
-            elif node.position.y + node.height < entityYTop:
-                pass
-            #Skip if the Entity is too far down
-            elif node.position.y > entityYBottom:
-                pass
-            #Otherwise the Entity is on the Terrain, ensure the Entitys height and return True
-            else:
-                entity.position.y = node.position.y - entity.height
-                entity.direction = Vector2f(0, 0)
-                entity.state = EntityState.MOVING
-                onTerrain = True
-                break
-
-        #If the Entity isn't on Terrain, apply gravity to the Entity
-        if not onTerrain:
+        #If the Entity is on Terrain, ensure the Entitys height
+        if onTerrain:
+            entity.position.y = onTerrain.position.y - entity.height
+            entity.direction = Vector2f(0, 0)
+            entity.state = EntityState.MOVING
+        #Otherwise, apply gravity to the Entity
+        else:
             entity.accelerate(0, self.GRAVITY * frameDeltaTime)
 
     #Move an Entity
@@ -117,6 +96,35 @@ class World:
         #If x or y are non 0, move the Entity
         if x != 0 or y != 0:
             entity.move(x, y)
+
+    #Test whether the Entity is on Terrain, returns the Terrain if it is, else None
+    def isEntityOnTerrain(self, entity):
+        #Calculate facts about the Entity position used for detecting whether the Entity is on solid Terrain
+        #TODO magic values
+        entityYTop = entity.position.y + entity.height * 0.5
+        entityYBottom = entity.position.y + entity.height
+        entityXLeft = entity.position.x + entity.width * 0.25
+        entityXRight = entity.position.x + entity.width * 0.75
+
+        #For all Terrain
+        for node in self.terrain:
+            #Skip if the Entity is too far left
+            if node.position.x + node.width < entityXLeft:
+                pass
+            #Skip if the Entity is too far right
+            elif node.position.x > entityXRight:
+                pass
+            #Skip if the Entity is too far up
+            elif node.position.y + node.height < entityYTop:
+                pass
+            #Skip if the Entity is too far down
+            elif node.position.y > entityYBottom:
+                pass
+            #Otherwise the Entity is on the Terrain, return the Terrain
+            else:
+                return node
+
+        return None
 
     #Update the World, apply Gravity, Direction etc.
     def update(self, frameDeltaTime):
