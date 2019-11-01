@@ -88,6 +88,18 @@ class Vector2f:
     def getLengthSQ(self):
         return self.x * self.x + self.y * self.y
 
+    #Get the Vector length between this vector and the other
+    def getLengthTo(self, other):
+        deltaX = other.x - self.x
+        deltaY = other.y - self.y
+        return math.sqrt(deltaX * deltaX + deltaY * deltaY)
+
+    #Get the Vector length between this vector and the other squared
+    def getLengthToSQ(self, other):
+        deltaX = other.x - self.x
+        deltaY = other.y - self.y
+        return deltaX * deltaX + deltaY * deltaY
+
     #Remove length from the Vector
     def removeMagnitude(self, lengthToRemove):
         #Get the current length

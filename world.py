@@ -66,10 +66,22 @@ class World:
 
     #Run Entity AI
     def entityAI(self, entity, frameDeltaTime):
-        self.entityMove(entity, -25 * frameDeltaTime, 0)
-        if self.isEntityOnTerrain(entity):
-                self.entityJump(entity)
-                #pass
+        #Find the closest enemy
+        enemy = self.getClosestEntity(entity, entity.team)
+
+        #If an enemy was found
+        if enemy:
+            #Get its relative positon
+            relativePosition = enemy.position - entity.position
+
+            #Move towards it
+            if relativePosition.x < 0:
+                self.entityMove(entity, -25 * frameDeltaTime, 0)
+            else:
+                self.entityMove(entity, 25 * frameDeltaTime, 0)
+
+            #Jump
+            self.entityJump(entity)
 
     #Apply gravity to an Entity depending on what if any Terrain it is on
     def entityGravity(self, entity, frameDeltaTime):
@@ -87,9 +99,11 @@ class World:
 
     #Jump an Entity
     def entityJump(self, entity):
-        self.entityMove(entity, 0, -entity.getJumpHeight())
-        entity.direction.y = 0
-        #entity.jump()
+        #If the Entity is on Terrain, jump
+        if self.isEntityOnTerrain(entity):
+            self.entityMove(entity, 0, -entity.getJumpHeight())
+            entity.direction.y = 0
+            #entity.jump()
 
     #Move an Entity
     def entityMove(self, entity, x, y):
@@ -135,6 +149,20 @@ class World:
         #If x or y are non 0, move the Entity
         if x != 0 or y != 0:
             entity.move(x, y)
+
+    #Get the closest Entity optionally not belonging to a team
+    def getClosestEntity(self, entity, team):
+        closestDistanceSQ = 0
+        closestEntity = None
+
+        #For all Entitys, find the closest
+        for node in self.entitys:
+            if team is None or node.team != team:
+                if closestEntity is None or closestDistanceSQ > entity.position.getLengthToSQ(node.position):
+                    closestEntity = node
+                    closestDistanceSQ = entity.position.getLengthToSQ(node.position)
+
+        return closestEntity
 
     #Test whether the Entity is on Terrain, returns the Terrain if it is, else None
     def isEntityOnTerrain(self, entity):
