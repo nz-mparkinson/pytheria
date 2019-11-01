@@ -13,7 +13,7 @@ class Ammo(Node):
     AMMO_SIZE = 16
 
     #Define the constructor
-    def __init__(self, posX, posY, dirX, dirY, imageString, type, team, speed):
+    def __init__(self, posX, posY, dirX, dirY, imageString, type, team, range, speed):
         super().__init__(NodeType.AMMO, self.AMMO_SIZE, self.AMMO_SIZE, posX, posY, Vector2f(dirX, dirY).getAngle(), dirX, dirY, imageString)
 
         self.team = team
@@ -21,6 +21,18 @@ class Ammo(Node):
 
         #Set the Ammo speed
         self.direction.setLength(speed)
+
+        #Derive how long the Ammo lasts
+        self.timeLeft = range / speed
+
+    #Update the Ammo status
+    def update(self, frameDeltaTime):
+        self.timeLeft -= frameDeltaTime
+
+        if self.timeLeft < 0:
+            return True
+
+        return False
 
 
 

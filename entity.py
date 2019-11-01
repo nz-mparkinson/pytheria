@@ -31,12 +31,12 @@ class Entity(Node):
         self.manaMax = 10
         self.manaRegen = 1
         self.rangedDamage = 1
-        self.rangedRange = 50
+        self.rangedRange = 200
         self.rangedRateOfFire = 1
         self.rangedSpeed = 200
         self.speed = 25
         self.spellDamage = 1
-        self.spellRange = 100
+        self.spellRange = 200
         self.spellRateOfFire = 1
         self.spellSpeed = 300
 
