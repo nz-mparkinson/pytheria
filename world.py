@@ -12,8 +12,11 @@ class World:
     FRICTION_DEFAULT = 49.5
     GRAVITY_DEFAULT = 100
     MAX_SPEED_DEFAULT = 100 #TODO implement
-    WORLD_HEIGHT_MAX = 20
-    WORLD_HEIGHT_MIN = 12
+    WORLD_HEIGHT_DEFAULT = 16
+    WORLD_HEIGHT_DEFAULT_WIDTH = 4
+    WORLD_HEIGHT_MAX = 24 #TODO not used
+    WORLD_HEIGHT_MIN = 8 #TODO not used
+    WORLD_HEIGHT_STEP_MAX = 2
     WORLD_WIDTH = 16
 
     #Define the constructor
@@ -29,19 +32,33 @@ class World:
 
     #Create a World based on the seedValue
     def createWorld(self):
-        #TODO implement properly using the seedValue
-
         #Set physics values
         self.friction = self.FRICTION_DEFAULT
         self.gravity = self.GRAVITY_DEFAULT
         self.maxSpeed = self.MAX_SPEED_DEFAULT
 
+        #Add Terrain around the Player at the default height
+        for i in range(-self.WORLD_HEIGHT_DEFAULT_WIDTH, self.WORLD_HEIGHT_DEFAULT_WIDTH):
+            for j in range(-self.WORLD_HEIGHT_DEFAULT, 0):
+                self.terrain.append(Terrain(i * Terrain.TERRAIN_SIZE, -j * Terrain.TERRAIN_SIZE, "../resources/mine2/test.png"))
+
         #Seed the random number generator
         random.seed(self.seedValue)
 
-        #Add some Terrain
-        for i in range(-self.WORLD_WIDTH, self.WORLD_WIDTH):
-            for j in range(-self.WORLD_WIDTH, random.randrange(-4, 4)):
+        #Add Terrain with random heights to the right of the Player
+        terrainHeight = 0
+        for i in range(self.WORLD_HEIGHT_DEFAULT_WIDTH, self.WORLD_WIDTH):
+            terrainHeight = terrainHeight + random.randrange(-self.WORLD_HEIGHT_STEP_MAX, self.WORLD_HEIGHT_STEP_MAX+1)
+            print(terrainHeight)
+            for j in range(-self.WORLD_HEIGHT_DEFAULT, terrainHeight):
+                self.terrain.append(Terrain(i * Terrain.TERRAIN_SIZE, -j * Terrain.TERRAIN_SIZE, "../resources/mine2/test.png"))
+
+        #Add Terrain with random heights to the left of the Player
+        terrainHeight = 0
+        for i in reversed(range(-self.WORLD_WIDTH, -self.WORLD_HEIGHT_DEFAULT_WIDTH)):
+            terrainHeight = terrainHeight + random.randrange(-self.WORLD_HEIGHT_STEP_MAX, self.WORLD_HEIGHT_STEP_MAX+1)
+            #print(terrainHeight)
+            for j in range(-self.WORLD_HEIGHT_DEFAULT, terrainHeight):
                 self.terrain.append(Terrain(i * Terrain.TERRAIN_SIZE, -j * Terrain.TERRAIN_SIZE, "../resources/mine2/test.png"))
 
         #Add an Entity
