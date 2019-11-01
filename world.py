@@ -26,8 +26,10 @@ class World:
 
         self.ammo = []
         self.entitys = []
-        self.selectable = []
         self.terrain = []
+
+        self.collidables = []
+        self.selectables = []
 
         self.createWorld()
 
@@ -41,7 +43,7 @@ class World:
         #Add Terrain around the Player at the default height
         for i in range(-self.WORLD_HEIGHT_DEFAULT_WIDTH, self.WORLD_HEIGHT_DEFAULT_WIDTH):
             for j in range(-self.WORLD_HEIGHT_DEFAULT, 0):
-                self.terrain.append(Terrain(i * Terrain.TERRAIN_SIZE, -j * Terrain.TERRAIN_SIZE, "../resources/mine2/test.png"))
+                self.addTerrain(Terrain(i * Terrain.TERRAIN_SIZE, -j * Terrain.TERRAIN_SIZE, "../resources/mine2/test.png"))
 
         #Seed the random number generator
         random.seed(self.seedValue)
@@ -51,22 +53,38 @@ class World:
         for i in range(self.WORLD_HEIGHT_DEFAULT_WIDTH, self.WORLD_WIDTH):
             terrainHeight = terrainHeight + random.randrange(-self.WORLD_HEIGHT_STEP_MAX, self.WORLD_HEIGHT_STEP_MAX+1)
             for j in range(-self.WORLD_HEIGHT_DEFAULT, terrainHeight):
-                self.terrain.append(Terrain(i * Terrain.TERRAIN_SIZE, -j * Terrain.TERRAIN_SIZE, "../resources/mine2/test.png"))
+                self.addTerrain(Terrain(i * Terrain.TERRAIN_SIZE, -j * Terrain.TERRAIN_SIZE, "../resources/mine2/test.png"))
 
         #Add Terrain with random heights to the left of the Player
         terrainHeight = 0
         for i in reversed(range(-self.WORLD_WIDTH, -self.WORLD_HEIGHT_DEFAULT_WIDTH)):
             terrainHeight = terrainHeight + random.randrange(-self.WORLD_HEIGHT_STEP_MAX, self.WORLD_HEIGHT_STEP_MAX+1)
             for j in range(-self.WORLD_HEIGHT_DEFAULT, terrainHeight):
-                self.terrain.append(Terrain(i * Terrain.TERRAIN_SIZE, -j * Terrain.TERRAIN_SIZE, "../resources/mine2/test.png"))
+                self.addTerrain(Terrain(i * Terrain.TERRAIN_SIZE, -j * Terrain.TERRAIN_SIZE, "../resources/mine2/test.png"))
 
         #Add an enemy Entity
-        self.entitys.append(Entity(Entity.WIDTH_DEFAULT, Entity.HEIGHT_DEFAULT, 50, 0, 0, 0, 0, "../resources/mine/circle.png", 1))
+        self.addEntity(Entity(Entity.WIDTH_DEFAULT, Entity.HEIGHT_DEFAULT, 50, 0, 0, 0, 0, "../resources/mine/circle.png", 1))
 
-    #Check for Ammo collisions
-    def ammoCollisionCheck(self, ammo):
+    #Add an Ammo to the World
+    def addAmmo(self, node):
+        self.ammo.append(node)
+
+    #Add an Entity to the World
+    def addEntity(self, node):
+        self.entitys.append(node)
+        self.collidables.append(node)   #TODO doesn't work
+        self.selectables.append(node)   #TODO doesn't work
+
+    #Add an Terrain to the World
+    def addTerrain(self, node):
+        self.terrain.append(node)
+        self.collidables.append(node)   #TODO doesn't work
+        self.selectables.append(node)   #TODO doesn't work
+
+    #Handle a Ammo collision with an enemy 
+    def ammoCollisionEnemy(self, ammo, enemy):
+        #TODO handle ammo collision with En
         pass
-        #TODO use nodeMove()?
 
     #Run Entity AI
     def entityAI(self, entity, frameDeltaTime):
@@ -101,12 +119,12 @@ class World:
 
     #Have an Entity Attack using Ranged TODO
     def entityAttackRanged(self, entity, dirX, dirY):
-        self.ammo.append(Ammo(entity.getCentreX(), entity.getCentreY(), dirX, dirY, "../resources/mine/circle.png", AmmoType.RANGED, entity.team, entity.rangedRange, entity.rangedSpeed))
+        self.addAmmo(Ammo(entity.getCentreX(), entity.getCentreY(), dirX, dirY, "../resources/mine/circle.png", AmmoType.RANGED, entity.team, entity.rangedRange, entity.rangedSpeed))
 
     #Have an Entity Attack using Spell TODO
     def entityAttackSpell(self, entity, dirX, dirY):
         #TODO when using Entity centre, the targeting is off
-        self.ammo.append(Ammo(entity.position.x, entity.position.y, dirX, dirY, "../resources/mine/circle.png", AmmoType.SPELL, entity.team, entity.spellRange, entity.spellSpeed))
+        self.addAmmo(Ammo(entity.position.x, entity.position.y, dirX, dirY, "../resources/mine/circle.png", AmmoType.SPELL, entity.team, entity.spellRange, entity.spellSpeed))
 
     #Apply Damage to an Entity
     def entityDamage(self, entity, damage):
@@ -194,54 +212,73 @@ class World:
 
     #Move a Node
     def nodeMove(self, node, x, y):
-        #Calculate facts about the Node position used for detecting whether the Node will collide with solid Terrain
+        #Calculate facts about the Node position used for detecting whether the Node will collide with the Collidable
         nodeYTop = y + node.position.y
         nodeYBottom = y + node.position.y + node.height
         nodeXLeft = x + node.position.x
         nodeXRight = x + node.position.x + node.width
 
-        #For all Terrain
-        for terrain in self.terrain:
+        #For all Collidable nodes
+        for collidable in self.terrain:
+            #Skip if the Node is a Entity
+            #if collidable.nodeType is NodeType.ENTITY and node.nodeType is NodeType.ENTITY:
+            #    pass
             #Skip if the Node is too far left
-            if terrain.position.x + terrain.width <= nodeXLeft:
+            if collidable.position.x + collidable.width <= nodeXLeft:
                 pass
             #Skip if the Node is too far right
-            elif terrain.position.x >= nodeXRight:
+            elif collidable.position.x >= nodeXRight:
                 pass
             #Skip if the Node is too far down
-            elif terrain.position.y + terrain.height <= nodeYTop:
+            elif collidable.position.y + collidable.height <= nodeYTop:
                 pass
             #Skip if the Node is too far up
-            elif terrain.position.y >= nodeYBottom:
+            elif collidable.position.y >= nodeYBottom:
                 pass
-            #Otherwise the Node will collide with the Terrain, handle accordlingly, note: setting values exactly due to float rounding
+            #Otherwise the Node will collide with the Collidable, handle accordlingly, note: setting values exactly due to float rounding
             else:
                 #Calculate how close the Node is to each edge of the Node
-                leftDelta = abs(terrain.position.x + terrain.width - node.position.x)
-                rightDelta = abs(terrain.position.x - node.position.x - node.width)
-                upDelta = abs(terrain.position.y + terrain.height - node.position.y)
-                downDelta = abs(terrain.position.y - node.position.y - node.height)
+                leftDelta = abs(collidable.position.x + collidable.width - node.position.x)
+                rightDelta = abs(collidable.position.x - node.position.x - node.width)
+                upDelta = abs(collidable.position.y + collidable.height - node.position.y)
+                downDelta = abs(collidable.position.y - node.position.y - node.height)
 
                 #If the Node is moving too far left, set its horizontal position and direction
                 if leftDelta < rightDelta and leftDelta < upDelta and leftDelta < downDelta:
-                    x = terrain.position.x + terrain.width - node.position.x
+                    x = collidable.position.x + collidable.width - node.position.x
                     node.direction.x = 0
                 #If the Node is moving too far right, set its horizontal position and direction
                 elif rightDelta < leftDelta and rightDelta < upDelta and rightDelta < downDelta:
-                    x = terrain.position.x - node.position.x - node.width
+                    x = collidable.position.x - node.position.x - node.width
                     node.direction.x = 0
                 #If the Node is moving too far up, set its vertical position and direction
                 elif upDelta < leftDelta and upDelta < rightDelta and upDelta < downDelta:
-                    y = terrain.position.y + terrain.height - node.position.y
+                    y = collidable.position.y + collidable.height - node.position.y
                     node.direction.y = 0
                 #If the Node is moving too far down, set its vertical position and direction
                 elif downDelta < leftDelta and downDelta < rightDelta and downDelta < upDelta:
-                    y = terrain.position.y - node.position.y - node.height
+                    y = collidable.position.y - node.position.y - node.height
                     node.direction.y = 0
 
         #If x or y are non 0, move the Node
         if x != 0 or y != 0:
             node.move(x, y)
+
+    #Remove an Ammo from the World
+    def removeAmmo(self, node):
+        self.ammo.remove(node)
+
+    #Remove an Entity from the World
+    def removeEntity(self, node):
+        self.entitys.remove(node)
+        self.collidables.remove(node)
+        self.selectables.remove(node)
+
+    #Remove an Terrain from the World
+    def removeTerrain(self, node):
+        self.terrain.remove(node)
+        self.collidables.remove(node)
+        self.selectables.remove(node)
 
     #Update the World, apply Gravity, Direction etc.
     def update(self, player, frameDeltaTime):
@@ -270,9 +307,6 @@ class World:
                 self.entityGravity(node, frameDeltaTime)
             #Apply Direction
             self.nodeMove(node, node.direction.x * frameDeltaTime, node.direction.y * frameDeltaTime)
-
-            #TODO use nodeMove()?
-            self.ammoCollisionCheck(node)
 
         #For all Terrain, Update
         for node in self.terrain:

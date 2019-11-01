@@ -136,7 +136,7 @@ class Game:
         #Create the Player and add it to the World
         self.player = Entity(Entity.WIDTH_DEFAULT, Entity.HEIGHT_DEFAULT, 0, 0, 0, 0, 0, "../resources/mine/circle.png", 0)
         self.player.state = EntityType.IMMORTAL
-        self.world.entitys.append(self.player)
+        self.world.addEntity(self.player)
 
         #While the Game is running
         while(self.running):
