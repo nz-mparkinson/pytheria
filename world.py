@@ -26,6 +26,7 @@ class World:
 
         self.ammo = []
         self.entitys = []
+        self.selectable = []
         self.terrain = []
 
         self.createWorld()
@@ -144,28 +145,34 @@ class World:
             #Skip if the Entity is too far right
             elif node.position.x >= entityXRight:
                 pass
-            #Skip if the Entity is too far up
+            #Skip if the Entity is too far down
             elif node.position.y + node.height <= entityYTop:
                 pass
-            #Skip if the Entity is too far down
+            #Skip if the Entity is too far up
             elif node.position.y >= entityYBottom:
                 pass
             #Otherwise the Entity will collide with the Terrain, handle accordlingly, note: setting values exactly due to float rounding
             else:
+                #Calculate how close the Entity is to each edge of the Node
+                leftDelta = abs(node.position.x + node.width - entity.position.x)
+                rightDelta = abs(node.position.x - entity.position.x - entity.width)
+                upDelta = abs(node.position.y + node.height - entity.position.y)
+                downDelta = abs(node.position.y - entity.position.y - entity.height)
+
                 #If the Entity is moving too far left, set its horizontal position and direction
-                if node.position.x + node.width > entityXLeft and x < 0:
+                if leftDelta < rightDelta and leftDelta < upDelta and leftDelta < downDelta:
                     x = node.position.x + node.width - entity.position.x
                     entity.direction.x = 0
                 #If the Entity is moving too far right, set its horizontal position and direction
-                elif node.position.x < entityXRight and x > 0:
+                elif rightDelta < leftDelta and rightDelta < upDelta and rightDelta < downDelta:
                     x = node.position.x - entity.position.x - entity.width
                     entity.direction.x = 0
                 #If the Entity is moving too far up, set its vertical position and direction
-                elif node.position.y + node.height > entityYTop and y < 0:
+                elif upDelta < leftDelta and upDelta < rightDelta and upDelta < downDelta:
                     y = node.position.y + node.height - entity.position.y
                     entity.direction.y = 0
                 #If the Entity is moving too far down, set its vertical position and direction
-                elif node.position.y < entityYBottom and y > 0:
+                elif downDelta < leftDelta and downDelta < rightDelta and downDelta < upDelta:
                     y = node.position.y - entity.position.y - entity.height
                     entity.direction.y = 0
 
@@ -188,6 +195,20 @@ class World:
 
         return closestEntity
 
+    #Get the closest Node thats selectable, optionally with range
+    def getClosestNode(self, entity, range):
+        closestDistanceSQ = 0
+        closestNode = None
+
+        #For all selectable Nodes, find the closest
+        for node in self.selectable:
+            if closestEntity is None or closestDistanceSQ > entity.position.getLengthToSQ(node.position):
+               if range is None or range * range >= entity.position.getLengthToSQ(node.position):
+                   closestNode = node
+                   closestDistanceSQ = entity.position.getLengthToSQ(node.position)
+
+        return closestNode
+
     #Test whether the Entity is on Terrain, returns the Terrain if it is, else None
     def isEntityOnTerrain(self, entity):
         #Calculate facts about the Entity position used for detecting whether the Entity is on solid Terrain, note: +/- 1 because of floating points
@@ -205,10 +226,10 @@ class World:
             #Skip if the Entity is too far right
             elif node.position.x > entityXRight:
                 pass
-            #Skip if the Entity is too far up
+            #Skip if the Entity is too far down
             elif node.position.y + node.height < entityYTop:
                 pass
-            #Skip if the Entity is too far down
+            #Skip if the Entity is too far up
             elif node.position.y > entityYBottom:
                 pass
             #Otherwise the Entity is on the Terrain, return the Terrain

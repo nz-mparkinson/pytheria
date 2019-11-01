@@ -9,6 +9,7 @@ from world import *
 
 #TODO
 # _ for private variables
+# positions are top left corner, centre
 
 #Define a class for the Game
 class Game:
