@@ -91,22 +91,11 @@ class Effect(Node):
             return True
 
         #Depending on the Effect type
-        if self.type is EffectType.HEALTH_BAR:
-            pass
-        elif self.type is EffectType.EXPLOSION:
+        if self.type is EffectType.EXPLOSION:
             #Calculate new size/transparency
             newWidth = int(self.widthOriginal * (1 + self.SIZE_MOD_EXPLOSION * (self.TIME_EXPLOSION - self.timeLeft) / self.TIME_EXPLOSION))
             newHeight = int(self.heightOriginal * (1 + self.SIZE_MOD_EXPLOSION * (self.TIME_EXPLOSION - self.timeLeft) / self.TIME_EXPLOSION))
             newTransparency = int(self.TRANSPARENCY_EXPLOSION * self.timeLeft / self.TIME_EXPLOSION)
-
-            #Set new size/transparency
-            self.setSize(newWidth, newHeight)
-            self.setTransparency(newTransparency)
-        elif self.type is EffectType.IMPLOSION:
-            #Calculate new size/transparency
-            newWidth = int(self.widthOriginal * (1 + self.SIZE_MOD_IMPLOSION * self.timeLeft / self.TIME_IMPLOSION))
-            newHeight = int(self.heightOriginal * (1 + self.SIZE_MOD_IMPLOSION * self.timeLeft / self.TIME_IMPLOSION))
-            newTransparency = int(self.TRANSPARENCY_IMPLOSION * self.timeLeft / self.TIME_IMPLOSION)
 
             #Set new size/transparency
             self.setSize(newWidth, newHeight)
@@ -118,6 +107,15 @@ class Effect(Node):
 
             #Set new size/transparency
             self.setSize(self.width, newHeight)
+            self.setTransparency(newTransparency)
+        elif self.type is EffectType.IMPLOSION:
+            #Calculate new size/transparency
+            newWidth = int(self.widthOriginal * (1 + self.SIZE_MOD_IMPLOSION * self.timeLeft / self.TIME_IMPLOSION))
+            newHeight = int(self.heightOriginal * (1 + self.SIZE_MOD_IMPLOSION * self.timeLeft / self.TIME_IMPLOSION))
+            newTransparency = int(self.TRANSPARENCY_IMPLOSION * self.timeLeft / self.TIME_IMPLOSION)
+
+            #Set new size/transparency
+            self.setSize(newWidth, newHeight)
             self.setTransparency(newTransparency)
 
         return False

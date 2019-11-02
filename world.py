@@ -131,44 +131,42 @@ class World:
                 self.entityHit(enemy, entity.attackDamage)
 
     #Have an Entity attack using Ranged
-    def entityAttackRanged(self, entity, dirX, dirY):
+    def entityAttackRanged(self, entity, targetX, targetY):
         #If the Entity can attack using ranged
         if entity.attackRanged():
             #Because position tracks the top left corner of the object the following calculatings are required
-            dirX = dirX - entity.widthHalf - Ammo.AMMO_SIZE_HALF
-            dirY = dirY - entity.heightHalf - Ammo.AMMO_SIZE_HALF
-            posX = entity.position.x + entity.widthHalf
-            posY = entity.position.y + entity.heightHalf
+            posX = entity.position.x + entity.widthHalf - Ammo.AMMO_SIZE_HALF
+            posY = entity.position.y + entity.heightHalf - Ammo.AMMO_SIZE_HALF
+            dirX = targetX - entity.position.x - entity.widthHalf
+            dirY = targetY - entity.position.y - entity.heightHalf
 
             #Create the Ammo
             self.addAmmo(Ammo.Ammo(posX, posY, dirX, dirY, entity.team, AmmoType.RANGED, entity.rangedDamage, entity.rangedRange, entity.rangedSpeed))
 
     #Have an Entity attack using Spell
-    def entityAttackSpell(self, entity, dirX, dirY):
+    def entityAttackSpell(self, entity, targetX, targetY):
         #If the Entity can attack using a spell
         if entity.attackSpell():
             #Because position tracks the top left corner of the object the following calculatings are required
-            dirX = dirX - entity.widthHalf - Ammo.AMMO_SIZE_HALF
-            dirY = dirY - entity.heightHalf - Ammo.AMMO_SIZE_HALF
-            posX = entity.position.x + entity.widthHalf
-            posY = entity.position.y + entity.heightHalf
+            posX = entity.position.x + entity.widthHalf - Ammo.AMMO_SIZE_HALF
+            posY = entity.position.y + entity.heightHalf - Ammo.AMMO_SIZE_HALF
+            dirX = targetX - entity.position.x - entity.widthHalf
+            dirY = targetY - entity.position.y - entity.heightHalf
 
             #Create the Ammo
             self.addAmmo(Ammo.Ammo(posX, posY, dirX, dirY, entity.team, AmmoType.SPELL, entity.spellDamage, entity.spellRange, entity.spellSpeed))
 
     #Have an Entity Attack using Summon
-    def entityAttackSummon(self, entity, dirX, dirY):
+    def entityAttackSummon(self, entity, targetX, targetY):
         #If the Entity can attack using a spell
         if entity.attackSpell():
             #Because position tracks the top left corner of the object the following calculatings are required
-            dirX = dirX - entity.widthHalf - Ammo.AMMO_SIZE_HALF
-            dirY = dirY - entity.heightHalf - Ammo.AMMO_SIZE_HALF
-            posX = entity.position.x + entity.widthHalf
-            posY = entity.position.y + entity.heightHalf
+            posX = targetX - entity.widthHalf
+            posY = targetY - entity.heightHalf
 
             #Add an Effect/Entity
-            self.addEffect(Effect.ExplosionVertical(entity.width, entity.height, dirX, dirY))
-            self.addEntity(Entity.Entity(Entity.WIDTH_DEFAULT, Entity.HEIGHT_DEFAULT, dirX, dirY, 0, 0, 0, EntityType.NORMAL, entity.team))
+            self.addEffect(Effect.ExplosionVertical(entity.width, entity.height, posX, posY))
+            self.addEntity(Entity.Entity(Entity.WIDTH_DEFAULT, Entity.HEIGHT_DEFAULT, posX, posY, 0, 0, 0, EntityType.NORMAL, entity.team))
 
     #Apply Gravity to an Entity depending on what if any Terrain it is on
     def entityGravity(self, entity, frameDeltaTime):

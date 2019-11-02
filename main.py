@@ -11,8 +11,7 @@ from world import *
 
 #TODO
 # _ for private variables
-# positions being top left, change to be centre, and only have draw calls use function getting top left?
-# could use node.image.position as top left, and node.position as centre, to speed things up, store half width/height so can do add/sub
+# positions are top left, change to be centre and only have draw calls use function getting top left? use node.image.position as top left?
 
 #Define a class for the Game
 class Game:
@@ -89,16 +88,20 @@ class Game:
             pos = pygame.mouse.get_pos()
             pressed1, pressed2, pressed3 = pygame.mouse.get_pressed()
 
+            #Calculate the mouse position in the world
+            posX = self.player.position.x + pos[0] - self.widthHalf
+            posY = self.player.position.y + pos[1] - self.heightHalf
+
             #If the middle mouse pressed, fire
             if pressed2:
                 #self.world.entityAttackMelee(self.player)
-                self.world.entityAttackRanged(self.player, pos[0] - self.widthHalf, pos[1] - self.heightHalf)
+                self.world.entityAttackRanged(self.player, posX, posY)
             #If the right mouse pressed, fire
             if pressed3:
-                self.world.entityAttackSummon(self.player, pos[0] - self.widthHalf, pos[1] - self.heightHalf)
+                self.world.entityAttackSummon(self.player, posX, posY)
             #If the left mouse pressed, fire
             if pressed1:
-                self.world.entityAttackSpell(self.player, pos[0] - self.widthHalf, pos[1] - self.heightHalf)
+                self.world.entityAttackSpell(self.player, posX, posY)
         #If the event is a mouse move, select the Node near the mouse
         if event.type == pygame.MOUSEMOTION:
             pos = pygame.mouse.get_pos()
