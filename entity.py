@@ -9,6 +9,12 @@ class EntityType(Enum):
     DEAD = 2
     IMMORTAL = 3
 
+#Define an Enum for EntityImage
+class EntityImage(Enum):
+    NORMAL = "../resources/mine/circle.png"
+    DEAD = "../resources/mine/circle.png"
+    IMMORTAL = "../resources/mine/circle.png"
+
 #Define a class for Entitys
 class Entity(Node):
     HEIGHT_DEFAULT = 48
@@ -16,11 +22,11 @@ class Entity(Node):
     WIDTH_DEFAULT = 24
 
     #Define the constructor
-    def __init__(self, width, height, posX, posY, rotation, dirX, dirY, imageString, team):
+    def __init__(self, width, height, posX, posY, rotation, dirX, dirY, imageString, type, team):
         super().__init__(NodeType.ENTITY, width, height, posX, posY, rotation, dirX, dirY, imageString, team)
 
         #Set Node fields
-        self.type = EntityType.NORMAL
+        self.type = type
 
         #Set Entity fields
         self.attackDamage = 1
@@ -44,6 +50,20 @@ class Entity(Node):
 
         #Set Entity pointers
         self.healthBar = None
+
+    #Define a Entity factory
+    def Entity(width, height, posX, posY, rotation, dirX, dirY, type, team):
+        imageString = ""
+
+        #Depending on the type, set the imageString
+        if type is EntityType.NORMAL:
+            imageString = EntityImage.NORMAL.value
+        elif type is EntityType.DEAD:
+            imageString = EntityImage.DEAD.value
+        elif type is EntityType.IMMORTAL:
+            imageString = EntityImage.IMMORTAL.value
+
+        return Entity(width, height, posX, posY, rotation, dirX, dirY, imageString, type, team)
 
     #Damage the Entity, return true if the Entity dies
     def damage(self, damage):

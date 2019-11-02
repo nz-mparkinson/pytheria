@@ -44,7 +44,7 @@ class World:
         #Add Terrain around the Player at the default height
         for i in range(-self.WORLD_HEIGHT_DEFAULT_WIDTH, self.WORLD_HEIGHT_DEFAULT_WIDTH):
             for j in range(-self.WORLD_HEIGHT_DEFAULT, 0):
-                self.addTerrain(Terrain(i * Terrain.TERRAIN_SIZE, -j * Terrain.TERRAIN_SIZE, "../resources/mine2/test.png"))
+                self.addTerrain(Terrain.Terrain(i * Terrain.TERRAIN_SIZE, -j * Terrain.TERRAIN_SIZE, TerrainType.DIRT))
 
         #Seed the random number generator
         random.seed(self.seedValue)
@@ -55,14 +55,14 @@ class World:
             #Add Terrain to the left
             terrainHeightLeft = terrainHeightLeft + random.randrange(-self.WORLD_HEIGHT_STEP_MAX, self.WORLD_HEIGHT_STEP_MAX+1)
             for j in range(-self.WORLD_HEIGHT_DEFAULT, terrainHeightLeft):
-                self.addTerrain(Terrain(-i * Terrain.TERRAIN_SIZE, -j * Terrain.TERRAIN_SIZE, "../resources/mine2/test.png"))
+                self.addTerrain(Terrain.Terrain(-i * Terrain.TERRAIN_SIZE, -j * Terrain.TERRAIN_SIZE, TerrainType.DIRT))
             #Add Terrain to the right
             terrainHeightRight = terrainHeightRight + random.randrange(-self.WORLD_HEIGHT_STEP_MAX, self.WORLD_HEIGHT_STEP_MAX+1)
             for j in range(-self.WORLD_HEIGHT_DEFAULT, terrainHeightRight):
-                self.addTerrain(Terrain(i * Terrain.TERRAIN_SIZE, -j * Terrain.TERRAIN_SIZE, "../resources/mine2/test.png"))
+                self.addTerrain(Terrain.Terrain(i * Terrain.TERRAIN_SIZE, -j * Terrain.TERRAIN_SIZE, TerrainType.DIRT))
 
         #Add an enemy Entity
-        self.addEntity(Entity(Entity.WIDTH_DEFAULT, Entity.HEIGHT_DEFAULT, 50, 0, 0, 0, 0, "../resources/mine/circle.png", 1))
+        self.addEntity(Entity.Entity(Entity.WIDTH_DEFAULT, Entity.HEIGHT_DEFAULT, 50, 0, 0, 0, 0, EntityType.NORMAL, 1))
 
     #Add an Ammo to the World
     def addAmmo(self, node):
@@ -124,7 +124,7 @@ class World:
         posY = entity.position.y + entity.height / 2
 
         #Create the Ammo
-        self.addAmmo(Ammo(posX, posY, dirX, dirY, "../resources/mine/circle.png", entity.team, AmmoType.RANGED, entity.rangedDamage, entity.rangedRange, entity.rangedSpeed))
+        self.addAmmo(Ammo.Ammo(posX, posY, dirX, dirY, entity.team, AmmoType.RANGED, entity.rangedDamage, entity.rangedRange, entity.rangedSpeed))
 
     #Have an Entity Attack using Spell
     def entityAttackSpell(self, entity, dirX, dirY):
@@ -135,7 +135,7 @@ class World:
         posY = entity.position.y + entity.height / 2
 
         #Create the Ammo
-        self.addAmmo(Ammo(posX, posY, dirX, dirY, "../resources/mine/circle.png", entity.team, AmmoType.SPELL, entity.spellDamage, entity.spellRange, entity.spellSpeed))
+        self.addAmmo(Ammo.Ammo(posX, posY, dirX, dirY, entity.team, AmmoType.SPELL, entity.spellDamage, entity.spellRange, entity.spellSpeed))
 
     #Have an Entity Attack using Summon
     def entityAttackSummon(self, entity, dirX, dirY):
@@ -147,10 +147,10 @@ class World:
 
         #Add an Effect/Entity
         self.addEffect(Effect.ExplosionVertical(entity.width, entity.height, dirX, dirY))
-        self.addEntity(Entity(Entity.WIDTH_DEFAULT, Entity.HEIGHT_DEFAULT, dirX, dirY, 0, 0, 0, "../resources/mine/circle.png", entity.team))
+        self.addEntity(Entity.Entity(Entity.WIDTH_DEFAULT, Entity.HEIGHT_DEFAULT, dirX, dirY, 0, 0, 0, EntityType.NORMAL, entity.team))
 
         #Create the Ammo
-        self.addAmmo(Ammo(posX, posY, dirX, dirY, "../resources/mine/circle.png", entity.team, AmmoType.SPELL, entity.spellDamage, entity.spellRange, entity.spellSpeed))
+        self.addAmmo(Ammo.Ammo(posX, posY, dirX, dirY, entity.team, AmmoType.SPELL, entity.spellDamage, entity.spellRange, entity.spellSpeed))
 
     #Apply Gravity to an Entity depending on what if any Terrain it is on
     def entityGravity(self, entity, frameDeltaTime):

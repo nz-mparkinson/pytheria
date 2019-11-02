@@ -12,7 +12,6 @@ from world import *
 #TODO
 # _ for private variables
 # positions are top left corner, centre
-# factory methods for ammo/entitys etc. anything with a type?
 # rof, mana checks for attacking
 
 #Define a class for the Game
@@ -148,9 +147,8 @@ class Game:
         self.world = World("Test", 11)
 
         #Create the Player and add it to the World
-        self.player = Entity(Entity.WIDTH_DEFAULT, Entity.HEIGHT_DEFAULT, 0, 0, 0, 0, 0, "../resources/mine/circle.png", 0)
+        self.player = Entity.Entity(Entity.WIDTH_DEFAULT, Entity.HEIGHT_DEFAULT, 0, 0, 0, 0, 0, EntityType.IMMORTAL, 0)
         self.player.spellDamage = 5
-        self.player.type = EntityType.IMMORTAL
         self.world.addEntity(self.player)
 
         #While the Game is running

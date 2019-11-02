@@ -41,32 +41,32 @@ class Terrain(Node):
         self.type = type
 
     #Define a Terrain factory
-    def Explosion(posX, posY, type):
+    def Terrain(posX, posY, type):
         imageString = ""
 
         #Depending on the type, set the imageString
         if type is TerrainType.WATER:
-            imageString = TerrainImage.WATER
+            imageString = TerrainImage.WATER.value
         elif type is TerrainType.SAND:
-            imageString = TerrainImage.SAND
+            imageString = TerrainImage.SAND.value
         elif type is TerrainType.DIRT:
-            imageString = TerrainImage.DIRT
+            imageString = TerrainImage.DIRT.value
         elif type is TerrainType.COPPER:
-            imageString = TerrainImage.COPPER
+            imageString = TerrainImage.COPPER.value
         elif type is TerrainType.TIN:
-            imageString = TerrainImage.TIN
+            imageString = TerrainImage.TIN.value
         elif type is TerrainType.IRON:
-            imageString = TerrainImage.IRON
+            imageString = TerrainImage.IRON.value
         elif type is TerrainType.COAL:
-            imageString = TerrainImage.COAL
+            imageString = TerrainImage.COAL.value
         elif type is TerrainType.SILVER:
-            imageString = TerrainImage.SILVER
+            imageString = TerrainImage.SILVER.value
         elif type is TerrainType.GOLD:
-            imageString = TerrainImage.GOLD
+            imageString = TerrainImage.GOLD.value
         elif type is TerrainType.PLATINUM:
-            imageString = TerrainImage.PLATINUM
+            imageString = TerrainImage.PLATINUM.value
 
-        return Terrain(width, height, posX, posY, TerrainImage.WATER, type)
+        return Terrain(posX, posY, imageString, type)
 
 
 

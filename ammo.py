@@ -8,6 +8,11 @@ class AmmoType(Enum):
     RANGED = 1
     SPELL = 2
 
+#Define an Enum for AmmoImage
+class AmmoImage(Enum):
+    RANGED = "../resources/mine/circle.png"
+    SPELL = "../resources/mine/circle.png"
+
 #Define a class for Ammo
 class Ammo(Node):
     AMMO_SIZE = 16
@@ -27,6 +32,18 @@ class Ammo(Node):
 
         #Derive how long the Ammo lasts
         self.timeLeft = range / speed
+
+    #Define a Ammo factory
+    def Ammo(posX, posY, dirX, dirY, team, type, damage, range, speed):
+        imageString = ""
+
+        #Depending on the type, set the imageString
+        if type is AmmoType.RANGED:
+            imageString = AmmoImage.RANGED.value
+        elif type is AmmoType.SPELL:
+            imageString = AmmoImage.SPELL.value
+
+        return Ammo(posX, posY, dirX, dirY, imageString, team, type, damage, range, speed)
 
     #Update the Ammo status
     def update(self, frameDeltaTime):
