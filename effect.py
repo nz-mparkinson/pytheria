@@ -9,13 +9,17 @@ class EffectType(Enum):
     EXPLOSION = 2
     IMPLOSION = 3
     EXPLOSION_VERTICAL = 4
+    RETICLE = 5
 
 #Define a class for Effect
 class Effect(Node):
+    COLOUR_HEALTH_BAR = (0, 255, 0)
+    COLOUR_RETICLE = (170, 170, 170)
     IMAGE_EXPLOSION = "../resources/mine/circle.png"
     IMAGE_EXPLOSION_VERTICAL = "../resources/mine/square.png"
     IMAGE_HEALTH_BAR = "../resources/mine/healthbar.png"
     IMAGE_IMPLOSION = "../resources/mine/circle.png"
+    IMAGE_RETICLE = "../resources/mine/box.png"
     SIZE_MOD_EXPLOSION = 5
     SIZE_MOD_EXPLOSION_VERTICAL = 5
     SIZE_MOD_IMPLOSION = 5
@@ -42,13 +46,16 @@ class Effect(Node):
         #Depending on the Effect type, set timeLeft etc.
         if self.type is EffectType.HEALTH_BAR:
             self.timeLeft = self.TIME_HEALTH_BAR
-            self.setColour(0, 255, 0)
+            self.setColour(self.COLOUR_HEALTH_BAR[0], self.COLOUR_HEALTH_BAR[1], self.COLOUR_HEALTH_BAR[2])
         elif self.type is EffectType.EXPLOSION:
             self.timeLeft = self.TIME_EXPLOSION
         elif self.type is EffectType.IMPLOSION:
             self.timeLeft = self.TIME_IMPLOSION
         elif self.type is EffectType.EXPLOSION_VERTICAL:
             self.timeLeft = self.TIME_EXPLOSION_VERTICAL
+        elif self.type is EffectType.RETICLE:
+            self.timeLeft = -1
+            self.setColour(self.COLOUR_RETICLE[0], self.COLOUR_RETICLE[1], self.COLOUR_RETICLE[2])
 
     #Define a Explosion Effect factory
     def Explosion(width, height, posX, posY):
@@ -65,6 +72,10 @@ class Effect(Node):
     #Define a Health Bar Effect factory
     def HealthBar(width, height, posX, posY):
         return Effect(width, height, posX, posY, Effect.IMAGE_HEALTH_BAR, EffectType.HEALTH_BAR)
+
+    #Define a Reticle Effect factory
+    def Reticle(width, height, posX, posY):
+        return Effect(width, height, posX, posY, Effect.IMAGE_RETICLE, EffectType.RETICLE)
 
     #Reset timeLeft depending on the Effect type
     def resetTimeLeft(self):

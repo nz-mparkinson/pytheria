@@ -38,6 +38,7 @@ class Game:
         self.clock = None
         self.font = None
         self.player = None
+        self.reticle = None
         self.screen = None
         self.selectedNode = None
         self.world = None
@@ -52,6 +53,7 @@ class Game:
         self.font = pygame.font.SysFont('mono', 20, bold=True)
         self.screen = pygame.display.set_mode(self.size, pygame.HWSURFACE | pygame.DOUBLEBUF)
         self.background = pygame.Surface(self.screen.get_size()).convert()
+        self.reticle = Effect.Reticle(self.SELECT_RANGE, self.SELECT_RANGE, 0, 0)
 
         self.running = True
 
@@ -106,7 +108,14 @@ class Game:
             posY = self.player.position.y + pos[1] - self.heightHalf
 
             #Get the Node near the mouse
-            self.selectedNode = self.world.getClosestNode(Vector2f(posX, posY), self.SELECT_RANGE)
+            temp = self.world.getClosestNode(Vector2f(posX, posY), self.SELECT_RANGE)
+
+            #Set the Reticle size
+            if temp and temp is not self.selectedNode:
+                self.reticle.setSize(temp.width, temp.height)
+                self.reticle.setColour(Effect.COLOUR_RETICLE[0], Effect.COLOUR_RETICLE[1], Effect.COLOUR_RETICLE[2])
+
+            self.selectedNode = temp
 
     #Define a function for Game logic
     def on_loop(self):
@@ -146,6 +155,7 @@ class Game:
             #TODO hover for target info
             selectedText = self.font.render("FPS: {:6.3}{}TIME: {:6.3}".format(self.clock.get_fps(), " "*5, self.playTime), True, (0, 255, 0))
             self.screen.blit(fps, (self.width - selectedText.get_width(), self.height - selectedText.get_height()))
+            self.screen.blit(self.reticle.image, (self.selectedNode.position.x - xPos, self.selectedNode.position.y - yPos))
 
         #Update the screen
         pygame.display.flip()
