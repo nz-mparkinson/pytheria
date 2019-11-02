@@ -14,6 +14,7 @@ class Entity(Node):
     HEIGHT_DEFAULT = 48
     JUMP_HEIGHT_MOD = 2.5
     WIDTH_DEFAULT = 24
+
     #Define the constructor
     def __init__(self, width, height, posX, posY, rotation, dirX, dirY, imageString, team):
         super().__init__(NodeType.ENTITY, width, height, posX, posY, rotation, dirX, dirY, imageString, team)
