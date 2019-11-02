@@ -32,6 +32,7 @@ class Entity(Node):
         self.attackDamage = 1
         self.attackRange = 20
         self.attackRateOfFire = 1
+        self.attackTimeLeft = -1
         self.healthCurrent = 10
         self.healthMax = 10
         self.healthRegen = 1
@@ -42,11 +43,13 @@ class Entity(Node):
         self.rangedRange = 200
         self.rangedRateOfFire = 1
         self.rangedSpeed = 200
+        self.rangedTimeLeft = -1
         self.speed = 25
         self.spellDamage = 1
         self.spellRange = 200
         self.spellRateOfFire = 1
         self.spellSpeed = 300
+        self.spellTimeLeft = -1
 
         #Set Entity pointers
         self.healthBar = None
@@ -64,6 +67,27 @@ class Entity(Node):
             imageString = EntityImage.IMMORTAL.value
 
         return Entity(width, height, posX, posY, rotation, dirX, dirY, imageString, type, team)
+
+    #Get whether the Entity can attack using Melee
+    def canAttackMelee(self):
+        if self.attackTimeLeft < 0:
+            return True
+
+        return False
+
+    #Get whether the Entity can attack using Ranged
+    def canAttackRanged(self):
+        if self.rangedTimeLeft < 0:
+            return True
+
+        return False
+
+    #Get whether the Entity can attack using Spell
+    def canAttackSpell(self):
+        if self.spellTimeLeft < 0:
+            return True
+
+        return False
 
     #Damage the Entity, return true if the Entity dies
     def damage(self, damage):
@@ -87,6 +111,10 @@ class Entity(Node):
 
     #Update the Entity status
     def update(self, frameDeltaTime):
+        self.attackTimeLeft -= frameDeltaTime
+        self.rangedTimeLeft -= frameDeltaTime
+        self.spellTimeLeft -= frameDeltaTime
+
         #If the Entity is dead, return True
         if self.healthCurrent <= 0:
             return True

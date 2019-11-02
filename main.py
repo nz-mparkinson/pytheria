@@ -11,8 +11,7 @@ from world import *
 
 #TODO
 # _ for private variables
-# positions are top left corner, centre
-# rof, mana checks for attacking
+# mana checks for attacking
 
 #Define a class for the Game
 class Game:
@@ -149,6 +148,7 @@ class Game:
         #Create the Player and add it to the World
         self.player = Entity.Entity(Entity.WIDTH_DEFAULT, Entity.HEIGHT_DEFAULT, 0, 0, 0, 0, 0, EntityType.IMMORTAL, 0)
         self.player.spellDamage = 5
+        self.player.spellRateOfFire = 0.05
         self.world.addEntity(self.player)
 
         #While the Game is running

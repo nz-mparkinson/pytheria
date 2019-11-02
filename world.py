@@ -119,51 +119,71 @@ class World:
             #Jump
             self.entityJump(entity)
 
-    #Have an Entity Attack using Melee
+    #Have an Entity attack using Melee
     def entityAttackMelee(self, entity):
-        #Find the closest enemy
-        enemy = self.getClosestEntity(entity, entity.attackRange, entity.team)
+        #If the Entity can attack
+        if entity.canAttackMelee():
+            #Find the closest enemy
+            enemy = self.getClosestEntity(entity, entity.attackRange, entity.team)
 
-        #TODO if hit
-        if enemy:
-            self.entityHit(enemy, entity.attackDamage)
+            #TODO if hit
+            if enemy:
+                self.entityHit(enemy, entity.attackDamage)
 
-    #Have an Entity Attack using Ranged
+            #Set attackTimeLeft
+            entity.attackTimeLeft += entity.attackRateOfFire
+
+    #Have an Entity attack using Ranged
     def entityAttackRanged(self, entity, dirX, dirY):
-        #Because position tracks the top left corner of the object the following calculatings are required
-        dirX = dirX - entity.width / 2 - Ammo.AMMO_SIZE / 2
-        dirY = dirY - entity.height / 2 - Ammo.AMMO_SIZE / 2
-        posX = entity.position.x + entity.width / 2
-        posY = entity.position.y + entity.height / 2
+        #If the Entity can ranged
+        if entity.canAttackRanged():
+            #Because position tracks the top left corner of the object the following calculatings are required
+            dirX = dirX - entity.width / 2 - Ammo.AMMO_SIZE / 2
+            dirY = dirY - entity.height / 2 - Ammo.AMMO_SIZE / 2
+            posX = entity.position.x + entity.width / 2
+            posY = entity.position.y + entity.height / 2
 
-        #Create the Ammo
-        self.addAmmo(Ammo.Ammo(posX, posY, dirX, dirY, entity.team, AmmoType.RANGED, entity.rangedDamage, entity.rangedRange, entity.rangedSpeed))
+            #Create the Ammo
+            self.addAmmo(Ammo.Ammo(posX, posY, dirX, dirY, entity.team, AmmoType.RANGED, entity.rangedDamage, entity.rangedRange, entity.rangedSpeed))
 
-    #Have an Entity Attack using Spell
+            #Set rangedTimeLeft   #TODO arror cost
+            entity.rangedTimeLeft += entity.rangedRateOfFire
+
+    #Have an Entity attack using Spell
     def entityAttackSpell(self, entity, dirX, dirY):
-        #Because position tracks the top left corner of the object the following calculatings are required
-        dirX = dirX - entity.width / 2 - Ammo.AMMO_SIZE / 2
-        dirY = dirY - entity.height / 2 - Ammo.AMMO_SIZE / 2
-        posX = entity.position.x + entity.width / 2
-        posY = entity.position.y + entity.height / 2
+        #If the Entity can spell
+        if entity.canAttackSpell():
+            #Because position tracks the top left corner of the object the following calculatings are required
+            dirX = dirX - entity.width / 2 - Ammo.AMMO_SIZE / 2
+            dirY = dirY - entity.height / 2 - Ammo.AMMO_SIZE / 2
+            posX = entity.position.x + entity.width / 2
+            posY = entity.position.y + entity.height / 2
 
-        #Create the Ammo
-        self.addAmmo(Ammo.Ammo(posX, posY, dirX, dirY, entity.team, AmmoType.SPELL, entity.spellDamage, entity.spellRange, entity.spellSpeed))
+            #Create the Ammo
+            self.addAmmo(Ammo.Ammo(posX, posY, dirX, dirY, entity.team, AmmoType.SPELL, entity.spellDamage, entity.spellRange, entity.spellSpeed))
+
+            #Set spellTimeLeft   #TODO mana cost
+            entity.spellTimeLeft += entity.spellRateOfFire
 
     #Have an Entity Attack using Summon
     def entityAttackSummon(self, entity, dirX, dirY):
-        #Because position tracks the top left corner of the object the following calculatings are required
-        dirX = dirX - entity.width / 2 - Ammo.AMMO_SIZE / 2
-        dirY = dirY - entity.height / 2 - Ammo.AMMO_SIZE / 2
-        posX = entity.position.x + entity.width / 2
-        posY = entity.position.y + entity.height / 2
+        #If the Entity can spell
+        if entity.canAttackSpell():
+            #Because position tracks the top left corner of the object the following calculatings are required
+            dirX = dirX - entity.width / 2 - Ammo.AMMO_SIZE / 2
+            dirY = dirY - entity.height / 2 - Ammo.AMMO_SIZE / 2
+            posX = entity.position.x + entity.width / 2
+            posY = entity.position.y + entity.height / 2
 
-        #Add an Effect/Entity
-        self.addEffect(Effect.ExplosionVertical(entity.width, entity.height, dirX, dirY))
-        self.addEntity(Entity.Entity(Entity.WIDTH_DEFAULT, Entity.HEIGHT_DEFAULT, dirX, dirY, 0, 0, 0, EntityType.NORMAL, entity.team))
+            #Add an Effect/Entity
+            self.addEffect(Effect.ExplosionVertical(entity.width, entity.height, dirX, dirY))
+            self.addEntity(Entity.Entity(Entity.WIDTH_DEFAULT, Entity.HEIGHT_DEFAULT, dirX, dirY, 0, 0, 0, EntityType.NORMAL, entity.team))
 
-        #Create the Ammo
-        self.addAmmo(Ammo.Ammo(posX, posY, dirX, dirY, entity.team, AmmoType.SPELL, entity.spellDamage, entity.spellRange, entity.spellSpeed))
+            #Create the Ammo
+            self.addAmmo(Ammo.Ammo(posX, posY, dirX, dirY, entity.team, AmmoType.SPELL, entity.spellDamage, entity.spellRange, entity.spellSpeed))
+
+            #Set spellTimeLeft   #TODO mana cost
+            entity.spellTimeLeft += entity.spellRateOfFire
 
     #Apply Gravity to an Entity depending on what if any Terrain it is on
     def entityGravity(self, entity, frameDeltaTime):
