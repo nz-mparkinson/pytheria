@@ -16,7 +16,10 @@ class Ammo(Node):
     def __init__(self, posX, posY, dirX, dirY, imageString, team, type, damage, range, speed):
         super().__init__(NodeType.AMMO, self.AMMO_SIZE, self.AMMO_SIZE, posX, posY, Vector2f(dirX, dirY).getAngle(), dirX, dirY, imageString, team)
 
+        #Set Node fields
         self.type = type
+
+        #Set Ammo fields
         self.damage = damage
 
         #Set the Ammo speed
@@ -29,6 +32,7 @@ class Ammo(Node):
     def update(self, frameDeltaTime):
         self.timeLeft -= frameDeltaTime
 
+        #If the Ammo has expired, return true
         if self.timeLeft < 0:
             return True
 

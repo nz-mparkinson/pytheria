@@ -19,24 +19,24 @@ from world import *
 class Game:
     #Define the constructor
     def __init__(self, width, height, maxFPS):
+        #Set Game fields
         self.height = height
         self.maxFPS = maxFPS
         self.width = width
 
+        #Initialize Game fields
         self.frameDeltaTime = 0
         self.playTime = 0.0
         self.running = False
         self.size = width, height
 
+        #Initialize Game pointers
         self.background = None
         self.clock = None
         self.font = None
         self.player = None
         self.screen = None
         self.world = None
-
-        self.playerPosTop = None
-        self.playerPosLeft = None
 
     #Define a function for initializing the Game
     def on_init(self):

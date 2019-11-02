@@ -18,8 +18,10 @@ class Entity(Node):
     def __init__(self, width, height, posX, posY, rotation, dirX, dirY, imageString, team):
         super().__init__(NodeType.ENTITY, width, height, posX, posY, rotation, dirX, dirY, imageString, team)
 
+        #Set Node fields
         self.type = EntityType.NORMAL
 
+        #Set Entity fields
         self.attackDamage = 1
         self.attackRange = 20
         self.attackRateOfFire = 1
@@ -39,6 +41,7 @@ class Entity(Node):
         self.spellRateOfFire = 1
         self.spellSpeed = 300
 
+        #Set Entity pointers
         self.healthBar = None
 
     #Damage the Entity, return true if the Entity dies

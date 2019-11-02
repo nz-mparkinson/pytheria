@@ -12,11 +12,10 @@ from terrain import *
 class World:
     FRICTION_DEFAULT = 50
     GRAVITY_DEFAULT = 200
-    MAX_SPEED_DEFAULT = 400 #TODO implement
+    MAX_SPEED_DEFAULT = 400         #TODO implement
     WORLD_HEIGHT_DEFAULT = 16
     WORLD_HEIGHT_DEFAULT_WIDTH = 4
-    WORLD_HEIGHT_MAX = 24 #TODO not used
-    WORLD_HEIGHT_MIN = 8 #TODO not used
+    WORLD_HEIGHT_DIFFERENCE_MAX = 8 #TODO not used
     WORLD_HEIGHT_STEP_MAX = 2
     WORLD_WIDTH = 16
 
@@ -50,18 +49,16 @@ class World:
         #Seed the random number generator
         random.seed(self.seedValue)
 
-        #Add Terrain with random heights to the right of the Player
-        terrainHeight = 0
+        #Add Terrain with random heights to the left/right of the Player
+        terrainHeightLeft, terrainHeightRight = 0, 0
         for i in range(self.WORLD_HEIGHT_DEFAULT_WIDTH, self.WORLD_WIDTH):
-            terrainHeight = terrainHeight + random.randrange(-self.WORLD_HEIGHT_STEP_MAX, self.WORLD_HEIGHT_STEP_MAX+1)
-            for j in range(-self.WORLD_HEIGHT_DEFAULT, terrainHeight):
-                self.addTerrain(Terrain(i * Terrain.TERRAIN_SIZE, -j * Terrain.TERRAIN_SIZE, "../resources/mine2/test.png"))
-
-        #Add Terrain with random heights to the left of the Player
-        terrainHeight = 0
-        for i in reversed(range(-self.WORLD_WIDTH, -self.WORLD_HEIGHT_DEFAULT_WIDTH)):
-            terrainHeight = terrainHeight + random.randrange(-self.WORLD_HEIGHT_STEP_MAX, self.WORLD_HEIGHT_STEP_MAX+1)
-            for j in range(-self.WORLD_HEIGHT_DEFAULT, terrainHeight):
+            #Add Terrain to the left
+            terrainHeightLeft = terrainHeightLeft + random.randrange(-self.WORLD_HEIGHT_STEP_MAX, self.WORLD_HEIGHT_STEP_MAX+1)
+            for j in range(-self.WORLD_HEIGHT_DEFAULT, terrainHeightLeft):
+                self.addTerrain(Terrain(-i * Terrain.TERRAIN_SIZE, -j * Terrain.TERRAIN_SIZE, "../resources/mine2/test.png"))
+            #Add Terrain to the right
+            terrainHeightRight = terrainHeightRight + random.randrange(-self.WORLD_HEIGHT_STEP_MAX, self.WORLD_HEIGHT_STEP_MAX+1)
+            for j in range(-self.WORLD_HEIGHT_DEFAULT, terrainHeightRight):
                 self.addTerrain(Terrain(i * Terrain.TERRAIN_SIZE, -j * Terrain.TERRAIN_SIZE, "../resources/mine2/test.png"))
 
         #Add an enemy Entity
@@ -109,7 +106,7 @@ class World:
             #Jump
             self.entityJump(entity)
 
-    #Have an Entity Attack using Melee TODO
+    #Have an Entity Attack using Melee
     def entityAttackMelee(self, entity):
         #Find the closest enemy
         enemy = self.getClosestEntity(entity, entity.attackRange, entity.team)
@@ -180,7 +177,6 @@ class World:
         #Otherwise, add a Health Bar Effect
         else:
             self.addEffect(Effect.HealthBar(int(entity.width * entity.getHealthPercentage()), entity.height, entity.position.x, entity.position.y))
-            #TODO move below into factory method?
             self.effects[-1].entity = entity
             self.effects[-1].position = entity.position
             entity.healthBar = self.effects[-1]
@@ -191,7 +187,7 @@ class World:
         if self.isEntityOnTerrain(entity):
             self.nodeMove(entity, entity.direction.x, -entity.getJumpHeight())
             entity.direction.y = 0
-            #entity.jump()
+            #entity.jump()   #TODO remove
 
     #Get the closest Entity optionally with range and not belonging to the same team
     def getClosestEntity(self, entity, range, team):

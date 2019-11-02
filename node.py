@@ -18,10 +18,8 @@ class NodeType(Enum):
 class Node:
     #Define the constructor
     def __init__(self, nodeType, width, height, posX, posY, rotation, dirX, dirY, imageString, team):
-        #Load the image, note: keeping a copy of the original as rotating the image looses quality
-        self.imageOriginal = pygame.image.load(imageString).convert_alpha()
-        self.image = self.imageOriginal
 
+        #Set the Node fields
         self.nodeType = nodeType
         self.width = width
         self.height = height
@@ -29,6 +27,10 @@ class Node:
         self.rotation = rotation
         self.direction = Vector2f(dirX, dirY)
         self.team = team
+
+        #Load the image, note: keeping a copy of the original as rotating the image looses quality
+        self.imageOriginal = pygame.image.load(imageString).convert_alpha()
+        self.image = self.imageOriginal
 
         #Set the Node rotation/size
         self.setRotation(rotation)
@@ -115,7 +117,7 @@ class Node:
         self.width = width
         self.image = pygame.transform.scale(self.image, (width, self.height))
 
-    #Update the Node
+    #Update the Node status
     def update(self, frameDeltaTime):
         pass
 
