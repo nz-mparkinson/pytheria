@@ -11,7 +11,6 @@ from world import *
 
 #TODO
 # _ for private variables
-# mana checks for attacking
 
 #Define a class for the Game
 class Game:

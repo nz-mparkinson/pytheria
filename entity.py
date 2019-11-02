@@ -68,23 +68,34 @@ class Entity(Node):
 
         return Entity(width, height, posX, posY, rotation, dirX, dirY, imageString, type, team)
 
-    #Get whether the Entity can attack using Melee
-    def canAttackMelee(self):
+    #Have the Entity attack using Melee, returning True if successful
+    def attackMelee(self):
         if self.attackTimeLeft < 0:
+            #Set attackTimeLeft
+            self.attackTimeLeft += self.attackRateOfFire
+
             return True
 
         return False
 
-    #Get whether the Entity can attack using Ranged
-    def canAttackRanged(self):
-        if self.rangedTimeLeft < 0:
+    #Have the Entity attack using Ranged, returning True if successful
+    def attackRanged(self):
+        if self.rangedTimeLeft < 0 and self.hasRangedAmmo():
+            #Set rangedTimeLeft
+            self.rangedTimeLeft += self.rangedRateOfFire
+            #TODO remove ranged Ammo
+
             return True
 
         return False
 
-    #Get whether the Entity can attack using Spell
-    def canAttackSpell(self):
-        if self.spellTimeLeft < 0:
+    #Have the Entity attack using Spell, returning True if successful
+    def attackSpell(self):
+        if self.spellTimeLeft < 0 and self.hasSpellMana():
+            #Set spellTimeLeft
+            self.spellTimeLeft += self.spellRateOfFire
+            #TODO remove spell mana
+
             return True
 
         return False
@@ -104,6 +115,16 @@ class Entity(Node):
             return 0
 
         return self.healthCurrent / self.healthMax
+
+    #Get whether the Entity has ranged Ammo
+    def hasRangedAmmo(self):
+        #TODO check for ranged Ammo
+        return True
+
+    #Get whether the Entity has spell mana
+    def hasSpellMana(self):
+        #TODO check for spell mana
+        return True
 
     #Have the Entity jump
     def jump(self):

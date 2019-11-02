@@ -121,8 +121,8 @@ class World:
 
     #Have an Entity attack using Melee
     def entityAttackMelee(self, entity):
-        #If the Entity can attack
-        if entity.canAttackMelee():
+        #If the Entity can attack using melee
+        if entity.attackMelee():
             #Find the closest enemy
             enemy = self.getClosestEntity(entity, entity.attackRange, entity.team)
 
@@ -130,13 +130,10 @@ class World:
             if enemy:
                 self.entityHit(enemy, entity.attackDamage)
 
-            #Set attackTimeLeft
-            entity.attackTimeLeft += entity.attackRateOfFire
-
     #Have an Entity attack using Ranged
     def entityAttackRanged(self, entity, dirX, dirY):
-        #If the Entity can ranged
-        if entity.canAttackRanged():
+        #If the Entity can attack using ranged
+        if entity.attackRanged():
             #Because position tracks the top left corner of the object the following calculatings are required
             dirX = dirX - entity.width / 2 - Ammo.AMMO_SIZE / 2
             dirY = dirY - entity.height / 2 - Ammo.AMMO_SIZE / 2
@@ -146,13 +143,10 @@ class World:
             #Create the Ammo
             self.addAmmo(Ammo.Ammo(posX, posY, dirX, dirY, entity.team, AmmoType.RANGED, entity.rangedDamage, entity.rangedRange, entity.rangedSpeed))
 
-            #Set rangedTimeLeft   #TODO arror cost
-            entity.rangedTimeLeft += entity.rangedRateOfFire
-
     #Have an Entity attack using Spell
     def entityAttackSpell(self, entity, dirX, dirY):
-        #If the Entity can spell
-        if entity.canAttackSpell():
+        #If the Entity can attack using a spell
+        if entity.attackSpell():
             #Because position tracks the top left corner of the object the following calculatings are required
             dirX = dirX - entity.width / 2 - Ammo.AMMO_SIZE / 2
             dirY = dirY - entity.height / 2 - Ammo.AMMO_SIZE / 2
@@ -162,12 +156,9 @@ class World:
             #Create the Ammo
             self.addAmmo(Ammo.Ammo(posX, posY, dirX, dirY, entity.team, AmmoType.SPELL, entity.spellDamage, entity.spellRange, entity.spellSpeed))
 
-            #Set spellTimeLeft   #TODO mana cost
-            entity.spellTimeLeft += entity.spellRateOfFire
-
     #Have an Entity Attack using Summon
     def entityAttackSummon(self, entity, dirX, dirY):
-        #If the Entity can spell
+        #If the Entity can attack using a spell
         if entity.canAttackSpell():
             #Because position tracks the top left corner of the object the following calculatings are required
             dirX = dirX - entity.width / 2 - Ammo.AMMO_SIZE / 2
@@ -181,9 +172,6 @@ class World:
 
             #Create the Ammo
             self.addAmmo(Ammo.Ammo(posX, posY, dirX, dirY, entity.team, AmmoType.SPELL, entity.spellDamage, entity.spellRange, entity.spellSpeed))
-
-            #Set spellTimeLeft   #TODO mana cost
-            entity.spellTimeLeft += entity.spellRateOfFire
 
     #Apply Gravity to an Entity depending on what if any Terrain it is on
     def entityGravity(self, entity, frameDeltaTime):
