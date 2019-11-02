@@ -12,6 +12,7 @@ from world import *
 #TODO
 # _ for private variables
 # positions are top left corner, centre
+# factory methods for ammo/entitys etc. anything with a type?
 
 #Define a class for the Game
 class Game:

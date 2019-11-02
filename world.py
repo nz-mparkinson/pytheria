@@ -140,21 +140,6 @@ class World:
         #Create the Ammo
         self.addAmmo(Ammo(posX, posY, dirX, dirY, "../resources/mine/circle.png", entity.team, AmmoType.SPELL, entity.spellDamage, entity.spellRange, entity.spellSpeed))
 
-    #Apply Damage to an Entity
-    def entityHit(self, entity, damage):
-        #Damage the Entity
-        entity.damage(damage)
-
-        #If the Entity already has a Health Bar Effect, update its width
-        if entity.healthBar:
-            entity.healthBar.setWidth(int(entity.width * entity.getHealthPercentage()))
-        #Otherwise, add a Health Bar Effect
-        else:
-            self.addEffect(Effect(int(entity.width * entity.getHealthPercentage()), entity.height, entity.position.x, entity.position.y, "../resources/mine/healthbar.png", EffectType.HEALTH_BAR))
-            self.effects[-1].entity = entity
-            self.effects[-1].position = entity.position
-            entity.healthBar = self.effects[-1]
-
     #Apply Gravity to an Entity depending on what if any Terrain it is on
     def entityGravity(self, entity, frameDeltaTime):
         #Get the Terrain the Entity is on if any
@@ -169,6 +154,22 @@ class World:
         else:
             entity.accelerate(0, self.GRAVITY_DEFAULT * frameDeltaTime)
 
+    #Apply Damage to an Entity
+    def entityHit(self, entity, damage):
+        entity.damage(damage)
+
+        #If the Entity already has a Health Bar Effect, update its width
+        if entity.healthBar:
+            entity.healthBar.setWidth(int(entity.width * entity.getHealthPercentage()))
+            entity.healthBar.resetTimeLeft()
+        #Otherwise, add a Health Bar Effect
+        else:
+            self.addEffect(Effect.HealthBar(int(entity.width * entity.getHealthPercentage()), entity.height, entity.position.x, entity.position.y))
+            #TODO move below into factory method?
+            self.effects[-1].entity = entity
+            self.effects[-1].position = entity.position
+            entity.healthBar = self.effects[-1]
+
     #Have an Entity Jump
     def entityJump(self, entity):
         #If the Entity is on Terrain, jump
@@ -179,7 +180,7 @@ class World:
 
     #Get the closest Entity optionally with range and not belonging to the same team
     def getClosestEntity(self, entity, range, team):
-        closestDistanceSQ = 0
+        closestDistanceSQ = None
         closestEntity = None
 
         #For all Entitys, find the closest
@@ -194,7 +195,7 @@ class World:
 
     #Get the closest Node thats selectable, optionally with range
     def getClosestNode(self, entity, range):
-        closestDistanceSQ = 0
+        closestDistanceSQ = None
         closestNode = None
 
         #For all selectable Nodes, find the closest
@@ -265,9 +266,12 @@ class World:
                 pass
             #If the Node is an Ammo
             elif node.nodeType == NodeType.AMMO:
-                #Move the Ammo and explode
+                #Move the Ammo
                 node.move(x, y)
-                #TODO sound/animation
+
+                #Create an Effect/Sound for the explosion
+                self.addEffect(Effect.Explosion(node.width, node.height, node.position.x, node.position.y))
+                #TODO sound
 
                 #If the Collidable is an Entity, damage the Entity
                 if collidable.nodeType == NodeType.ENTITY:

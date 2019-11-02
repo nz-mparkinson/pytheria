@@ -77,13 +77,16 @@ class Node:
         self.setRotation(self.rotation + rotationDelta)
 
     #Set the Node colour
-    def setColour(self, red, green, blue, alpha):
+    def setColour(self, red, green, blue):
         arr = pygame.surfarray.pixels3d(self.image)
         arr[:,:,0] = red
         arr[:,:,1] = green
         arr[:,:,2] = blue
 
-        pass
+    #Set the Node height
+    def setHeight(self, height):
+        self.height = height
+        self.image = pygame.transform.scale(self.image, (self.width, height))
 
     #Set the Node rotation, note: requires that Node size is also set
     def setRotation(self, rotation):
@@ -93,9 +96,15 @@ class Node:
 
     #Set the Node size
     def setSize(self, width, height):
+        self.position.x -= (width - self.width) / 2
+        self.position.y -= (height - self.height) / 2
         self.width = width
         self.height = height
-        self.image = pygame.transform.scale(self.image, (width, height))
+        self.image = pygame.transform.scale(self.imageOriginal, (width, height))
+
+    #Set the Node transparency
+    def setTransparency(self, alpha):
+        self.image.set_alpha(alpha)
 
     #Set the Node width
     def setWidth(self, width):
