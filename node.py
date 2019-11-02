@@ -22,7 +22,9 @@ class Node:
         #Set the Node fields
         self.nodeType = nodeType
         self.width = width
+        self.widthHalf = width / 2
         self.height = height
+        self.heightHalf = height / 2
         self.position = Vector2f(posX, posY)
         self.rotation = rotation
         self.direction = Vector2f(dirX, dirY)
@@ -46,15 +48,15 @@ class Node:
 
     #Get centre positon
     def getCentre(self):
-        return Vector2f(self.position.x + self.width / 2, self.position.y + self.height / 2)
+        return Vector2f(self.position.x + self.widthHalf, self.position.y + self.heightHalf)
 
     #Get centre positon x
     def getCentreX(self):
-        return self.position.x + self.width / 2
+        return self.position.x + self.widthHalf
 
     #Get centre positon
     def getCentreY(self):
-        return self.position.y + self.height / 2
+        return self.position.y + self.heightHalf
 
     #Get whether a Node is inside another Node
     def isInside(self, other):
@@ -88,6 +90,7 @@ class Node:
     #Set the Node height
     def setHeight(self, height):
         self.height = height
+        self.heightHalf = height / 2
         self.image = pygame.transform.scale(self.image, (self.width, height))
 
     #Set the Node rotation, note: requires that Node size is also set
@@ -101,7 +104,9 @@ class Node:
         self.position.x -= (width - self.width) / 2
         self.position.y -= (height - self.height) / 2
         self.width = width
+        self.widthHalf = width / 2
         self.height = height
+        self.heightHalf = height / 2
         self.image = pygame.transform.scale(self.imageOriginal, (width, height))
 
     #Set the Node transparency
@@ -115,6 +120,7 @@ class Node:
     #Set the Node width
     def setWidth(self, width):
         self.width = width
+        self.widthHalf = width / 2
         self.image = pygame.transform.scale(self.image, (width, self.height))
 
     #Update the Node status

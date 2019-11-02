@@ -32,6 +32,7 @@ class TerrainImage(Enum):
 #Define a class for Terrain
 class Terrain(Node):
     TERRAIN_SIZE = 32
+    TERRAIN_SIZE_HALF = 16
 
     #Define the constructor
     def __init__(self, posX, posY, imageString, type):

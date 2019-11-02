@@ -16,6 +16,7 @@ class AmmoImage(Enum):
 #Define a class for Ammo
 class Ammo(Node):
     AMMO_SIZE = 16
+    AMMO_SIZE_HALF = 8
 
     #Define the constructor
     def __init__(self, posX, posY, dirX, dirY, imageString, team, type, damage, range, speed):

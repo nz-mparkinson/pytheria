@@ -135,10 +135,10 @@ class World:
         #If the Entity can attack using ranged
         if entity.attackRanged():
             #Because position tracks the top left corner of the object the following calculatings are required
-            dirX = dirX - entity.width / 2 - Ammo.AMMO_SIZE / 2
-            dirY = dirY - entity.height / 2 - Ammo.AMMO_SIZE / 2
-            posX = entity.position.x + entity.width / 2
-            posY = entity.position.y + entity.height / 2
+            dirX = dirX - entity.widthHalf - Ammo.AMMO_SIZE_HALF
+            dirY = dirY - entity.heightHalf - Ammo.AMMO_SIZE_HALF
+            posX = entity.position.x + entity.widthHalf
+            posY = entity.position.y + entity.heightHalf
 
             #Create the Ammo
             self.addAmmo(Ammo.Ammo(posX, posY, dirX, dirY, entity.team, AmmoType.RANGED, entity.rangedDamage, entity.rangedRange, entity.rangedSpeed))
@@ -148,10 +148,10 @@ class World:
         #If the Entity can attack using a spell
         if entity.attackSpell():
             #Because position tracks the top left corner of the object the following calculatings are required
-            dirX = dirX - entity.width / 2 - Ammo.AMMO_SIZE / 2
-            dirY = dirY - entity.height / 2 - Ammo.AMMO_SIZE / 2
-            posX = entity.position.x + entity.width / 2
-            posY = entity.position.y + entity.height / 2
+            dirX = dirX - entity.widthHalf - Ammo.AMMO_SIZE_HALF
+            dirY = dirY - entity.heightHalf - Ammo.AMMO_SIZE_HALF
+            posX = entity.position.x + entity.widthHalf
+            posY = entity.position.y + entity.heightHalf
 
             #Create the Ammo
             self.addAmmo(Ammo.Ammo(posX, posY, dirX, dirY, entity.team, AmmoType.SPELL, entity.spellDamage, entity.spellRange, entity.spellSpeed))
@@ -161,10 +161,10 @@ class World:
         #If the Entity can attack using a spell
         if entity.attackSpell():
             #Because position tracks the top left corner of the object the following calculatings are required
-            dirX = dirX - entity.width / 2 - Ammo.AMMO_SIZE / 2
-            dirY = dirY - entity.height / 2 - Ammo.AMMO_SIZE / 2
-            posX = entity.position.x + entity.width / 2
-            posY = entity.position.y + entity.height / 2
+            dirX = dirX - entity.widthHalf - Ammo.AMMO_SIZE_HALF
+            dirY = dirY - entity.heightHalf - Ammo.AMMO_SIZE_HALF
+            posX = entity.position.x + entity.widthHalf
+            posY = entity.position.y + entity.heightHalf
 
             #Add an Effect/Entity
             self.addEffect(Effect.ExplosionVertical(entity.width, entity.height, dirX, dirY))
@@ -223,16 +223,16 @@ class World:
         return closestEntity
 
     #Get the closest Node thats selectable, optionally with range
-    def getClosestNode(self, entity, range):
+    def getClosestNode(self, position, range):
         closestDistanceSQ = None
         closestNode = None
 
         #For all selectable Nodes, find the closest
-        for node in self.selectable:
-            if closestEntity is None or closestDistanceSQ > entity.position.getLengthToSQ(node.position):
-               if range is None or range * range >= entity.position.getLengthToSQ(node.position):
+        for node in self.selectables:
+            if closestNode is None or closestDistanceSQ > position.getLengthTo(node.getCentre()) - node.widthHalf:
+               if range is None or range >= position.getLengthTo(node.getCentre()) - node.widthHalf:
                    closestNode = node
-                   closestDistanceSQ = entity.position.getLengthToSQ(node.position)
+                   closestDistanceSQ = position.getLengthTo(node.getCentre()) - node.widthHalf
 
         return closestNode
 
