@@ -15,7 +15,7 @@ class World:
     MAX_SPEED_DEFAULT = 400         #TODO implement
     WORLD_HEIGHT_DEFAULT = 16
     WORLD_HEIGHT_DEFAULT_WIDTH = 4
-    WORLD_HEIGHT_DIFFERENCE_MAX = 8 #TODO not used
+    WORLD_HEIGHT_DIFFERENCE_MAX = 8
     WORLD_HEIGHT_STEP_MAX = 2
     WORLD_WIDTH = 16
 
@@ -52,12 +52,25 @@ class World:
         #Add Terrain with random heights to the left/right of the Player
         terrainHeightLeft, terrainHeightRight = 0, 0
         for i in range(self.WORLD_HEIGHT_DEFAULT_WIDTH, self.WORLD_WIDTH):
-            #Add Terrain to the left
+            #Get the next Terrain height to the left
             terrainHeightLeft = terrainHeightLeft + random.randrange(-self.WORLD_HEIGHT_STEP_MAX, self.WORLD_HEIGHT_STEP_MAX+1)
+            if terrainHeightLeft < -self.WORLD_HEIGHT_DIFFERENCE_MAX:
+                terrainHeightLeft = -self.WORLD_HEIGHT_DIFFERENCE_MAX
+            elif terrainHeightLeft > self.WORLD_HEIGHT_DIFFERENCE_MAX:
+                terrainHeightLeft = self.WORLD_HEIGHT_DIFFERENCE_MAX
+
+            #Add Terrain to the left
             for j in range(-self.WORLD_HEIGHT_DEFAULT, terrainHeightLeft):
                 self.addTerrain(Terrain.Terrain(-i * Terrain.TERRAIN_SIZE, -j * Terrain.TERRAIN_SIZE, TerrainType.DIRT))
+
+            #Get the next Terrain height to the right
+            terrainHeightRight = terrainHeightLeft + random.randrange(-self.WORLD_HEIGHT_STEP_MAX, self.WORLD_HEIGHT_STEP_MAX+1)
+            if terrainHeightRight < -self.WORLD_HEIGHT_DIFFERENCE_MAX:
+                terrainHeightRight = -self.WORLD_HEIGHT_DIFFERENCE_MAX
+            elif terrainHeightRight > self.WORLD_HEIGHT_DIFFERENCE_MAX:
+                terrainHeightRight = self.WORLD_HEIGHT_DIFFERENCE_MAX
+
             #Add Terrain to the right
-            terrainHeightRight = terrainHeightRight + random.randrange(-self.WORLD_HEIGHT_STEP_MAX, self.WORLD_HEIGHT_STEP_MAX+1)
             for j in range(-self.WORLD_HEIGHT_DEFAULT, terrainHeightRight):
                 self.addTerrain(Terrain.Terrain(i * Terrain.TERRAIN_SIZE, -j * Terrain.TERRAIN_SIZE, TerrainType.DIRT))
 
