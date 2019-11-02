@@ -83,6 +83,16 @@ class Game:
             #If space key pressed, move the player up
             if keys[pygame.K_SPACE]:
                 self.world.entityJump(self.player)
+
+            #If j key pressed, toggle AttackType backward
+            if keys[pygame.K_j]:
+                self.player.toggleAttackType(False)
+            #If k key pressed, toggle AttackType forward
+            if keys[pygame.K_k]:
+                self.player.toggleAttackType(True)
+
+            print(self.player.attackType)
+
         #If the event is a mouse press, get the mouse position and all mouse buttons and react accordingly
         if event.type == pygame.MOUSEBUTTONDOWN:
             pos = pygame.mouse.get_pos()
@@ -92,16 +102,31 @@ class Game:
             posX = self.player.position.x + pos[0] - self.widthHalf
             posY = self.player.position.y + pos[1] - self.heightHalf
 
-            #If the middle mouse pressed, fire
-            if pressed2:
-                #self.world.entityAttackMelee(self.player)
-                self.world.entityAttackRanged(self.player, posX, posY)
-            #If the right mouse pressed, fire
-            if pressed3:
-                self.world.entityAttackSummon(self.player, posX, posY)
-            #If the left mouse pressed, fire
+            #If the left mouse pressed, attack
             if pressed1:
-                self.world.entityAttackSpell(self.player, posX, posY)
+                if self.player.attackType == AttackType.MELEE:
+                    self.world.entityAttackMelee(self.player)
+                elif self.player.attackType == AttackType.RANGED:
+                    self.world.entityAttackRanged(self.player, posX, posY)
+                elif self.player.attackType == AttackType.SPELL:
+                    self.world.entityAttackSpell(self.player, posX, posY)
+                elif self.player.attackType == AttackType.SUMMON:
+                    self.world.entityAttackSummon(self.player, posX, posY)
+            #If the middle mouse pressed
+            if pressed2:
+                #TODO
+                pass
+            #If the right mouse pressed, interact/mine
+            if pressed3:
+                #TODO
+                pass
+
+            #If the mouse wheel was moved up, toggle AttackType backward
+            if event.button == 4:
+                self.player.toggleAttackType(False)
+            #If the mouse wheel was moved down, toggle AttackType forward
+            elif event.button == 5:
+                self.player.toggleAttackType(True)
         #If the event is a mouse move, select the Node near the mouse
         if event.type == pygame.MOUSEMOTION:
             pos = pygame.mouse.get_pos()
@@ -178,6 +203,7 @@ class Game:
 
         #Create the Player and add it to the World
         self.player = Entity.Entity(Entity.WIDTH_DEFAULT, Entity.HEIGHT_DEFAULT, 0, 0, 0, 0, 0, EntityType.IMMORTAL, 0)
+        self.player.attackType = AttackType.SPELL
         self.player.spellDamage = 5
         self.player.spellRateOfFire = 0.05
         self.world.addEntity(self.player)

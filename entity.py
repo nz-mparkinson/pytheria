@@ -3,6 +3,13 @@
 #Import libraries
 from node import *
 
+#Define an Enum for AttackType
+class AttackType(Enum):
+    MELEE = 1
+    RANGED = 2
+    SPELL = 3
+    SUMMON = 4
+
 #Define an Enum for EntityType
 class EntityType(Enum):
     NORMAL = 1
@@ -33,6 +40,7 @@ class Entity(Node):
         self.attackRange = 20
         self.attackRateOfFire = 1
         self.attackTimeLeft = -1
+        self.attackType = AttackType.MELEE
         self.healthCurrent = 10
         self.healthMax = 10
         self.healthRegen = 1
@@ -129,6 +137,19 @@ class Entity(Node):
     #Have the Entity jump
     def jump(self):
         self.direction.y -= self.height * self.JUMP_HEIGHT_MOD
+
+    #Toggle the Entity AttackType forwards or backwards
+    def toggleAttackType(self, forward):
+        if forward:
+            if self.attackType == AttackType.SUMMON:
+                self.attackType = AttackType.MELEE
+            else:
+                self.attackType = AttackType(self.attackType.value + 1)
+        else:
+            if self.attackType == AttackType.MELEE:
+                self.attackType = AttackType.SUMMON
+            else:
+                self.attackType = AttackType(self.attackType.value - 1)
 
     #Update the Entity status
     def update(self, frameDeltaTime):
