@@ -19,7 +19,7 @@ class Node:
     #Define the constructor
     def __init__(self, nodeType, width, height, posX, posY, rotation, dirX, dirY, imageString, team):
         #Load the image, note: keeping a copy of the original as rotating the image looses quality
-        self.imageOriginal = pygame.image.load(imageString)
+        self.imageOriginal = pygame.image.load(imageString).convert_alpha()
         self.image = self.imageOriginal
 
         self.nodeType = nodeType
@@ -92,7 +92,7 @@ class Node:
     def setRotation(self, rotation):
         self.rotation = rotation
         self.image = pygame.transform.rotozoom(self.imageOriginal, rotation, 1)
-        self.setSize(self.width, self.height)
+        self.image = pygame.transform.scale(self.image, (self.width, self.height))
 
     #Set the Node size
     def setSize(self, width, height):
@@ -104,7 +104,11 @@ class Node:
 
     #Set the Node transparency
     def setTransparency(self, alpha):
-        self.image.set_alpha(alpha)
+        temp = pygame.Surface((self.image.get_width(), self.image.get_height())).convert()
+        temp.blit(self.image, (0, 0))
+        temp.set_alpha(alpha)
+        temp.set_colorkey((0, 0, 0))
+        self.image = temp
 
     #Set the Node width
     def setWidth(self, width):

@@ -7,15 +7,18 @@ from node import *
 class EffectType(Enum):
     HEALTH_BAR = 1
     EXPLOSION = 2
+    IMPLOSION = 3 #TODO oposite of explosion
+    VERTICAL = 4  #TODO square that grows vertically, looses opacity
 
 #Define a class for Effect
 class Effect(Node):
     EFFECT_TIME = 3
     IMAGE_EXPLOSION = "../resources/mine/circle.png"
     IMAGE_HEALTH_BAR = "../resources/mine/healthbar.png"
-    SIZE_MOD_EXPLOSION = 3
-    TIME_EXPLOSION = 0.25
+    SIZE_MOD_EXPLOSION = 5
+    TIME_EXPLOSION = 0.2
     TIME_HEALTH_BAR = 3
+    TRANSPARENCY_EXPLOSION = 150
 
     #Define the constructor
     def __init__(self, width, height, posX, posY, imageString, type):
@@ -65,7 +68,9 @@ class Effect(Node):
         elif self.type is EffectType.EXPLOSION:
             newWidth = int(self.widthOriginal * (1 + self.SIZE_MOD_EXPLOSION * (self.TIME_EXPLOSION - self.timeLeft) / self.TIME_EXPLOSION))
             newHeight = int(self.heightOriginal * (1 + self.SIZE_MOD_EXPLOSION * (self.TIME_EXPLOSION - self.timeLeft) / self.TIME_EXPLOSION))
+            newTransparency = int(self.TRANSPARENCY_EXPLOSION * self.timeLeft / self.TIME_EXPLOSION)
             self.setSize(newWidth, newHeight)
+            self.setTransparency(newTransparency)
 
         return False
 
