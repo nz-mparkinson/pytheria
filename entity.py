@@ -124,6 +124,13 @@ class Entity(Node):
 
         return self.healthCurrent / self.healthMax
 
+    #Get the Entitys mana percentage
+    def getManaPercentage(self):
+        if self.manaCurrent <= 0:
+            return 0
+
+        return self.manaCurrent / self.manaMax
+
     #Get whether the Entity has ranged Ammo
     def hasRangedAmmo(self):
         #TODO check for ranged Ammo

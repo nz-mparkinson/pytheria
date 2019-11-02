@@ -7,6 +7,7 @@
 import pygame
 from pygame.locals import *
 
+from gui import *
 from world import *
 
 #TODO
@@ -19,6 +20,7 @@ class Game:
 
     #Define the constructor
     def __init__(self, width, height, maxFPS):
+
         #Set Game fields
         self.height = height
         self.heightHalf = height // 2
@@ -36,6 +38,7 @@ class Game:
         self.background = None
         self.clock = None
         self.font = None
+        self.gui = None
         self.player = None
         self.reticle = None
         self.screen = None
@@ -53,6 +56,8 @@ class Game:
         self.screen = pygame.display.set_mode(self.size, pygame.HWSURFACE | pygame.DOUBLEBUF)
         self.background = pygame.Surface(self.screen.get_size()).convert()
         self.reticle = Effect.Reticle(self.SELECT_RANGE, self.SELECT_RANGE, 0, 0)
+
+        self.gui = GUI(self.width, self.height)
 
         self.running = True
 
@@ -87,11 +92,11 @@ class Game:
             #If j key pressed, toggle AttackType backward
             if keys[pygame.K_j]:
                 self.player.toggleAttackType(False)
+                print(self.player.attackType)
             #If k key pressed, toggle AttackType forward
             if keys[pygame.K_k]:
                 self.player.toggleAttackType(True)
-
-            print(self.player.attackType)
+                print(self.player.attackType)
 
         #If the event is a mouse press, get the mouse position and all mouse buttons and react accordingly
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -185,6 +190,10 @@ class Game:
             self.screen.blit(fps, (self.width - selectedText.get_width(), self.height - selectedText.get_height()))
             self.screen.blit(self.reticle.image, (self.selectedNode.position.x - xPos, self.selectedNode.position.y - yPos))
 
+        #Draw the GUI Nodes
+        for node in self.gui.nodes:
+            self.screen.blit(node.image, (node.position.x, node.position.y))
+
         #Update the screen
         pygame.display.flip()
 
@@ -220,6 +229,9 @@ class Game:
 
             #Game logic
             self.on_loop()
+
+            #Update the GUI
+            self.gui.update(self.player, self.frameDeltaTime)
 
             #Render the Game state
             self.on_render()
