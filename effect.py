@@ -7,7 +7,7 @@ from node import *
 class EffectType(Enum):
     HEALTH_BAR = 1
     EXPLOSION = 2
-    IMPLOSION = 3 #TODO oposite of explosion
+    IMPLOSION = 3
     VERTICAL = 4  #TODO square that grows vertically, looses opacity
 
 #Define a class for Effect
@@ -17,6 +17,7 @@ class Effect(Node):
     IMAGE_HEALTH_BAR = "../resources/mine/healthbar.png"
     SIZE_MOD_EXPLOSION = 5
     TIME_EXPLOSION = 0.2
+    TIME_IMPLOSION = 0.5
     TIME_HEALTH_BAR = 3
     TRANSPARENCY_EXPLOSION = 150
 
@@ -37,10 +38,16 @@ class Effect(Node):
             self.timeLeft = self.TIME_HEALTH_BAR
         elif self.type is EffectType.EXPLOSION:
             self.timeLeft = self.TIME_EXPLOSION
+        elif self.type is EffectType.IMPLOSION:
+            self.timeLeft = self.TIME_IMPLOSION
 
     #Define a Explosion Effect factory
     def Explosion(width, height, posX, posY):
         return Effect(width, height, posX, posY, Effect.IMAGE_EXPLOSION, EffectType.EXPLOSION)
+
+    #Define a Implosion Effect factory
+    def Implosion(width, height, posX, posY):
+        return Effect(width, height, posX, posY, Effect.IMAGE_EXPLOSION, EffectType.IMPLOSION)
 
     #Define a Health Bar Effect factory
     def HealthBar(width, height, posX, posY):
@@ -69,6 +76,13 @@ class Effect(Node):
             newWidth = int(self.widthOriginal * (1 + self.SIZE_MOD_EXPLOSION * (self.TIME_EXPLOSION - self.timeLeft) / self.TIME_EXPLOSION))
             newHeight = int(self.heightOriginal * (1 + self.SIZE_MOD_EXPLOSION * (self.TIME_EXPLOSION - self.timeLeft) / self.TIME_EXPLOSION))
             newTransparency = int(self.TRANSPARENCY_EXPLOSION * self.timeLeft / self.TIME_EXPLOSION)
+            self.setSize(newWidth, newHeight)
+            self.setTransparency(newTransparency)
+        elif self.type is EffectType.IMPLOSION:
+            newWidth = int(self.widthOriginal * (1 + self.SIZE_MOD_EXPLOSION * self.timeLeft / self.TIME_IMPLOSION))
+            newHeight = int(self.heightOriginal * (1 + self.SIZE_MOD_EXPLOSION * self.timeLeft / self.TIME_IMPLOSION))
+            newTransparency = int(self.TRANSPARENCY_EXPLOSION * self.timeLeft / self.TIME_IMPLOSION)
+
             self.setSize(newWidth, newHeight)
             self.setTransparency(newTransparency)
 
