@@ -10,14 +10,14 @@ from terrain import *
 
 #Define a class for World, which manages all Nodes in a locale
 class World:
-    FRICTION_DEFAULT = 50
+    FRICTION_DEFAULT = 50           #TODO implement
     GRAVITY_DEFAULT = 200
     MAX_SPEED_DEFAULT = 400         #TODO implement
     WORLD_HEIGHT_DEFAULT = 16
     WORLD_HEIGHT_DEFAULT_WIDTH = 4
     WORLD_HEIGHT_DIFFERENCE_MAX = 8
     WORLD_HEIGHT_STEP_MAX = 2
-    WORLD_WIDTH = 16
+    WORLD_WIDTH = 32
 
     #Define the constructor
     def __init__(self, name, seedValue):
