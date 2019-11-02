@@ -14,7 +14,7 @@ class EffectType(Enum):
 #Define a class for Effect
 class Effect(Node):
     COLOUR_HEALTH_BAR = (0, 255, 0)
-    COLOUR_RETICLE = (170, 170, 170)
+    COLOUR_RETICLE = (204, 204, 204)
     IMAGE_EXPLOSION = "../resources/mine/circle.png"
     IMAGE_EXPLOSION_VERTICAL = "../resources/mine/square.png"
     IMAGE_HEALTH_BAR = "../resources/mine/healthbar.png"
