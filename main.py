@@ -1,6 +1,8 @@
 #!/usr/bin/python
 
 
+
+
 #Import libraries
 import pygame
 from pygame.locals import *
@@ -113,15 +115,14 @@ class Game:
         for node in self.world.entitys:
             if node is not self.player:
                 self.screen.blit(node.image, (node.position.x - xPos, node.position.y - yPos))
+        #Draw the Player in the centre of the screen
+        self.screen.blit(self.player.image, (self.width // 2, self.height // 2))
         #Draw all Ammo
         for node in self.world.ammo:
             self.screen.blit(node.image, (node.position.x - xPos, node.position.y - yPos))
         #Draw all Effects
         for node in self.world.effects:
             self.screen.blit(node.image, (node.position.x - xPos, node.position.y - yPos))
-
-        #Draw the Player in the centre of the screen
-        self.screen.blit(self.player.image, (self.width // 2, self.height // 2))
 
         #Draw the FPS
         fps = self.font.render("FPS: {:6.3}{}TIME: {:6.3}".format(self.clock.get_fps(), " "*5, self.playTime), True, (0, 255, 0))

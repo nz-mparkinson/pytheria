@@ -9,7 +9,7 @@ class EffectType(Enum):
 
 #Define a class for Effect
 class Effect(Node):
-    EFFECT_TIME = 1
+    EFFECT_TIME = 3
 
     #Define the constructor
     def __init__(self, width, height, posX, posY, imageString, type):
@@ -18,6 +18,10 @@ class Effect(Node):
         self.type = type
 
         self.timeLeft = self.EFFECT_TIME
+
+        #Depending on the Effect type
+        if type is EffectType.HEALTH_BAR:
+            self.setColour(0, 255, 0, 100)
 
     #Update the Effect status
     def update(self, frameDeltaTime):

@@ -145,6 +145,7 @@ class World:
         entity.damage(damage)
         #TODO add healthbar, make it follow the Entity
         self.addEffect(Effect(int(entity.width * entity.getHealthPercentage()), entity.height, entity.position.x, entity.position.y, "../resources/mine/healthbar.png", EffectType.HEALTH_BAR))
+        self.effects[-1].position = entity.position
 
     #Apply Gravity to an Entity depending on what if any Terrain it is on
     def entityGravity(self, entity, frameDeltaTime):
@@ -262,7 +263,7 @@ class World:
 
                 #If the Collidable is an Entity, damage the Entity
                 if collidable.nodeType == NodeType.ENTITY:
-                    collidable.damage(node.damage)
+                    self.entityDamage(collidable, node.damage)
 
                 #Remove the Ammo and return
                 self.removeAmmo(node)
@@ -353,8 +354,8 @@ class World:
                 self.removeEffect(node)
                 continue
 
-            #Apply Direction
-            self.nodeMove(node, node.direction.x * frameDeltaTime, node.direction.y * frameDeltaTime)
+            #Apply Direction, note: no collision checking
+            node.move(node.direction.x * frameDeltaTime, node.direction.y * frameDeltaTime)
 
         #For all Terrain, Update
         for node in self.terrain:

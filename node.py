@@ -76,6 +76,15 @@ class Node:
     def rotate(self, rotationDelta):
         self.setRotation(self.rotation + rotationDelta)
 
+    #Set the Node colour
+    def setColour(self, red, green, blue, alpha):
+        arr = pygame.surfarray.pixels3d(self.image)
+        arr[:,:,0] = red
+        arr[:,:,1] = green
+        arr[:,:,2] = blue
+
+        pass
+
     #Set the Node rotation, note: requires that Node size is also set
     def setRotation(self, rotation):
         self.rotation = rotation
