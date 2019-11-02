@@ -39,6 +39,8 @@ class Entity(Node):
         self.spellRateOfFire = 1
         self.spellSpeed = 300
 
+        self.healthBar = None
+
     #Damage the Entity, return true if the Entity dies
     def damage(self, damage):
         if self.type is EntityType.NORMAL:

@@ -97,6 +97,11 @@ class Node:
         self.height = height
         self.image = pygame.transform.scale(self.image, (width, height))
 
+    #Set the Node width
+    def setWidth(self, width):
+        self.width = width
+        self.image = pygame.transform.scale(self.image, (width, self.height))
+
     #Update the Node
     def update(self, frameDeltaTime):
         pass

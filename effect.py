@@ -19,6 +19,8 @@ class Effect(Node):
 
         self.timeLeft = self.EFFECT_TIME
 
+        self.entity = None
+
         #Depending on the Effect type
         if type is EffectType.HEALTH_BAR:
             self.setColour(0, 255, 0, 100)

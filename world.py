@@ -116,7 +116,7 @@ class World:
 
         #TODO if hit
         if enemy:
-            self.entityDamage(enemy, entity.attackDamage)
+            self.entityHit(enemy, entity.attackDamage)
 
     #Have an Entity Attack using Ranged
     def entityAttackRanged(self, entity, dirX, dirY):
@@ -141,11 +141,19 @@ class World:
         self.addAmmo(Ammo(posX, posY, dirX, dirY, "../resources/mine/circle.png", entity.team, AmmoType.SPELL, entity.spellDamage, entity.spellRange, entity.spellSpeed))
 
     #Apply Damage to an Entity
-    def entityDamage(self, entity, damage):
+    def entityHit(self, entity, damage):
+        #Damage the Entity
         entity.damage(damage)
-        #TODO add healthbar, make it follow the Entity
-        self.addEffect(Effect(int(entity.width * entity.getHealthPercentage()), entity.height, entity.position.x, entity.position.y, "../resources/mine/healthbar.png", EffectType.HEALTH_BAR))
-        self.effects[-1].position = entity.position
+
+        #If the Entity already has a Health Bar Effect, update its width
+        if entity.healthBar:
+            entity.healthBar.setWidth(int(entity.width * entity.getHealthPercentage()))
+        #Otherwise, add a Health Bar Effect
+        else:
+            self.addEffect(Effect(int(entity.width * entity.getHealthPercentage()), entity.height, entity.position.x, entity.position.y, "../resources/mine/healthbar.png", EffectType.HEALTH_BAR))
+            self.effects[-1].entity = entity
+            self.effects[-1].position = entity.position
+            entity.healthBar = self.effects[-1]
 
     #Apply Gravity to an Entity depending on what if any Terrain it is on
     def entityGravity(self, entity, frameDeltaTime):
@@ -263,7 +271,7 @@ class World:
 
                 #If the Collidable is an Entity, damage the Entity
                 if collidable.nodeType == NodeType.ENTITY:
-                    self.entityDamage(collidable, node.damage)
+                    self.entityHit(collidable, node.damage)
 
                 #Remove the Ammo and return
                 self.removeAmmo(node)
@@ -323,6 +331,9 @@ class World:
         for node in self.entitys:
             #If the Entity has expired, remove it
             if node.update(frameDeltaTime):
+                #If the Entity has an Effect, make sure the Effect doesn't reference the Entity
+                if node.healthBar:
+                    node.healthBar = None
                 self.removeEntity(node)
                 continue
 
@@ -344,6 +355,7 @@ class World:
             #If the Ammo type is Ranged, apply Gravity
             if node.type is AmmoType.RANGED:
                 self.entityGravity(node, frameDeltaTime)
+
             #Apply Direction
             self.nodeMove(node, node.direction.x * frameDeltaTime, node.direction.y * frameDeltaTime)
 
@@ -351,8 +363,15 @@ class World:
         for node in self.effects:
             #If the Effect has expired, remove it
             if node.update(frameDeltaTime):
+                #If the Effect has an Entity, make sure the Entity doesn't reference the Effect
+                if node.entity:
+                    node.entity.healthBar = None
                 self.removeEffect(node)
                 continue
+
+            #If the Effect is a Health Bar and references a Entity, update its width
+            if node.type is EffectType.HEALTH_BAR and node.entity:
+                node.setWidth(int(node.entity.width * node.entity.getHealthPercentage()))
 
             #Apply Direction, note: no collision checking
             node.move(node.direction.x * frameDeltaTime, node.direction.y * frameDeltaTime)
