@@ -13,6 +13,7 @@ from world import *
 # _ for private variables
 # positions are top left corner, centre
 # factory methods for ammo/entitys etc. anything with a type?
+# rof, mana checks for attacking
 
 #Define a class for the Game
 class Game:
@@ -82,12 +83,13 @@ class Game:
             pos = pygame.mouse.get_pos()
             pressed1, pressed2, pressed3 = pygame.mouse.get_pressed()
 
-            #If the left mouse pressed, fire
-            if pressed3:
-                self.world.entityAttackMelee(self.player)
-            #If the left mouse pressed, fire
+            #If the middle mouse pressed, fire
             if pressed2:
+                #self.world.entityAttackMelee(self.player)
                 self.world.entityAttackRanged(self.player, pos[0] - self.width / 2, pos[1] - self.height / 2)
+            #If the right mouse pressed, fire
+            if pressed3:
+                self.world.entityAttackSummon(self.player, pos[0] - self.width / 2, pos[1] - self.height / 2)
             #If the left mouse pressed, fire
             if pressed1:
                 self.world.entityAttackSpell(self.player, pos[0] - self.width / 2, pos[1] - self.height / 2)

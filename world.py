@@ -140,6 +140,21 @@ class World:
         #Create the Ammo
         self.addAmmo(Ammo(posX, posY, dirX, dirY, "../resources/mine/circle.png", entity.team, AmmoType.SPELL, entity.spellDamage, entity.spellRange, entity.spellSpeed))
 
+    #Have an Entity Attack using Summon
+    def entityAttackSummon(self, entity, dirX, dirY):
+        #Because position tracks the top left corner of the object the following calculatings are required
+        dirX = dirX - entity.width / 2 - Ammo.AMMO_SIZE / 2
+        dirY = dirY - entity.height / 2 - Ammo.AMMO_SIZE / 2
+        posX = entity.position.x + entity.width / 2
+        posY = entity.position.y + entity.height / 2
+
+        #Add an Effect/Entity
+        self.addEffect(Effect.ExplosionVertical(entity.width, entity.height, dirX, dirY))
+        self.addEntity(Entity(Entity.WIDTH_DEFAULT, Entity.HEIGHT_DEFAULT, dirX, dirY, 0, 0, 0, "../resources/mine/circle.png", entity.team))
+
+        #Create the Ammo
+        self.addAmmo(Ammo(posX, posY, dirX, dirY, "../resources/mine/circle.png", entity.team, AmmoType.SPELL, entity.spellDamage, entity.spellRange, entity.spellSpeed))
+
     #Apply Gravity to an Entity depending on what if any Terrain it is on
     def entityGravity(self, entity, frameDeltaTime):
         #Get the Terrain the Entity is on if any
