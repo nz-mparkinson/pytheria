@@ -33,7 +33,7 @@ class Entity(Node):
     WIDTH_DEFAULT = 24
 
     #Define the constructor
-    def __init__(self, width, height, posX, posY, rotation, dirX, dirY, imageString, type, team, name):
+    def __init__(self, width, height, posX, posY, rotation, dirX, dirY, imageString, team, name, type):
         super().__init__(NodeType.ENTITY, width, height, posX, posY, rotation, dirX, dirY, imageString, team, name)
 
         #Set Node fields
@@ -72,7 +72,7 @@ class Entity(Node):
         self.healthBar = None
 
     #Define a Entity factory
-    def Entity(width, height, posX, posY, rotation, dirX, dirY, type, team):
+    def Entity(width, height, posX, posY, rotation, dirX, dirY, team, type):
         imageString = ""
         name = ""
 
@@ -84,7 +84,7 @@ class Entity(Node):
             imageString = EntityImage.ROBOT.value
             name = "Robot"
 
-        return Entity(width, height, posX, posY, rotation, dirX, dirY, imageString, type, team, name)
+        return Entity(width, height, posX, posY, rotation, dirX, dirY, imageString, team, name, type)
 
     #Have the Entity attack using Melee, returning True if successful
     def attackMelee(self):

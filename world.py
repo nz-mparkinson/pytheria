@@ -76,7 +76,7 @@ class World:
                 self.addTerrain(Terrain.Terrain(i * Terrain.TERRAIN_SIZE, -j * Terrain.TERRAIN_SIZE, TerrainType.DIRT))
 
         #Add an enemy Entity
-        self.addEntity(Entity.Entity(Entity.WIDTH_DEFAULT, Entity.HEIGHT_DEFAULT, 50, 0, 0, 0, 0, EntityType.ROBOT, 1))
+        self.addEntity(Entity.Entity(Entity.WIDTH_DEFAULT, Entity.HEIGHT_DEFAULT, 50, 0, 0, 0, 0, Team.ENEMY, EntityType.ROBOT))
 
     #Add an Ammo to the World
     def addAmmo(self, node):
@@ -167,7 +167,7 @@ class World:
 
             #Add an Effect/Entity
             self.addEffect(Effect.ExplosionVertical(entity.width, entity.height, posX, posY))
-            self.addEntity(Entity.Entity(Entity.WIDTH_DEFAULT, Entity.HEIGHT_DEFAULT, posX, posY, 0, 0, 0, EntityType.ROBOT, entity.team))
+            self.addEntity(Entity.Entity(Entity.WIDTH_DEFAULT, Entity.HEIGHT_DEFAULT, posX, posY, 0, 0, 0, entity.team, EntityType.ROBOT))
 
     #Apply Gravity to an Entity depending on what if any Terrain it is on
     def entityGravity(self, entity, frameDeltaTime):

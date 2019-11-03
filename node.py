@@ -14,6 +14,11 @@ class NodeType(Enum):
     AMMO = 3
     EFFECT = 4
 
+#Define an Enum for Team
+class Team(Enum):
+    FRIEND = 1
+    ENEMY = 2
+
 #Define a class for Nodes, objects within the game
 class Node:
     #Define the constructor
