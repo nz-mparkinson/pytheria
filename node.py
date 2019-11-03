@@ -30,9 +30,13 @@ class Node:
         self.direction = Vector2f(dirX, dirY)
         self.team = team
 
+        #Initialize Node fields
+        self.movement = Vector2f(0, 0)
+
         #Load the image, note: keeping a copy of the original as rotating the image looses quality
         self.imageOriginal = pygame.image.load(imageString).convert_alpha()
         self.image = self.imageOriginal
+        self.imageFlip = False
 
         #Set the Node rotation/size
         self.setRotation(rotation)
@@ -49,6 +53,16 @@ class Node:
     #Deccelerate the Node
     def deccelerate(self, speedToRemove):
         self.direction.removeMagnitude(speedToRemove)
+
+    #Flip the Node image
+    def flipImage(self):
+        self.image = pygame.transform.flip(self.image, 1, 0)
+
+        #Toggle imageFlip
+        if self.imageFlip:
+            self.imageFlip = False
+        else:
+            self.imageFlip = True
 
     #Get centre positon
     def getCentre(self):
@@ -80,6 +94,16 @@ class Node:
         self.position.x += x
         self.position.y += y
 
+        #Set the Node movement
+        self.movement.x = x
+        self.movement.y = y
+
+        #If the image is facing the wrong way compared to the Node movement, flip the image
+        if self.movement.x < 0 and self.imageFlip:
+            self.flipImage()
+        if self.movement.x > 0 and not self.imageFlip:
+            self.flipImage()
+
     #Rotate the Node
     def rotate(self, rotationDelta):
         self.setRotation(self.rotation + rotationDelta)
@@ -102,6 +126,7 @@ class Node:
         #Load the image, note: keeping a copy of the original as rotating the image looses quality
         self.imageOriginal = pygame.image.load(imageString).convert_alpha()
         self.image = self.imageOriginal
+        self.imageFlip = False
 
         #Set the Node rotation/size
         self.setRotation(self.rotation)
@@ -111,6 +136,7 @@ class Node:
         self.rotation = rotation
         self.image = pygame.transform.rotozoom(self.imageOriginal, rotation, 1)
         self.image = pygame.transform.scale(self.image, (self.width, self.height))
+        self.imageFlip = False
 
     #Set the Node size
     def setSize(self, width, height):
@@ -121,6 +147,7 @@ class Node:
         self.height = height
         self.heightHalf = height / 2
         self.image = pygame.transform.scale(self.imageOriginal, (width, height))
+        self.imageFlip = False
 
     #Set the Node transparency
     def setTransparency(self, alpha):

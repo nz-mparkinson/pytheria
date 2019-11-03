@@ -18,9 +18,9 @@ class EntityType(Enum):
 
 #Define an Enum for EntityImage
 class EntityImage(Enum):
-    NORMAL = "../resources/mine/circle.png"
-    DEAD = "../resources/mine/circle.png"
-    IMMORTAL = "../resources/mine/circle.png"
+    NORMAL = "../resources/mine2/entity_normal.png"
+    DEAD = "../resources/mine2/entity_dead.png"
+    IMMORTAL = "../resources/mine2/entity_immortal.png"
 
 #Define a class for Entitys
 class Entity(Node):
