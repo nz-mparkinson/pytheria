@@ -221,8 +221,9 @@ class Game:
         self.world = World("Test", 11)
 
         #Create the Player and add it to the World
-        self.player = Entity.Entity(Entity.WIDTH_DEFAULT, Entity.HEIGHT_DEFAULT, 0, 0, 0, 0, 0, EntityType.IMMORTAL, 0)
+        self.player = Entity.Entity(Entity.WIDTH_DEFAULT, Entity.HEIGHT_DEFAULT, 0, 0, 0, 0, 0, EntityType.ROBOT, 0)
         self.player.attackType = AttackType.SPELL
+        self.player.state = EntityState.IMMORTAL
         self.player.spellDamage = 5
         self.player.spellRateOfFire = 0.05
         self.world.addEntity(self.player)

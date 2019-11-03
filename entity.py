@@ -10,17 +10,21 @@ class AttackType(Enum):
     SPELL = 3
     SUMMON = 4
 
-#Define an Enum for EntityType
-class EntityType(Enum):
+#Define an Enum for EntityState
+class EntityState(Enum):
     NORMAL = 1
     DEAD = 2
     IMMORTAL = 3
 
+#Define an Enum for EntityType
+class EntityType(Enum):
+    HUMAN = 1
+    ROBOT = 2
+
 #Define an Enum for EntityImage
 class EntityImage(Enum):
-    NORMAL = "../resources/mine2/entity_normal.png"
-    DEAD = "../resources/mine2/entity_dead.png"
-    IMMORTAL = "../resources/mine2/entity_immortal.png"
+    HUMAN = "../resources/mine2/entity_human.png"
+    ROBOT = "../resources/mine2/entity_robot.png"
 
 #Define a class for Entitys
 class Entity(Node):
@@ -62,6 +66,7 @@ class Entity(Node):
         self.spellRateOfFire = 1
         self.spellSpeed = 300
         self.spellTimeLeft = -1
+        self.state = EntityState.NORMAL
 
         #Set Entity pointers
         self.healthBar = None
@@ -72,15 +77,12 @@ class Entity(Node):
         name = ""
 
         #Depending on the type, set the imageString
-        if type is EntityType.NORMAL:
-            imageString = EntityImage.NORMAL.value
-            name = "Normal"
-        elif type is EntityType.DEAD:
-            imageString = EntityImage.DEAD.value
-            name = "Dead"
-        elif type is EntityType.IMMORTAL:
-            imageString = EntityImage.IMMORTAL.value
-            name = "Immortal"
+        if type is EntityType.HUMAN:
+            imageString = EntityImage.HUMAN.value
+            name = "Human"
+        elif type is EntityType.ROBOT:
+            imageString = EntityImage.ROBOT.value
+            name = "Robot"
 
         return Entity(width, height, posX, posY, rotation, dirX, dirY, imageString, type, team, name)
 
@@ -120,7 +122,7 @@ class Entity(Node):
 
     #Damage the Entity, return true if the Entity dies
     def damage(self, damage):
-        if self.type is EntityType.NORMAL:
+        if self.state is EntityState.NORMAL:
             self.healthCurrent -= damage
 
     #Get the Entitys jump height
@@ -193,6 +195,7 @@ class Entity(Node):
 
         #If the Entity is dead, return True
         if self.healthCurrent <= 0:
+            self.state = EntityState.DEAD
             return True
 
         #Regen health
