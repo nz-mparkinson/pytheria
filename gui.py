@@ -12,12 +12,12 @@ class GUI(Node):
     COLOUR_MANA_BAR = (0, 0, 255)
     IMAGE_HEALTH_BAR = "../resources/mine/square.png"
     IMAGE_MANA_BAR = "../resources/mine/square.png"
-    HEIGHT_HEALTH_BAR = 0.05
-    HEIGHT_MANA_BAR = 0.05
+    HEIGHT_HEALTH_BAR = 0.025
+    HEIGHT_MANA_BAR = 0.025
     POSITION_X_HEALTH_BAR = 0.25
     POSITION_X_MANA_BAR = 0.25
-    POSITION_Y_HEALTH_BAR = 0.85
-    POSITION_Y_MANA_BAR = 0.8
+    POSITION_Y_HEALTH_BAR = 0.9
+    POSITION_Y_MANA_BAR = 0.87
     WIDTH_HEALTH_BAR = 0.5
     WIDTH_MANA_BAR = 0.5
 
