@@ -1,6 +1,8 @@
 Pytheria
 =======
 
+A Terraria like game, implemented in Python using PyGame.
+
 ## TODO
 
  * hud attacktype scrolls vertical, weapon/spells scrolls horizontal
