@@ -37,6 +37,10 @@ class Node:
         #Set the Node rotation/size
         self.setRotation(rotation)
 
+    #Define a Node factory
+    def Node(width, height, posX, posY, imageString):
+        return Node(NodeType.EFFECT, width, height, posX, posY, 0, 0, 0, imageString, -1)
+
     #Accelerate the Node in a direction
     def accelerate(self, x, y):
         self.direction.x += x
@@ -92,6 +96,15 @@ class Node:
         self.height = height
         self.heightHalf = height / 2
         self.image = pygame.transform.scale(self.image, (self.width, height))
+
+    #set the Node image
+    def setImage(self, imageString):
+        #Load the image, note: keeping a copy of the original as rotating the image looses quality
+        self.imageOriginal = pygame.image.load(imageString).convert_alpha()
+        self.image = self.imageOriginal
+
+        #Set the Node rotation/size
+        self.setRotation(self.rotation)
 
     #Set the Node rotation, note: requires that Node size is also set
     def setRotation(self, rotation):
