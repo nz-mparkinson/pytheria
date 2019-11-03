@@ -8,6 +8,8 @@ from entity import *
 
 #Define a class for the GUI
 class GUI(Node):
+    COLOUR_HEALTH_BAR = (0, 255, 0)
+    COLOUR_MANA_BAR = (0, 0, 255)
     IMAGE_HEALTH_BAR = "../resources/mine/square.png"
     IMAGE_MANA_BAR = "../resources/mine/square.png"
     HEIGHT_HEALTH_BAR = 0.05
@@ -34,6 +36,8 @@ class GUI(Node):
         #Set GUI pointers
         self.healthReadout = Node(NodeType.EFFECT, int(self.width * self.WIDTH_HEALTH_BAR), int(self.height * self.HEIGHT_HEALTH_BAR), int(self.width * self.POSITION_X_HEALTH_BAR), int(self.height * self.POSITION_Y_HEALTH_BAR), 0, 0, 0, self.IMAGE_HEALTH_BAR, -1)
         self.manaReadout = Node(NodeType.EFFECT, int(self.width * self.WIDTH_MANA_BAR), int(self.height * self.HEIGHT_MANA_BAR), int(self.width * self.POSITION_X_MANA_BAR), int(self.height * self.POSITION_Y_MANA_BAR), 0, 0, 0, self.IMAGE_MANA_BAR, -1)
+        self.healthReadout.setColour(self.COLOUR_HEALTH_BAR[0], self.COLOUR_HEALTH_BAR[1], self.COLOUR_HEALTH_BAR[2])
+        self.manaReadout.setColour(self.COLOUR_MANA_BAR[0], self.COLOUR_MANA_BAR[1], self.COLOUR_MANA_BAR[2])
 
         #Add health/mana readouts to the GUI nodes array
         self.nodes.append(self.healthReadout)
@@ -43,8 +47,8 @@ class GUI(Node):
     def update(self, player, frameDeltaTime):
         #If there is a player, update the health/mana bar
         if player:
-            self.healthReadout.setWidth(int(self.WIDTH_HEALTH_BAR * player.getHealthPercentage()))
-            self.manaReadout.setWidth(int(self.WIDTH_MANA_BAR * player.getManaPercentage()))
+            self.healthReadout.setWidth(int(self.width * self.WIDTH_HEALTH_BAR * player.getHealthPercentage()))
+            self.manaReadout.setWidth(int(self.width * self.WIDTH_MANA_BAR * player.getManaPercentage()))
 
         pass
 

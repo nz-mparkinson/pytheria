@@ -47,6 +47,8 @@ class Entity(Node):
         self.manaCurrent = 10
         self.manaMax = 10
         self.manaRegen = 1
+        self.rangedAmmo = 10
+        self.rangedAmmoCost = 1
         self.rangedDamage = 1
         self.rangedRange = 200
         self.rangedRateOfFire = 1
@@ -54,6 +56,7 @@ class Entity(Node):
         self.rangedTimeLeft = -1
         self.speed = 25
         self.spellDamage = 1
+        self.spellManaCost = 1
         self.spellRange = 200
         self.spellRateOfFire = 1
         self.spellSpeed = 300
@@ -91,7 +94,8 @@ class Entity(Node):
         if self.rangedTimeLeft < 0 and self.hasRangedAmmo():
             #Set rangedTimeLeft
             self.rangedTimeLeft += self.rangedRateOfFire
-            #TODO remove ranged Ammo
+            #Rmove ranged Ammo
+            self.rangedAmmo -= self.rangedAmmoCost
 
             return True
 
@@ -102,7 +106,8 @@ class Entity(Node):
         if self.spellTimeLeft < 0 and self.hasSpellMana():
             #Set spellTimeLeft
             self.spellTimeLeft += self.spellRateOfFire
-            #TODO remove spell mana
+            #Remove Spell mana cost
+            self.manaCurrent -= self.spellManaCost
 
             return True
 
@@ -133,13 +138,17 @@ class Entity(Node):
 
     #Get whether the Entity has ranged Ammo
     def hasRangedAmmo(self):
-        #TODO check for ranged Ammo
-        return True
+        if self.rangedAmmo >= self.rangedAmmoCost:
+            return True
+
+        return False
 
     #Get whether the Entity has spell mana
     def hasSpellMana(self):
-        #TODO check for spell mana
-        return True
+        if self.manaCurrent >= self.spellManaCost:
+            return True
+
+        return False
 
     #Have the Entity jump
     def jump(self):
