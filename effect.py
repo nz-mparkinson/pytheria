@@ -10,15 +10,18 @@ class EffectType(Enum):
     IMPLOSION = 3
     EXPLOSION_VERTICAL = 4
     RETICLE = 5
+    MANA_BAR = 6
 
 #Define a class for Effect
 class Effect(Node):
     COLOUR_HEALTH_BAR = (0, 255, 0)
     COLOUR_RETICLE = (204, 204, 204)
+    COLOUR_MANA_BAR = (0, 0, 255)
     IMAGE_EXPLOSION = "../resources/mine/circle.png"
     IMAGE_EXPLOSION_VERTICAL = "../resources/mine/square.png"
-    IMAGE_HEALTH_BAR = "../resources/mine/healthbar.png"
+    IMAGE_HEALTH_BAR = "../resources/mine/square.png"
     IMAGE_IMPLOSION = "../resources/mine/circle.png"
+    IMAGE_MANA_BAR = "../resources/mine/square.png"
     IMAGE_RETICLE = "../resources/mine/box.png"
     SIZE_MOD_EXPLOSION = 5
     SIZE_MOD_EXPLOSION_VERTICAL = 5
@@ -27,6 +30,7 @@ class Effect(Node):
     TIME_EXPLOSION_VERTICAL = 0.5
     TIME_HEALTH_BAR = 3
     TIME_IMPLOSION = 0.5
+    TIME_MANA_BAR = 3
     TRANSPARENCY_EXPLOSION = 150
     TRANSPARENCY_EXPLOSION_VERTICAL = 150
     TRANSPARENCY_IMPLOSION = 150
@@ -56,6 +60,9 @@ class Effect(Node):
         elif self.type is EffectType.RETICLE:
             self.timeLeft = -1
             self.setColour(self.COLOUR_RETICLE[0], self.COLOUR_RETICLE[1], self.COLOUR_RETICLE[2])
+        elif self.type is EffectType.MANA_BAR:
+            self.timeLeft = self.TIME_MANA_BAR
+            self.setColour(self.COLOUR_MANA_BAR[0], self.COLOUR_MANA_BAR[1], self.COLOUR_MANA_BAR[2])
 
     #Define a Explosion Effect factory
     def Explosion(width, height, posX, posY):
@@ -72,6 +79,10 @@ class Effect(Node):
     #Define a Health Bar Effect factory
     def HealthBar(width, height, posX, posY):
         return Effect(width, height, posX, posY, Effect.IMAGE_HEALTH_BAR, EffectType.HEALTH_BAR)
+
+    #Define a Mana Bar Effect factory
+    def ManaBar(width, height, posX, posY):
+        return Effect(width, height, posX, posY, Effect.IMAGE_MANA_BAR, EffectType.MANA_BAR)
 
     #Define a Reticle Effect factory
     def Reticle(width, height, posX, posY):

@@ -4,14 +4,11 @@
 import pygame
 from pygame.locals import *
 
+from effect import *
 from entity import *
 
 #Define a class for the GUI
 class GUI(Node):
-    COLOUR_HEALTH_BAR = (0, 255, 0)
-    COLOUR_MANA_BAR = (0, 0, 255)
-    IMAGE_HEALTH_BAR = "../resources/mine/square.png"
-    IMAGE_MANA_BAR = "../resources/mine/square.png"
     HEIGHT_HEALTH_BAR = 0.025
     HEIGHT_MANA_BAR = 0.025
     POSITION_X_HEALTH_BAR = 0.25
@@ -32,12 +29,11 @@ class GUI(Node):
 
         #Initialize GUI fields
         self.nodes = []
+        self.selectionTimeLeft = -1
 
         #Set GUI pointers
-        self.healthReadout = Node(NodeType.EFFECT, int(self.width * self.WIDTH_HEALTH_BAR), int(self.height * self.HEIGHT_HEALTH_BAR), int(self.width * self.POSITION_X_HEALTH_BAR), int(self.height * self.POSITION_Y_HEALTH_BAR), 0, 0, 0, self.IMAGE_HEALTH_BAR, -1)
-        self.manaReadout = Node(NodeType.EFFECT, int(self.width * self.WIDTH_MANA_BAR), int(self.height * self.HEIGHT_MANA_BAR), int(self.width * self.POSITION_X_MANA_BAR), int(self.height * self.POSITION_Y_MANA_BAR), 0, 0, 0, self.IMAGE_MANA_BAR, -1)
-        self.healthReadout.setColour(self.COLOUR_HEALTH_BAR[0], self.COLOUR_HEALTH_BAR[1], self.COLOUR_HEALTH_BAR[2])
-        self.manaReadout.setColour(self.COLOUR_MANA_BAR[0], self.COLOUR_MANA_BAR[1], self.COLOUR_MANA_BAR[2])
+        self.healthReadout = Effect.HealthBar(int(self.width * self.WIDTH_HEALTH_BAR), int(self.height * self.HEIGHT_HEALTH_BAR), int(self.width * self.POSITION_X_HEALTH_BAR), int(self.height * self.POSITION_Y_HEALTH_BAR))
+        self.manaReadout = Effect.ManaBar(int(self.width * self.WIDTH_MANA_BAR), int(self.height * self.HEIGHT_MANA_BAR), int(self.width * self.POSITION_X_MANA_BAR), int(self.height * self.POSITION_Y_MANA_BAR))
 
         #Add health/mana readouts to the GUI nodes array
         self.nodes.append(self.healthReadout)
@@ -45,6 +41,8 @@ class GUI(Node):
 
     #Update the GUI
     def update(self, player, frameDeltaTime):
+        self.selectionTimeLeft -= frameDeltaTime
+
         #If there is a player, update the health/mana bar
         if player:
             self.healthReadout.setWidth(int(self.width * self.WIDTH_HEALTH_BAR * player.getHealthPercentage()))

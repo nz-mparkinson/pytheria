@@ -12,6 +12,7 @@ from terrain import *
 class World:
     FRICTION_DEFAULT = 50           #TODO implement
     GRAVITY_DEFAULT = 200
+    HEIGHT_HEALTH_BAR = 0.125
     MAX_SPEED_DEFAULT = 400         #TODO implement
     WORLD_HEIGHT_DEFAULT = 16
     WORLD_HEIGHT_DEFAULT_WIDTH = 4
@@ -192,7 +193,7 @@ class World:
             entity.healthBar.resetTimeLeft()
         #Otherwise, add a Health Bar Effect
         else:
-            self.addEffect(Effect.HealthBar(int(entity.width * entity.getHealthPercentage()), entity.height, entity.position.x, entity.position.y))
+            self.addEffect(Effect.HealthBar(int(entity.width * entity.getHealthPercentage()), int(entity.height * self.HEIGHT_HEALTH_BAR), entity.position.x, entity.position.y))
             self.effects[-1].entity = entity
             self.effects[-1].position = entity.position
             entity.healthBar = self.effects[-1]
