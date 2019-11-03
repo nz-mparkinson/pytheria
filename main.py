@@ -39,6 +39,7 @@ class Game:
         self.clock = None
         self.font = None
         self.gui = None
+        self.keysPrevious = None
         self.player = None
         self.reticle = None
         self.screen = None
@@ -56,6 +57,7 @@ class Game:
         self.screen = pygame.display.set_mode(self.size, pygame.HWSURFACE | pygame.DOUBLEBUF)
         self.background = pygame.Surface(self.screen.get_size()).convert()
         self.reticle = Effect.Reticle(self.SELECT_RANGE, self.SELECT_RANGE, 0, 0)
+        self.keysPrevious = pygame.key.get_pressed()
 
         self.gui = GUI(self.width, self.height)
 
@@ -71,30 +73,31 @@ class Game:
             keys = pygame.key.get_pressed()
 
             #If escape key pressed, exit the Game
-            if keys[pygame.K_ESCAPE]:
+            if keys[pygame.K_ESCAPE] and not self.keysPrevious[pygame.K_ESCAPE]:
                 self.running = False
-            #If left key pressed, move the player left
+
+            #If left key down, move the player left
             if keys[pygame.K_LEFT]:
                 self.world.nodeMove(self.player, -5, 0)
-            #If right key pressed, move the player right
+            #If right key down, move the player right
             elif keys[pygame.K_RIGHT]:
                 self.world.nodeMove(self.player, 5, 0)
-            #If up key pressed, move the player up
+            #If up key down, move the player up
             if keys[pygame.K_UP]:
                 self.world.nodeMove(self.player, 0, -5)
-            #If down key pressed, move the player down
+            #If down key down, move the player down
             elif keys[pygame.K_DOWN]:
                 self.world.nodeMove(self.player, 0, 5)
-            #If space key pressed, move the player up
+            #If space key down, move the player up
             if keys[pygame.K_SPACE]:
                 self.world.entityJump(self.player)
 
             #If j key pressed, toggle AttackType backward
-            if keys[pygame.K_j]:
+            if keys[pygame.K_j] and not self.keysPrevious[pygame.K_j]:
                 self.player.toggleAttackType(False)
                 print(self.player.attackType)
             #If k key pressed, toggle AttackType forward
-            if keys[pygame.K_k]:
+            if keys[pygame.K_k] and not self.keysPrevious[pygame.K_k]:
                 self.player.toggleAttackType(True)
                 print(self.player.attackType)
 
@@ -149,6 +152,9 @@ class Game:
                 self.reticle.setColour(Effect.COLOUR_RETICLE[0], Effect.COLOUR_RETICLE[1], Effect.COLOUR_RETICLE[2])
 
             self.selectedNode = temp
+
+        #Remember the key state for the next call
+        self.keysPrevious = pygame.key.get_pressed()
 
     #Define a function for Game logic
     def on_loop(self):
