@@ -35,8 +35,8 @@ class Terrain(Node):
     TERRAIN_SIZE_HALF = 16
 
     #Define the constructor
-    def __init__(self, posX, posY, imageString, type):
-        super().__init__(NodeType.TERRAIN, self.TERRAIN_SIZE, self.TERRAIN_SIZE, posX, posY, 0, 0, 0, imageString, -1)
+    def __init__(self, posX, posY, imageString, name, type):
+        super().__init__(NodeType.TERRAIN, self.TERRAIN_SIZE, self.TERRAIN_SIZE, posX, posY, 0, 0, 0, imageString, -1, name)
 
         #Set Node fields
         self.type = type
@@ -44,30 +44,41 @@ class Terrain(Node):
     #Define a Terrain factory
     def Terrain(posX, posY, type):
         imageString = ""
+        name = ""
 
         #Depending on the type, set the imageString
         if type is TerrainType.WATER:
             imageString = TerrainImage.WATER.value
+            name = "Water"
         elif type is TerrainType.SAND:
             imageString = TerrainImage.SAND.value
+            name = "Sand"
         elif type is TerrainType.DIRT:
             imageString = TerrainImage.DIRT.value
+            name = "Dirt"
         elif type is TerrainType.COPPER:
             imageString = TerrainImage.COPPER.value
+            name = "Copper"
         elif type is TerrainType.TIN:
             imageString = TerrainImage.TIN.value
+            name = "Tin"
         elif type is TerrainType.IRON:
             imageString = TerrainImage.IRON.value
+            name = "Iron"
         elif type is TerrainType.COAL:
             imageString = TerrainImage.COAL.value
+            name = "Coal"
         elif type is TerrainType.SILVER:
             imageString = TerrainImage.SILVER.value
+            name = "Silver"
         elif type is TerrainType.GOLD:
             imageString = TerrainImage.GOLD.value
+            name = "Gold"
         elif type is TerrainType.PLATINUM:
             imageString = TerrainImage.PLATINUM.value
+            name = "Platinum"
 
-        return Terrain(posX, posY, imageString, type)
+        return Terrain(posX, posY, imageString, name, type)
 
 
 

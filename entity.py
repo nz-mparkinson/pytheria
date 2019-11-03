@@ -29,8 +29,8 @@ class Entity(Node):
     WIDTH_DEFAULT = 24
 
     #Define the constructor
-    def __init__(self, width, height, posX, posY, rotation, dirX, dirY, imageString, type, team):
-        super().__init__(NodeType.ENTITY, width, height, posX, posY, rotation, dirX, dirY, imageString, team)
+    def __init__(self, width, height, posX, posY, rotation, dirX, dirY, imageString, type, team, name):
+        super().__init__(NodeType.ENTITY, width, height, posX, posY, rotation, dirX, dirY, imageString, team, name)
 
         #Set Node fields
         self.type = type
@@ -69,16 +69,20 @@ class Entity(Node):
     #Define a Entity factory
     def Entity(width, height, posX, posY, rotation, dirX, dirY, type, team):
         imageString = ""
+        name = ""
 
         #Depending on the type, set the imageString
         if type is EntityType.NORMAL:
             imageString = EntityImage.NORMAL.value
+            name = "Normal"
         elif type is EntityType.DEAD:
             imageString = EntityImage.DEAD.value
+            name = "Dead"
         elif type is EntityType.IMMORTAL:
             imageString = EntityImage.IMMORTAL.value
+            name = "Immortal"
 
-        return Entity(width, height, posX, posY, rotation, dirX, dirY, imageString, type, team)
+        return Entity(width, height, posX, posY, rotation, dirX, dirY, imageString, type, team, name)
 
     #Have the Entity attack using Melee, returning True if successful
     def attackMelee(self):

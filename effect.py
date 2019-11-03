@@ -37,7 +37,7 @@ class Effect(Node):
 
     #Define the constructor
     def __init__(self, width, height, posX, posY, imageString, type):
-        super().__init__(NodeType.EFFECT, width, height, posX, posY, 0, 0, 0, imageString, -1)
+        super().__init__(NodeType.EFFECT, width, height, posX, posY, 0, 0, 0, imageString, -1, "Effect")
 
         #Set Node fields
         self.type = type

@@ -20,7 +20,7 @@ class Ammo(Node):
 
     #Define the constructor
     def __init__(self, posX, posY, dirX, dirY, imageString, team, type, damage, range, speed):
-        super().__init__(NodeType.AMMO, self.AMMO_SIZE, self.AMMO_SIZE, posX, posY, Vector2f(dirX, dirY).getAngle(), dirX, dirY, imageString, team)
+        super().__init__(NodeType.AMMO, self.AMMO_SIZE, self.AMMO_SIZE, posX, posY, Vector2f(dirX, dirY).getAngle(), dirX, dirY, imageString, team, "Ammo")
 
         #Set Node fields
         self.type = type

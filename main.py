@@ -196,9 +196,8 @@ class Game:
 
         #If a Node is selected, draw its name
         if self.selectedNode:
-            #TODO hover for target info
-            selectedText = self.font.render("FPS: {:6.3}{}TIME: {:6.3}".format(self.clock.get_fps(), " "*5, self.playTime), True, (0, 255, 0))
-            self.screen.blit(fps, (self.width - selectedText.get_width(), self.height - selectedText.get_height()))
+            selectedText = self.font.render("Selected: " + self.selectedNode.name, True, (0, 255, 0))
+            self.screen.blit(selectedText, (self.width - selectedText.get_width(), self.height - selectedText.get_height()))
             self.screen.blit(self.reticle.image, (self.selectedNode.position.x - xPos, self.selectedNode.position.y - yPos))
 
         #Draw the GUI Nodes

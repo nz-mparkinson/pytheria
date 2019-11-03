@@ -17,7 +17,7 @@ class NodeType(Enum):
 #Define a class for Nodes, objects within the game
 class Node:
     #Define the constructor
-    def __init__(self, nodeType, width, height, posX, posY, rotation, dirX, dirY, imageString, team):
+    def __init__(self, nodeType, width, height, posX, posY, rotation, dirX, dirY, imageString, team, name):
 
         #Set the Node fields
         self.nodeType = nodeType
@@ -29,6 +29,7 @@ class Node:
         self.rotation = rotation
         self.direction = Vector2f(dirX, dirY)
         self.team = team
+        self.name = name
 
         #Initialize Node fields
         self.movement = Vector2f(0, 0)
@@ -43,7 +44,7 @@ class Node:
 
     #Define a Node factory
     def Node(width, height, posX, posY, imageString):
-        return Node(NodeType.EFFECT, width, height, posX, posY, 0, 0, 0, imageString, -1)
+        return Node(NodeType.EFFECT, width, height, posX, posY, 0, 0, 0, imageString, -1, "Node")
 
     #Accelerate the Node in a direction
     def accelerate(self, x, y):
