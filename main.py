@@ -124,9 +124,9 @@ class Game:
             #If the middle mouse pressed
             if pressed2:
                 pass
-            #If the right mouse pressed, interact/mine
+            #If the right mouse pressed, interact/mine Terrain/place Terrain
             if pressed3:
-                #TODO implement interact/mine
+                #TODO implement interact/mine Terrain/place Terrain
                 pass
 
             #If the mouse wheel was moved up, toggle AttackType backward

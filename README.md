@@ -5,10 +5,20 @@ A Terraria like game, implemented in Python using PyGame.
 
 ## TODO
 
+ * _ for private variables
  * hud attacktype scrolls vertical, weapon/spells scrolls horizontal
  * implement attack style, weapon/spell, is there a better name?
- * _ for private variables
- * positions are top left, change to be centre and only have draw calls use function getting top left? use node.image.position as top left?
+ * Spawn Enemys
+ * Inventory
+ * Mining
+ * Crafting
+ * Spells, tracking Spells
+ * Weapons
+ * Armour
+ * Food
+ * Entity types
+ * World generation, bigger, some limit on how far you can go in any direction, different terrain types
+ * Placing terrain
 
 ## Requirements
 
@@ -27,7 +37,7 @@ A Terraria like game, implemented in Python using PyGame.
  * Space - Jump
 
  * Left Mouse Button - Attack
- * Right Mouse Button - Interact/Mine
+ * Right Mouse Button - Interact/Mine Terrain/Place Terrain
  * Mouse Wheel - Switch Attack Type
 
  * J - Switch Attack Type Item
