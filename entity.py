@@ -40,11 +40,7 @@ class Entity(Node):
         self.type = type
 
         #Set Entity fields
-        self.attackDamage = 1
-        self.attackRange = 20
-        self.attackRateOfFire = 1
         self.attackStyle = AttackType.MELEE
-        self.attackTimeLeft = -1
         self.attackType = AttackType.MELEE
         self.healthCurrent = 10
         self.healthMax = 10
@@ -52,6 +48,10 @@ class Entity(Node):
         self.manaCurrent = 10
         self.manaMax = 10
         self.manaRegen = 1
+        self.meleeDamage = 1
+        self.meleeRange = 20
+        self.meleeRateOfFire = 1
+        self.meleeTimeLeft = -1
         self.rangedAmmo = 10
         self.rangedAmmoCost = 1
         self.rangedDamage = 1
@@ -67,6 +67,9 @@ class Entity(Node):
         self.spellSpeed = 300
         self.spellTimeLeft = -1
         self.state = EntityState.NORMAL
+
+        self.attackRange = self.meleeRange
+        self.attackRangeSQ = self.meleeRange * self.meleeRange
 
         #Set Entity pointers
         self.healthBar = None
@@ -89,9 +92,9 @@ class Entity(Node):
 
     #Have the Entity attack using Melee, returning True if successful
     def attackMelee(self):
-        if self.attackTimeLeft < 0:
-            #Set attackTimeLeft
-            self.attackTimeLeft += self.attackRateOfFire
+        if self.meleeTimeLeft < 0:
+            #Set meleeTimeLeft
+            self.meleeTimeLeft += self.meleeRateOfFire
 
             return True
 
@@ -117,6 +120,19 @@ class Entity(Node):
             #Remove Spell mana cost
             self.manaCurrent -= self.spellManaCost
 
+            return True
+
+        return False
+
+    #Get whether the Entity can attack with the current attackType
+    def canAttack(self):
+        if self.attackType is AttackType.MELEE and self.meleeTimeLeft < 0:
+            return True
+        if self.attackType is AttackType.RANGED and self.rangedTimeLeft < 0 and self.hasRangedAmmo():
+            return True
+        if self.attackType is AttackType.SPELL and self.spellTimeLeft < 0 and self.hasSpellMana():
+            return True
+        if self.attackType is AttackType.SUMMON and self.spellTimeLeft < 0 and self.hasSpellMana():
             return True
 
         return False
@@ -164,6 +180,7 @@ class Entity(Node):
 
     #Toggle the Entity AttackStyle forwards or backwards
     def toggleAttackStyle(self, forward):
+        #TODO
         if forward:
             if self.attackStyle == AttackType.SUMMON:
                 self.attackStyle = AttackType.MELEE
@@ -188,9 +205,23 @@ class Entity(Node):
             else:
                 self.attackType = AttackType(self.attackType.value - 1)
 
+        #Depending on the attackType, set attackRange
+        if self.attackType == AttackType.MELEE:
+            self.attackRange = self.meleeRange
+            self.attackRangeSQ = self.meleeRange * self.meleeRange
+        elif self.attackType == AttackType.RANGED:
+            self.attackRange = self.rangedRange
+            self.attackRangeSQ = self.rangedRange * self.rangedRange
+        elif self.attackType == AttackType.SPELL:
+            self.attackRange = self.spellRange
+            self.attackRangeSQ = self.spellRange * self.spellRange
+        elif self.attackType == AttackType.SUMMON:
+            self.attackRange = self.spellRange
+            self.attackRangeSQ = self.spellRange * self.spellRange
+
     #Update the Entity status
     def update(self, frameDeltaTime):
-        self.attackTimeLeft -= frameDeltaTime
+        self.meleeTimeLeft -= frameDeltaTime
         self.rangedTimeLeft -= frameDeltaTime
         self.spellTimeLeft -= frameDeltaTime
 

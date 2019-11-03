@@ -117,10 +117,8 @@ class World:
             else:
                 self.nodeMove(entity, entity.speed * frameDeltaTime, 0)
 
-            #TODO attack range always, addMeleeRange etc
-            #TODO only do this if can attack
-            #If the target is in range, attack based on attackType
-            if relativePosition.getLength() < entity.attackRange:
+            #If the Entity can attack and the target is in range, attack based on attackType
+            if entity.canAttack() and relativePosition.getLengthSQ() < entity.attackRangeSQ:
                 if entity.attackType is AttackType.MELEE:
                     self.entityAttackMelee(entity)
                 elif entity.attackType is AttackType.RANGED:
@@ -138,11 +136,11 @@ class World:
         #If the Entity can attack using melee
         if entity.attackMelee():
             #Find the closest enemy
-            enemy = self.getClosestEntity(entity, entity.attackRange, entity.team)
+            enemy = self.getClosestEntity(entity, entity.meleeRange, entity.team)
 
             #If the enemy was in range, hit
             if enemy:
-                self.entityHit(enemy, entity.attackDamage)
+                self.entityHit(enemy, entity.meleeDamage)
 
     #Have an Entity attack using Ranged
     def entityAttackRanged(self, entity, targetX, targetY):
