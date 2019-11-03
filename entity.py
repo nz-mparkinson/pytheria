@@ -76,7 +76,7 @@ class Entity(Node):
         self.target = None
 
     #Define a Entity factory
-    def Entity(width, height, posX, posY, rotation, dirX, dirY, team, type):
+    def Entity(posX, posY, rotation, dirX, dirY, team, type):
         imageString = ""
         name = ""
 
@@ -88,7 +88,7 @@ class Entity(Node):
             imageString = EntityImage.ROBOT.value
             name = "Robot"
 
-        return Entity(width, height, posX, posY, rotation, dirX, dirY, imageString, team, name, type)
+        return Entity(Entity.WIDTH_DEFAULT, Entity.HEIGHT_DEFAULT, posX, posY, rotation, dirX, dirY, imageString, team, name, type)
 
     #Have the Entity attack using Melee, returning True if successful
     def attackMelee(self):

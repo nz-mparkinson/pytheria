@@ -216,7 +216,7 @@ class Game:
         self.world = World("Test", 11)
 
         #Create the Player and add it to the World
-        self.player = Entity.Entity(Entity.WIDTH_DEFAULT, Entity.HEIGHT_DEFAULT, 0, 0, 0, 0, 0, Team.FRIEND, EntityType.ROBOT)
+        self.player = Entity.Entity(0, 0, 0, 0, 0, Team.FRIEND, EntityType.ROBOT)
         self.player.attackType = AttackType.SPELL
         self.player.name = "Player"
         self.player.state = EntityState.IMMORTAL

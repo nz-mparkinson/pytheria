@@ -18,16 +18,16 @@ class TerrainType(Enum):
 
 #Define an Enum for TerrainImage
 class TerrainImage(Enum):
-    WATER = "../resources/mine2/test.png"
-    SAND = "../resources/mine2/test.png"
-    DIRT = "../resources/mine2/test.png"
-    COPPER = "../resources/mine2/test.png"
-    TIN = "../resources/mine2/test.png"
-    IRON = "../resources/mine2/test.png"
-    COAL = "../resources/mine2/test.png"
-    SILVER = "../resources/mine2/test.png"
-    GOLD = "../resources/mine2/test.png"
-    PLATINUM = "../resources/mine2/test.png"
+    WATER = "../resources/mine2/terrain_water.png"
+    SAND = "../resources/mine2/terrain_sand.png"
+    DIRT = "../resources/mine2/terrain_dirt.png"
+    COPPER = "../resources/mine2/terrain_copper.png"
+    TIN = "../resources/mine2/terrain_tin.png"
+    IRON = "../resources/mine2/terrain_iron.png"
+    COAL = "../resources/mine2/terrain_coal.png"
+    SILVER = "../resources/mine2/terrain_silver.png"
+    GOLD = "../resources/mine2/terrain_gold.png"
+    PLATINUM = "../resources/mine2/terrain_platinum.png"
 
 #Define a class for Terrain
 class Terrain(Node):
