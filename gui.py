@@ -43,11 +43,13 @@ class GUI(Node):
         self.selectionTimeLeft = -1
 
         #Set GUI pointers
-        #self.attackTypeNext = None
-        #self.attackTypePrevious = None
         self.attackTypeReadout = None
+        #self.attackTypeReadoutNext = None
+        #self.attackTypeReadoutNextNext = None
         self.attackTypeValue = None
         self.attackStyleReadout = None
+        #self.attackStyleReadoutNext = None
+        #self.attackStyleReadoutNextNext = None
         self.attackStyleValue = None
 
         #Create health/mana readouts

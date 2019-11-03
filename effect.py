@@ -5,18 +5,18 @@ from node import *
 
 #Define an Enum for EffectType
 class EffectType(Enum):
-    HEALTH_BAR = 1
-    EXPLOSION = 2
-    IMPLOSION = 3
-    EXPLOSION_VERTICAL = 4
-    RETICLE = 5
-    MANA_BAR = 6
+    EXPLOSION = 1
+    EXPLOSION_VERTICAL = 2
+    HEALTH_BAR = 3
+    IMPLOSION = 4
+    MANA_BAR = 5
+    RETICLE = 6
 
 #Define a class for Effect
 class Effect(Node):
     COLOUR_HEALTH_BAR = (0, 255, 0)
-    COLOUR_RETICLE = (204, 204, 204)
     COLOUR_MANA_BAR = (0, 0, 255)
+    COLOUR_RETICLE = (204, 204, 204)
     IMAGE_EXPLOSION = "../resources/mine/circle.png"
     IMAGE_EXPLOSION_VERTICAL = "../resources/mine/square.png"
     IMAGE_HEALTH_BAR = "../resources/mine/square.png"
@@ -48,21 +48,21 @@ class Effect(Node):
         self.widthOriginal = width
 
         #Depending on the Effect type, set timeLeft etc.
-        if self.type is EffectType.HEALTH_BAR:
-            self.timeLeft = self.TIME_HEALTH_BAR
-            self.setColour(self.COLOUR_HEALTH_BAR[0], self.COLOUR_HEALTH_BAR[1], self.COLOUR_HEALTH_BAR[2])
-        elif self.type is EffectType.EXPLOSION:
+        if self.type is EffectType.EXPLOSION:
             self.timeLeft = self.TIME_EXPLOSION
-        elif self.type is EffectType.IMPLOSION:
-            self.timeLeft = self.TIME_IMPLOSION
         elif self.type is EffectType.EXPLOSION_VERTICAL:
             self.timeLeft = self.TIME_EXPLOSION_VERTICAL
-        elif self.type is EffectType.RETICLE:
-            self.timeLeft = -1
-            self.setColour(self.COLOUR_RETICLE[0], self.COLOUR_RETICLE[1], self.COLOUR_RETICLE[2])
+        elif self.type is EffectType.HEALTH_BAR:
+            self.timeLeft = self.TIME_HEALTH_BAR
+            self.setColour(self.COLOUR_HEALTH_BAR[0], self.COLOUR_HEALTH_BAR[1], self.COLOUR_HEALTH_BAR[2])
+        elif self.type is EffectType.IMPLOSION:
+            self.timeLeft = self.TIME_IMPLOSION
         elif self.type is EffectType.MANA_BAR:
             self.timeLeft = self.TIME_MANA_BAR
             self.setColour(self.COLOUR_MANA_BAR[0], self.COLOUR_MANA_BAR[1], self.COLOUR_MANA_BAR[2])
+        elif self.type is EffectType.RETICLE:
+            self.timeLeft = -1
+            self.setColour(self.COLOUR_RETICLE[0], self.COLOUR_RETICLE[1], self.COLOUR_RETICLE[2])
 
     #Define a Explosion Effect factory
     def Explosion(width, height, posX, posY):

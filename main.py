@@ -95,11 +95,9 @@ class Game:
             #If j key pressed, toggle AttackType backward
             if keys[pygame.K_j] and not self.keysPrevious[pygame.K_j]:
                 self.player.toggleAttackType(False)
-                print(self.player.attackType)
             #If k key pressed, toggle AttackType forward
             if keys[pygame.K_k] and not self.keysPrevious[pygame.K_k]:
                 self.player.toggleAttackType(True)
-                print(self.player.attackType)
 
         #If the event is a mouse press, get the mouse position and all mouse buttons and react accordingly
         if event.type == pygame.MOUSEBUTTONDOWN:
