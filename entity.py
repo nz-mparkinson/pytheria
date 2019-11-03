@@ -70,6 +70,7 @@ class Entity(Node):
 
         #Set Entity pointers
         self.healthBar = None
+        self.target = None
 
     #Define a Entity factory
     def Entity(width, height, posX, posY, rotation, dirX, dirY, team, type):

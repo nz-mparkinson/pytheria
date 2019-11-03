@@ -100,13 +100,16 @@ class World:
 
     #Run Entity AI
     def entityAI(self, entity, frameDeltaTime):
-        #Find the closest enemy
-        enemy = self.getClosestEntity(entity, None, entity.team)
+        target = entity.target
 
-        #If an enemy was found
-        if enemy:
+        #If the Entity has no target, find the closest enemy
+        if not target:
+            target = self.getClosestEntity(entity, None, entity.team)
+
+        #If the entity has a target
+        if target:
             #Get its relative positon
-            relativePosition = enemy.position - entity.position
+            relativePosition = target.position - entity.position
 
             #Move towards it
             if relativePosition.x < 0:

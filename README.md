@@ -10,6 +10,7 @@ A Terraria like game, implemented in Python using PyGame.
 
 ## Requirements
 
+ * Python 3
  * PyGame
  * NumPy
 
