@@ -23,8 +23,8 @@ class EntityType(Enum):
 
 #Define an Enum for EntityImage
 class EntityImage(Enum):
-    HUMAN = "../resources/mine2/entity_human.png"
-    ROBOT = "../resources/mine2/entity_robot.png"
+    HUMAN = "./resources/entity_human.png"
+    ROBOT = "./resources/entity_robot.png"
 
 #Define a class for Entitys
 class Entity(Node):

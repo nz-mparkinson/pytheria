@@ -10,8 +10,8 @@ class AmmoType(Enum):
 
 #Define an Enum for AmmoImage
 class AmmoImage(Enum):
-    RANGED = "../resources/mine/circle.png"
-    SPELL = "../resources/mine/circle.png"
+    RANGED = "./resources/circle_128.png"
+    SPELL = "./resources/circle_128.png"
 
 #Define a class for Ammo
 class Ammo(Node):

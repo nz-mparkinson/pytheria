@@ -11,10 +11,10 @@ from entity import *
 class GUI(Node):
     HEIGHT_HEALTH_BAR = 0.025
     HEIGHT_MANA_BAR = 0.025
-    IMAGE_MELEE = "../resources/mine2/hud_melee.png"
-    IMAGE_RANGED = "../resources/mine2/hud_ranged.png"
-    IMAGE_SPELL = "../resources/mine2/hud_spell.png"
-    IMAGE_SUMMON = "../resources/mine2/hud_summon.png"
+    IMAGE_MELEE = "./resources/hud_melee.png"
+    IMAGE_RANGED = "./resources/hud_ranged.png"
+    IMAGE_SPELL = "./resources/hud_spell.png"
+    IMAGE_SUMMON = "./resources/hud_summon.png"
     POSITION_X_ATTACK_STYLE = 0.825
     POSITION_X_ATTACK_TYPE = 0.075
     POSITION_X_HEALTH_BAR = 0.25
