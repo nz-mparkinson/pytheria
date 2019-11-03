@@ -15,12 +15,15 @@ class GUI(Node):
     IMAGE_RANGED = "../resources/mine2/hud_ranged.png"
     IMAGE_SPELL = "../resources/mine2/hud_spell.png"
     IMAGE_SUMMON = "../resources/mine2/hud_summon.png"
+    POSITION_X_ATTACK_STYLE = 0.825
     POSITION_X_ATTACK_TYPE = 0.075
     POSITION_X_HEALTH_BAR = 0.25
     POSITION_X_MANA_BAR = 0.25
+    POSITION_Y_ATTACK_STYLE = 0.8
     POSITION_Y_ATTACK_TYPE = 0.8
     POSITION_Y_HEALTH_BAR = 0.9
     POSITION_Y_MANA_BAR = 0.87
+    SIZE_ATTACK_STYLE = 0.1
     SIZE_ATTACK_TYPE = 0.1
     WIDTH_HEALTH_BAR = 0.5
     WIDTH_MANA_BAR = 0.5
@@ -40,22 +43,26 @@ class GUI(Node):
         self.selectionTimeLeft = -1
 
         #Set GUI pointers
-        self.attackType = None
+        #self.attackTypeNext = None
+        #self.attackTypePrevious = None
+        self.attackTypeReadout = None
         self.attackTypeValue = None
-        self.attackTypeCurrent = None
-        self.attackTypeNext = None
-        self.attackTypePrevious = None
+        self.attackStyleReadout = None
+        self.attackStyleValue = None
 
         #Create health/mana readouts
         self.healthReadout = Effect.HealthBar(int(self.width * self.WIDTH_HEALTH_BAR), int(self.height * self.HEIGHT_HEALTH_BAR), int(self.width * self.POSITION_X_HEALTH_BAR), int(self.height * self.POSITION_Y_HEALTH_BAR))
         self.manaReadout = Effect.ManaBar(int(self.width * self.WIDTH_MANA_BAR), int(self.height * self.HEIGHT_MANA_BAR), int(self.width * self.POSITION_X_MANA_BAR), int(self.height * self.POSITION_Y_MANA_BAR))
-
-        #Add health/mana readouts to the GUI nodes array
         self.nodes.append(self.healthReadout)
         self.nodes.append(self.manaReadout)
 
-        self.attackType = Node.Node(int(self.width * self.SIZE_ATTACK_TYPE), int(self.height * self.SIZE_ATTACK_TYPE * self.aspectRatio), int(self.width * self.POSITION_X_ATTACK_TYPE), int(self.height * self.POSITION_Y_ATTACK_TYPE), self.IMAGE_MELEE)
-        self.nodes.append(self.attackType)
+        #Add attackType readout
+        self.attackTypeReadout = Node.Node(int(self.width * self.SIZE_ATTACK_TYPE), int(self.height * self.SIZE_ATTACK_TYPE * self.aspectRatio), int(self.width * self.POSITION_X_ATTACK_TYPE), int(self.height * self.POSITION_Y_ATTACK_TYPE), self.IMAGE_MELEE)
+        self.nodes.append(self.attackTypeReadout)
+
+        #Add attackStyle readout
+        self.attackStyleReadout = Node.Node(int(self.width * self.SIZE_ATTACK_STYLE), int(self.height * self.SIZE_ATTACK_STYLE * self.aspectRatio), int(self.width * self.POSITION_X_ATTACK_STYLE), int(self.height * self.POSITION_Y_ATTACK_STYLE), self.IMAGE_MELEE)
+        self.nodes.append(self.attackStyleReadout)
 
     #Update the GUI
     def update(self, player, frameDeltaTime):
@@ -70,16 +77,28 @@ class GUI(Node):
             if self.attackTypeValue is not player.attackType:
                 self.attackTypeValue = player.attackType
 
+                #Depending on the AttackType set the image
                 if self.attackTypeValue is AttackType.MELEE:
-                    self.attackType.setImage(self.IMAGE_MELEE)
+                    self.attackTypeReadout.setImage(self.IMAGE_MELEE)
                 elif self.attackTypeValue is AttackType.RANGED:
-                    self.attackType.setImage(self.IMAGE_RANGED)
+                    self.attackTypeReadout.setImage(self.IMAGE_RANGED)
                 elif self.attackTypeValue is AttackType.SPELL:
-                    self.attackType.setImage(self.IMAGE_SPELL)
+                    self.attackTypeReadout.setImage(self.IMAGE_SPELL)
                 elif self.attackTypeValue is AttackType.SUMMON:
-                    self.attackType.setImage(self.IMAGE_SUMMON)
+                    self.attackTypeReadout.setImage(self.IMAGE_SUMMON)
+            #If the Player attackStyle is different then the GUI, update the GUI
+            if self.attackStyleValue is not player.attackStyle:
+                self.attackStyleValue = player.attackStyle
 
-        pass
+                #Depending on the AttackStyle set the image
+                if self.attackStyleValue is AttackType.MELEE:
+                    self.attackStyleReadout.setImage(self.IMAGE_MELEE)
+                elif self.attackStyleValue is AttackType.RANGED:
+                    self.attackStyleReadout.setImage(self.IMAGE_RANGED)
+                elif self.attackStyleValue is AttackType.SPELL:
+                    self.attackStyleReadout.setImage(self.IMAGE_SPELL)
+                elif self.attackStyleValue is AttackType.SUMMON:
+                    self.attackStyleReadout.setImage(self.IMAGE_SUMMON)
 
 
 

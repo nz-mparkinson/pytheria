@@ -39,6 +39,7 @@ class Entity(Node):
         self.attackDamage = 1
         self.attackRange = 20
         self.attackRateOfFire = 1
+        self.attackStyle = AttackType.MELEE
         self.attackTimeLeft = -1
         self.attackType = AttackType.MELEE
         self.healthCurrent = 10
