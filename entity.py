@@ -155,6 +155,19 @@ class Entity(Node):
     def jump(self):
         self.direction.y -= self.height * self.JUMP_HEIGHT_MOD
 
+    #Toggle the Entity AttackStyle forwards or backwards
+    def toggleAttackStyle(self, forward):
+        if forward:
+            if self.attackStyle == AttackType.SUMMON:
+                self.attackStyle = AttackType.MELEE
+            else:
+                self.attackStyle = AttackType(self.attackStyle.value + 1)
+        else:
+            if self.attackStyle == AttackType.MELEE:
+                self.attackStyle = AttackType.SUMMON
+            else:
+                self.attackStyle = AttackType(self.attackStyle.value - 1)
+
     #Toggle the Entity AttackType forwards or backwards
     def toggleAttackType(self, forward):
         if forward:

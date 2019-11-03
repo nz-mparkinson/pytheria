@@ -92,11 +92,18 @@ class Game:
             if keys[pygame.K_SPACE]:
                 self.world.entityJump(self.player)
 
-            #If j key pressed, toggle AttackType backward
+            #If j key pressed, toggle AttackStyle backward
             if keys[pygame.K_j] and not self.keysPrevious[pygame.K_j]:
+                self.player.toggleAttackStyle(False)
+            #If k key pressed, toggle AttackStyle forward
+            elif keys[pygame.K_k] and not self.keysPrevious[pygame.K_k]:
+                self.player.toggleAttackStyle(True)
+
+            #If h key pressed, toggle AttackType backward
+            if keys[pygame.K_h] and not self.keysPrevious[pygame.K_h]:
                 self.player.toggleAttackType(False)
-            #If k key pressed, toggle AttackType forward
-            if keys[pygame.K_k] and not self.keysPrevious[pygame.K_k]:
+            #If l key pressed, toggle AttackType forward
+            elif keys[pygame.K_l] and not self.keysPrevious[pygame.K_l]:
                 self.player.toggleAttackType(True)
 
         #If the event is a mouse press, get the mouse position and all mouse buttons and react accordingly
