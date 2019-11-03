@@ -60,6 +60,11 @@ class Node:
     def deccelerate(self, speedToRemove):
         self.direction.removeMagnitude(speedToRemove)
 
+    #Ensure the Node isn't going faster then maxSpeed
+    def ensureMaxSpeed(self, maxSpeed):
+        if self.direction.getLengthSQ() > maxSpeed * maxSpeed:
+            self.direction.setLength(maxSpeed)
+
     #Flip the Node image
     def flipImage(self):
         self.image = pygame.transform.flip(self.image, 1, 0)

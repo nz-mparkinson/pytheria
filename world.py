@@ -13,7 +13,7 @@ class World:
     FRICTION_DEFAULT = 50           #TODO implement
     GRAVITY_DEFAULT = 200
     HEIGHT_HEALTH_BAR = 0.125
-    MAX_SPEED_DEFAULT = 400         #TODO implement
+    MAX_SPEED_DEFAULT = 400
     WORLD_HEIGHT_DEFAULT = 16
     WORLD_HEIGHT_DEFAULT_WIDTH = 4
     WORLD_HEIGHT_DIFFERENCE_MAX = 8
@@ -192,7 +192,8 @@ class World:
             entity.direction.y = 0
         #Otherwise, apply gravity to the Entity
         else:
-            entity.accelerate(0, self.GRAVITY_DEFAULT * frameDeltaTime)
+            entity.accelerate(0, self.gravity * frameDeltaTime)
+            entity.ensureMaxSpeed(self.maxSpeed)
 
     #Apply Damage to an Entity
     def entityHit(self, entity, damage):
