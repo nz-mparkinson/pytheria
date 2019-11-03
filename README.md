@@ -7,6 +7,8 @@ A Terraria like game, implemented in Python using PyGame.
 
  * hud attacktype scrolls vertical, weapon/spells scrolls horizontal
  * implement attack style, weapon/spell, is there a better name?
+ * _ for private variables
+ * positions are top left, change to be centre and only have draw calls use function getting top left? use node.image.position as top left?
 
 ## Requirements
 
@@ -26,7 +28,7 @@ A Terraria like game, implemented in Python using PyGame.
 
  * Left Mouse Button - Attack
  * Right Mouse Button - Interact/Mine
- * Middle Mouse Button - Switch Attack Type
+ * Mouse Wheel - Switch Attack Type
 
  * J - Switch Attack Type Item
  * K - Switch Attack Type Item

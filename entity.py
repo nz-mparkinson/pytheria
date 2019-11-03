@@ -180,7 +180,7 @@ class Entity(Node):
 
     #Toggle the Entity AttackStyle forwards or backwards
     def toggleAttackStyle(self, forward):
-        #TODO
+        #TODO implement changing of attackStyle
         if forward:
             if self.attackStyle == AttackType.SUMMON:
                 self.attackStyle = AttackType.MELEE

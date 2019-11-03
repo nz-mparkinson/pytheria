@@ -10,10 +10,6 @@ from pygame.locals import *
 from gui import *
 from world import *
 
-#TODO
-# _ for private variables
-# positions are top left, change to be centre and only have draw calls use function getting top left? use node.image.position as top left?
-
 #Define a class for the Game
 class Game:
     SELECT_RANGE = 4
@@ -127,11 +123,10 @@ class Game:
                     self.world.entityAttackSummon(self.player, posX, posY)
             #If the middle mouse pressed
             if pressed2:
-                #TODO
                 pass
             #If the right mouse pressed, interact/mine
             if pressed3:
-                #TODO
+                #TODO implement interact/mine
                 pass
 
             #If the mouse wheel was moved up, toggle AttackType backward

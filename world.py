@@ -128,7 +128,7 @@ class World:
                 elif entity.attackType is AttackType.SUMMON:
                     self.entityAttackSummon(entity, target.position.x, target.position.y)
 
-            #TODO jump only when required
+            #TODO AI, jump only when required
             #self.entityJump(entity)
 
     #Have an Entity attack using Melee
@@ -215,7 +215,7 @@ class World:
         if self.isEntityOnTerrain(entity):
             self.nodeMove(entity, entity.direction.x, -entity.getJumpHeight())
             entity.direction.y = 0
-            #entity.jump()   #TODO remove
+            #entity.jump()   #TODO remove?
 
     #Get the closest Entity optionally with range and not belonging to the same team
     def getClosestEntity(self, entity, range, team):
@@ -310,7 +310,7 @@ class World:
 
                 #Create an Effect/Sound for the explosion
                 self.addEffect(Effect.Explosion(node.width, node.height, node.position.x, node.position.y))
-                #TODO sound
+                #TODO add sound
 
                 #If the Collidable is an Entity, damage the Entity
                 if collidable.nodeType == NodeType.ENTITY:
