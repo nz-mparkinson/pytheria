@@ -3,23 +3,6 @@ Pytheria
 
 A Terraria like game, implemented in Python using PyGame.
 
-## TODO
-
- * _ for private variables
- * hud attacktype scrolls vertical, weapon/spells scrolls horizontal
- * implement attack style, weapon/spell, is there a better name?
- * Spawn Enemys
- * Inventory
- * Mining
- * Crafting
- * Spells, tracking Spells
- * Weapons
- * Armour
- * Food
- * Entity types
- * World generation, bigger, some limit on how far you can go in any direction, different terrain types
- * Placing terrain
-
 ## Requirements
 
  * Python 3
