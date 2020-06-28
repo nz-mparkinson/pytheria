@@ -10,73 +10,91 @@ from terrain import *
 
 #Define a class for World, which manages all Nodes in a locale
 class World:
-    FRICTION_DEFAULT = 50           #TODO implement
-    GRAVITY_DEFAULT = 200
+    #GUI
     HEIGHT_HEALTH_BAR = 0.125
-    MAX_SPEED_DEFAULT = 400
-    WORLD_HEIGHT_DEFAULT = 16
-    WORLD_HEIGHT_DEFAULT_WIDTH = 4
-    WORLD_HEIGHT_DIFFERENCE_MAX = 8
-    WORLD_HEIGHT_STEP_MAX = 2
-    WORLD_WIDTH = 32
+
+    #Physics
+    FRICTION_DEFAULT = 320		#The rate at which objects slow while on Terrain TODO
+    GRAVITY_DEFAULT = 160		#The rate at which objects accelerate downwards
+    MAX_SPEED_DEFAULT = 640		#The max speed an object can travel
+
+    #World generation
+    WORLD_DEFAULT_HEIGHT = 64		#The initial height of Terrain in a new World, aka sea level
+    WORLD_DEFAULT_HEIGHT_RANGE = 16	#The initial max variation in Terrain height in a new World
+    WORLD_DEFAULT_HEIGHT_STEP = 4	#The initial max variation in Terrain height compared to the next Terrain in a new World    
+    WORLD_DEFAULT_HEIGHT_WIDTH = 4	#The initial width of Terrain in a new World that is always the default height
+    WORLD_DEFAULT_WIDTH = 32		#The initial width of Terrain in a new World
+    
+    #World limits
+    WORLD_HEIGHT_MAX = 128		#The max height of the world
+    WORLD_WIDTH_MAX = 32		#The max width of the world
 
     #Define the constructor
     def __init__(self, name, seedValue):
+        #Set World fields
         self.name = name
         self.seedValue = seedValue
 
-        self.ammo = []
-        self.effects = []
-        self.entitys = []
-        self.terrain = []
+        #Initialize World fields
+        self.ammo = []			#Ammo
+        self.effects = []		#Effects
+        self.entitys = []		#Entitys
+
+        self.terrainValues = {}		#All terrain stored as ints, dict key is horizontal block number -> array index is block height, 0 being the bottom TODO
+        self.terrainVisible = []	#Viewable terrain, lazy loaded/pruned TODO
 
         self.collidables = []
         self.selectables = []
 
+        #Create the World
         self.createWorld()
 
     #Create a World based on the seedValue
     def createWorld(self):
+        #Seed the random number generator
+        random.seed(self.seedValue)
+
         #Set physics values
         self.friction = self.FRICTION_DEFAULT
         self.gravity = self.GRAVITY_DEFAULT
         self.maxSpeed = self.MAX_SPEED_DEFAULT
 
-        #Add Terrain around the Player at the default height
-        for i in range(-self.WORLD_HEIGHT_DEFAULT_WIDTH, self.WORLD_HEIGHT_DEFAULT_WIDTH):
-            for j in range(-self.WORLD_HEIGHT_DEFAULT, 0):
-                self.addTerrain(Terrain.Terrain(i * Terrain.TERRAIN_SIZE, -j * Terrain.TERRAIN_SIZE, TerrainType.DIRT))
-
-        #Seed the random number generator
-        random.seed(self.seedValue)
-
         #Add Terrain with random heights to the left/right of the Player
-        terrainHeightLeft, terrainHeightRight = 0, 0
-        for i in range(self.WORLD_HEIGHT_DEFAULT_WIDTH, self.WORLD_WIDTH):
-            #Get the next Terrain height to the left
-            terrainHeightLeft = terrainHeightLeft + random.randrange(-self.WORLD_HEIGHT_STEP_MAX, self.WORLD_HEIGHT_STEP_MAX+1)
-            if terrainHeightLeft < -self.WORLD_HEIGHT_DIFFERENCE_MAX:
-                terrainHeightLeft = -self.WORLD_HEIGHT_DIFFERENCE_MAX
-            elif terrainHeightLeft > self.WORLD_HEIGHT_DIFFERENCE_MAX:
-                terrainHeightLeft = self.WORLD_HEIGHT_DIFFERENCE_MAX
+        terrainHeightLeft, terrainHeightRight = self.WORLD_DEFAULT_HEIGHT, self.WORLD_DEFAULT_HEIGHT
+        for i in range(0, self.WORLD_DEFAULT_WIDTH):
+            #If far enough from the Player start position, get the new height for the next Terrain on the left/right
+            if i > self.WORLD_DEFAULT_HEIGHT_WIDTH:
+                terrainHeightLeft = self.createTerrainHeight(terrainHeightLeft)
+                terrainHeightRight = self.createTerrainHeight(terrainHeightRight)
 
-            #Add Terrain to the left
-            for j in range(-self.WORLD_HEIGHT_DEFAULT, terrainHeightLeft):
-                self.addTerrain(Terrain.Terrain(-i * Terrain.TERRAIN_SIZE, -j * Terrain.TERRAIN_SIZE, TerrainType.DIRT))
-
-            #Get the next Terrain height to the right
-            terrainHeightRight = terrainHeightLeft + random.randrange(-self.WORLD_HEIGHT_STEP_MAX, self.WORLD_HEIGHT_STEP_MAX+1)
-            if terrainHeightRight < -self.WORLD_HEIGHT_DIFFERENCE_MAX:
-                terrainHeightRight = -self.WORLD_HEIGHT_DIFFERENCE_MAX
-            elif terrainHeightRight > self.WORLD_HEIGHT_DIFFERENCE_MAX:
-                terrainHeightRight = self.WORLD_HEIGHT_DIFFERENCE_MAX
-
-            #Add Terrain to the right
-            for j in range(-self.WORLD_HEIGHT_DEFAULT, terrainHeightRight):
-                self.addTerrain(Terrain.Terrain(i * Terrain.TERRAIN_SIZE, -j * Terrain.TERRAIN_SIZE, TerrainType.DIRT))
+            #Add Terrain to the left/right
+            self.createTerrain(-i, terrainHeightLeft)
+            self.createTerrain(i, terrainHeightRight)
 
         #Add an enemy Entity
         self.addEntity(Entity.Entity(50, 0, 0, 0, 0, Team.ENEMY, EntityType.ROBOT))
+
+    #Create Terrain at xPos with height
+    def createTerrain(self, xPos, height):
+        #Initialize the terrainValues array for xPos
+        self.terrainValues[xPos] = []
+        
+        #For the height of the Terrain, add Terrain
+        for i in range(-self.WORLD_DEFAULT_HEIGHT, -self.WORLD_DEFAULT_HEIGHT + height):
+           self.addTerrain(Terrain.Terrain(xPos * Terrain.TERRAIN_SIZE, -i * Terrain.TERRAIN_SIZE, TerrainType.DIRT))
+           self.terrainValues[xPos].append(TerrainType.DIRT)
+
+    #Create the next Terrain height
+    def createTerrainHeight(self, previousHeight):
+        newHeight = previousHeight + random.randrange(-self.WORLD_DEFAULT_HEIGHT_STEP, self.WORLD_DEFAULT_HEIGHT_STEP + 1)
+
+        #Ensure newHeight is within limits
+        if newHeight < self.WORLD_DEFAULT_HEIGHT - self.WORLD_DEFAULT_HEIGHT_RANGE:
+            newHeight = self.WORLD_DEFAULT_HEIGHT - self.WORLD_DEFAULT_HEIGHT_RANGE
+        elif newHeight > self.WORLD_DEFAULT_HEIGHT + self.WORLD_DEFAULT_HEIGHT_RANGE:
+            newHeight = self.WORLD_DEFAULT_HEIGHT + self.WORLD_DEFAULT_HEIGHT_RANGE
+
+        return newHeight
 
     #Add an Ammo to the World
     def addAmmo(self, node):
@@ -94,7 +112,7 @@ class World:
 
     #Add an Terrain to the World
     def addTerrain(self, node):
-        self.terrain.append(node)
+        self.terrainVisible.append(node)
         self.collidables.append(node)
         self.selectables.append(node)
 
@@ -257,7 +275,7 @@ class World:
         entityXRight = entity.position.x + entity.width * 0.75 +1
 
         #For all Terrain
-        for node in self.terrain:
+        for node in self.terrainVisible:
             #Skip if the Entity is too far left
             if node.position.x + node.width < entityXLeft:
                 pass
@@ -421,7 +439,7 @@ class World:
             node.move(node.direction.x * frameDeltaTime, node.direction.y * frameDeltaTime)
 
         #For all Terrain, Update
-        for node in self.terrain:
+        for node in self.terrainVisible:
             node.update(frameDeltaTime)
 
 
