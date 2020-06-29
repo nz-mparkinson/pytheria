@@ -167,7 +167,7 @@ class Game:
         xPos, yPos = self.player.position.x - self.widthHalf, self.player.position.y - self.heightHalf
 
         #Draw all Terrain
-        for node in self.world.terrainVisible:
+        for node in self.world.terrain:
             self.screen.blit(node.image, (node.position.x - xPos, node.position.y - yPos))
         #Draw all Entitys
         for node in self.world.entitys:

@@ -23,11 +23,13 @@ class World:
     WORLD_DEFAULT_HEIGHT_RANGE = 16	#The initial max variation in Terrain height in a new World
     WORLD_DEFAULT_HEIGHT_STEP = 4	#The initial max variation in Terrain height compared to the next Terrain in a new World    
     WORLD_DEFAULT_HEIGHT_WIDTH = 4	#The initial width of Terrain in a new World that is always the default height
-    WORLD_DEFAULT_WIDTH = 32		#The initial width of Terrain in a new World
+    WORLD_DEFAULT_WIDTH = 256		#The initial width of Terrain in a new World
     
     #World limits
     WORLD_HEIGHT_MAX = 128		#The max height of the world
-    WORLD_WIDTH_MAX = 32		#The max width of the world
+    WORLD_VIEW_HEIGHT = 7		#the max height to display
+    WORLD_VIEW_WIDTH = 10		#The max width to display
+    WORLD_WIDTH_MAX = 1024		#The max width of the world
 
     #Define the constructor
     def __init__(self, name, seedValue):
@@ -40,14 +42,16 @@ class World:
         self.effects = []		#Effects
         self.entitys = []		#Entitys
 
-        self.terrainValues = {}		#All terrain stored as ints, dict key is horizontal block number -> array index is block height, 0 being the bottom TODO
-        self.terrainVisible = []	#Viewable terrain, lazy loaded/pruned TODO
+        self.terrain = []		#Viewable Terrain, lazy loaded/pruned, same content as self.terrainNodes
+        self.terrainNodes = {}		#Loaded Terrain, lazy loaded/pruned, same content as self.terrain
+        self.terrainTypes = {}		#All terrain stored as ints, in the shape of { xPos -> { yPos -> Terrain Type } }, sea level having a yPos of 0
 
         self.collidables = []
         self.selectables = []
 
-        #Create the World
+        #Create the World and ensure the Terrain is visible
         self.createWorld()
+        self.ensureTerrainVisible(0, 0)
 
     #Create a World based on the seedValue
     def createWorld(self):
@@ -68,7 +72,7 @@ class World:
                 terrainHeightRight = self.createTerrainHeight(terrainHeightRight)
 
             #Add Terrain to the left/right
-            self.createTerrain(-i, terrainHeightLeft)
+            self.createTerrain(-i - 1, terrainHeightLeft)
             self.createTerrain(i, terrainHeightRight)
 
         #Add an enemy Entity
@@ -76,13 +80,15 @@ class World:
 
     #Create Terrain at xPos with height
     def createTerrain(self, xPos, height):
-        #Initialize the terrainValues array for xPos
-        self.terrainValues[xPos] = []
+        #print("Creating Terrain Types: " + str(xPos) + " - " + str(height))
+        
+        #Initialize the terrainTypes dict for xPos
+        self.terrainTypes[xPos] = {}
         
         #For the height of the Terrain, add Terrain
         for i in range(-self.WORLD_DEFAULT_HEIGHT, -self.WORLD_DEFAULT_HEIGHT + height):
-           self.addTerrain(Terrain.Terrain(xPos * Terrain.TERRAIN_SIZE, -i * Terrain.TERRAIN_SIZE, TerrainType.DIRT))
-           self.terrainValues[xPos].append(TerrainType.DIRT)
+           #self.addTerrain(Terrain.Terrain(xPos * Terrain.TERRAIN_SIZE, -i * Terrain.TERRAIN_SIZE, TerrainType.DIRT))
+           self.terrainTypes[xPos][i] = TerrainType.DIRT
 
     #Create the next Terrain height
     def createTerrainHeight(self, previousHeight):
@@ -112,9 +118,56 @@ class World:
 
     #Add an Terrain to the World
     def addTerrain(self, node):
-        self.terrainVisible.append(node)
+        self.terrain.append(node)
         self.collidables.append(node)
         self.selectables.append(node)
+
+    #Ensure that only the Terrain that should be visible is
+    def ensureTerrainVisible(self, xPos, yPos):
+        #Calculate the max x/y positions for Terrain that is visible, converting from pixel position, note: y-axis is negative for pixel position
+        visbileYTop = int(-yPos / Terrain.TERRAIN_SIZE) + self.WORLD_VIEW_HEIGHT + 1	#TODO adjustment for drawing from top left
+        visibleYBottom = int(-yPos / Terrain.TERRAIN_SIZE) - self.WORLD_VIEW_HEIGHT
+        visibleXLeft = int(xPos / Terrain.TERRAIN_SIZE) - self.WORLD_VIEW_WIDTH - 1	#TODO adjustment for drawing from top left
+        visibleXRight = int(xPos / Terrain.TERRAIN_SIZE) + self.WORLD_VIEW_WIDTH
+        #print("Ensure Visible: " + str(visibleXLeft) + ", " + str(visbileYTop) + " to " + str(visibleXRight) + ", " + str(visibleYBottom))
+
+        #For all visible Terrain xPos
+        for x in range(visibleXLeft, visibleXRight + 1):
+            #If the dict for xPos hasn't be initialized, do so
+            if x not in self.terrainNodes.keys():
+                self.terrainNodes[x] = {}
+            
+            #If x isn't a valid key in self.terrainTypes
+            if x not in self.terrainTypes.keys():
+                print("TODO generate more Terrain")
+            
+            #If x is a valid key in self.terrainTypes
+            if x in self.terrainTypes.keys():
+                #For all visible Terrain yPos
+                for y in range(visibleYBottom, visbileYTop + 1):
+                    #If the Terrain for yPos hasn't be loaded, load it
+                    if y not in self.terrainNodes[x].keys() and y in self.terrainTypes[x].keys():
+                        #print("Creating: " + str(x) + ", " + str(y))
+                        self.terrainNodes[x][y] = Terrain.Terrain(x * Terrain.TERRAIN_SIZE, -y * Terrain.TERRAIN_SIZE, self.terrainTypes[x][y])
+                        self.addTerrain(self.terrainNodes[x][y])
+        
+        #For all loaded terrainNodes
+        for x in list(self.terrainNodes.keys()):
+            #If x should be pruned, do so
+            if x < visibleXLeft or visibleXRight < x:
+                for y in list(self.terrainNodes[x].keys()):
+                    self.removeTerrain(self.terrainNodes[x][y])
+                    del self.terrainNodes[x][y]
+                del self.terrainNodes[x]
+            #Otherwise, check all y values
+            else:
+                for y in list(self.terrainNodes[x].keys()):
+                    #If y should be pruned, do so
+                    if y < visibleYBottom or visbileYTop < y:
+                        self.removeTerrain(self.terrainNodes[x][y])
+                        del self.terrainNodes[x][y]
+
+        #print("Ensure Done")
 
     #Run Entity AI
     def entityAI(self, entity, frameDeltaTime):
@@ -275,7 +328,7 @@ class World:
         entityXRight = entity.position.x + entity.width * 0.75 +1
 
         #For all Terrain
-        for node in self.terrainVisible:
+        for node in self.terrain:
             #Skip if the Entity is too far left
             if node.position.x + node.width < entityXLeft:
                 pass
@@ -438,8 +491,11 @@ class World:
             #Apply Direction, note: no collision checking
             node.move(node.direction.x * frameDeltaTime, node.direction.y * frameDeltaTime)
 
+        #Ensure Terrain visible
+        self.ensureTerrainVisible(player.position.x, player.position.y)
+
         #For all Terrain, Update
-        for node in self.terrainVisible:
+        for node in self.terrain:
             node.update(frameDeltaTime)
 
 
