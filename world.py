@@ -15,7 +15,7 @@ class World:
 
     #Physics
     FRICTION_DEFAULT = 320		#The rate at which objects slow while on Terrain TODO
-    GRAVITY_DEFAULT = 160		#The rate at which objects accelerate downwards
+    GRAVITY_DEFAULT = 80		#The rate at which objects accelerate downwards
     MAX_SPEED_DEFAULT = 640		#The max speed an object can travel
 
     #World generation
@@ -42,11 +42,11 @@ class World:
         self.effects = []		#Effects
         self.entitys = []		#Entitys
 
-        self.terrain = []		#Viewable Terrain, lazy loaded/pruned, same content as self.terrainNodes
-        self.terrainNodes = {}		#Loaded Terrain, lazy loaded/pruned, same content as self.terrain
-        self.terrainTypes = {}		#All terrain stored as ints, in the shape of { xPos -> { yPos -> Terrain Type } }, sea level having a yPos of 0
+        self.terrain = []		#Viewable Terrain, lazy loaded/pruned, derived from self.terrainTypes, used for bulk updates/draw calls
+        self.terrainNodes = {}		#Viewable Terrain, lazy loaded/pruned, derived from self.terrainTypes, used for collision detection
+        self.terrainTypes = {}		#Terrain stored as enums, with the shape { xPos -> { yPos -> Terrain Type } }, ground/sea level having a yPos of 0
 
-        self.collidables = []
+        self.collidables = []		#TODO remove in favour of seperate checks for Entity/Terrain?
         self.selectables = []
 
         #Create the World and ensure the Terrain is visible
@@ -87,7 +87,6 @@ class World:
         
         #For the height of the Terrain, add Terrain
         for i in range(-self.WORLD_DEFAULT_HEIGHT, -self.WORLD_DEFAULT_HEIGHT + height):
-           #self.addTerrain(Terrain.Terrain(xPos * Terrain.TERRAIN_SIZE, -i * Terrain.TERRAIN_SIZE, TerrainType.DIRT))
            self.terrainTypes[xPos][i] = TerrainType.DIRT
 
     #Create the next Terrain height
@@ -116,7 +115,7 @@ class World:
         self.collidables.append(node)
         self.selectables.append(node)
 
-    #Add an Terrain to the World
+    #Add an Terrain to the World TODO note visible only
     def addTerrain(self, node):
         self.terrain.append(node)
         self.collidables.append(node)
@@ -124,46 +123,47 @@ class World:
 
     #Ensure that only the Terrain that should be visible is
     def ensureTerrainVisible(self, xPos, yPos):
-        #Calculate the max x/y positions for Terrain that is visible, converting from pixel position, note: y-axis is negative for pixel position
-        visbileYTop = int(-yPos / Terrain.TERRAIN_SIZE) + self.WORLD_VIEW_HEIGHT + 1	#TODO adjustment for drawing from top left
-        visibleYBottom = int(-yPos / Terrain.TERRAIN_SIZE) - self.WORLD_VIEW_HEIGHT
-        visibleXLeft = int(xPos / Terrain.TERRAIN_SIZE) - self.WORLD_VIEW_WIDTH - 1	#TODO adjustment for drawing from top left
-        visibleXRight = int(xPos / Terrain.TERRAIN_SIZE) + self.WORLD_VIEW_WIDTH
-        #print("Ensure Visible: " + str(visibleXLeft) + ", " + str(visbileYTop) + " to " + str(visibleXRight) + ", " + str(visibleYBottom))
+        #Calculate the max x/y positions for Terrain that should be visible, converting from pixel position, note: y-axis is negative for pixel position
+        checkYTop = int(-yPos / Terrain.TERRAIN_SIZE) + self.WORLD_VIEW_HEIGHT + 1	#TODO adjustment for drawing from top left
+        checkYBottom = int(-yPos / Terrain.TERRAIN_SIZE) - self.WORLD_VIEW_HEIGHT
+        checkXLeft = int(xPos / Terrain.TERRAIN_SIZE) - self.WORLD_VIEW_WIDTH - 1	#TODO adjustment for drawing from top left
+        checkXRight = int(xPos / Terrain.TERRAIN_SIZE) + self.WORLD_VIEW_WIDTH
 
-        #For all visible Terrain xPos
-        for x in range(visibleXLeft, visibleXRight + 1):
-            #If the dict for xPos hasn't be initialized, do so
+        #print("Ensure Visible: " + str(checkXLeft) + ", " + str(checkYTop) + " to " + str(checkXRight) + ", " + str(checkYBottom))
+
+        #For all Terrain x positions to check
+        for x in range(checkXLeft, checkXRight + 1):
+            #If the dict for x hasn't be initialized, do so
             if x not in self.terrainNodes.keys():
                 self.terrainNodes[x] = {}
-            
+
             #If x isn't a valid key in self.terrainTypes
             if x not in self.terrainTypes.keys():
                 print("TODO generate more Terrain")
-            
+
             #If x is a valid key in self.terrainTypes
             if x in self.terrainTypes.keys():
-                #For all visible Terrain yPos
-                for y in range(visibleYBottom, visbileYTop + 1):
-                    #If the Terrain for yPos hasn't be loaded, load it
+                #For all Terrain y positions to check
+                for y in range(checkYBottom, checkYTop + 1):
+                    #If the Terrain for y hasn't be loaded, load it
                     if y not in self.terrainNodes[x].keys() and y in self.terrainTypes[x].keys():
-                        #print("Creating: " + str(x) + ", " + str(y))
+                        #print("Loading: " + str(x) + ", " + str(y))
                         self.terrainNodes[x][y] = Terrain.Terrain(x * Terrain.TERRAIN_SIZE, -y * Terrain.TERRAIN_SIZE, self.terrainTypes[x][y])
                         self.addTerrain(self.terrainNodes[x][y])
-        
-        #For all loaded terrainNodes
+
+        #For all Terrain positions
         for x in list(self.terrainNodes.keys()):
-            #If x should be pruned, do so
-            if x < visibleXLeft or visibleXRight < x:
+            #If Terrain x position should be pruned, do so
+            if x < checkXLeft or checkXRight < x:
                 for y in list(self.terrainNodes[x].keys()):
                     self.removeTerrain(self.terrainNodes[x][y])
                     del self.terrainNodes[x][y]
                 del self.terrainNodes[x]
-            #Otherwise, check all y values
+            #Otherwise, check all Terrain y positions for the x position
             else:
                 for y in list(self.terrainNodes[x].keys()):
-                    #If y should be pruned, do so
-                    if y < visibleYBottom or visbileYTop < y:
+                    #If Terrain y position should be pruned, do so
+                    if y < checkYBottom or checkYTop < y:
                         self.removeTerrain(self.terrainNodes[x][y])
                         del self.terrainNodes[x][y]
 
@@ -254,12 +254,11 @@ class World:
     #Apply Gravity to an Entity depending on what if any Terrain it is on
     def entityGravity(self, entity, frameDeltaTime):
         #Get the Terrain the Entity is on if any
-        onTerrain = None
         onTerrain = self.isEntityOnTerrain(entity)
 
         #If the Entity is on Terrain, ensure the Entitys vertical position and direction
         if onTerrain:
-            entity.position.y = onTerrain.position.y - entity.height
+            entity.position.y = onTerrain.y - entity.height
             entity.direction.y = 0
         #Otherwise, apply gravity to the Entity
         else:
@@ -320,30 +319,36 @@ class World:
 
     #Test whether the Entity is on Terrain, returns the Terrain if it is, else None
     def isEntityOnTerrain(self, entity):
-        #Calculate facts about the Entity position used for detecting whether the Entity is on solid Terrain, note: +/- 1 because of floating points
+        #Calculate facts about the Entity position used for detecting whether the Entity is on solid Terrain
         #TODO magic values
-        entityYTop = entity.position.y + entity.height * 0.5 -1
-        entityYBottom = entity.position.y + entity.height +1
-        entityXLeft = entity.position.x + entity.width * 0.25 -1
-        entityXRight = entity.position.x + entity.width * 0.75 +1
+        entityYTop = entity.position.y + entity.height * 0.5
+        entityYBottom = entity.position.y + entity.height
+        entityXLeft = entity.position.x + entity.width * 0.25
+        entityXRight = entity.position.x + entity.width * 0.75
 
-        #For all Terrain
-        for node in self.terrain:
-            #Skip if the Entity is too far left
-            if node.position.x + node.width < entityXLeft:
-                pass
-            #Skip if the Entity is too far right
-            elif node.position.x > entityXRight:
-                pass
-            #Skip if the Entity is too far down
-            elif node.position.y + node.height < entityYTop:
-                pass
-            #Skip if the Entity is too far up
-            elif node.position.y > entityYBottom:
-                pass
-            #Otherwise the Entity is on the Terrain, return the Terrain
-            else:
-                return node
+        #print("Checking On Entity: " + str(entityXLeft) + ", " + str(entityYTop) + " to " + str(entityXRight) + ", " + str(entityYBottom))
+
+        #Calculate the max x/y positions for Terrain to check if Entity on top of, converting from pixel position, note: y-axis is negative for pixel position
+        checkYTop = int(-entity.position.y / Terrain.TERRAIN_SIZE) + 1
+        checkYBottom = int(-entity.position.y / Terrain.TERRAIN_SIZE) - 1
+        checkXLeft = int(entity.position.x / Terrain.TERRAIN_SIZE) - 1
+        checkXRight = int(entity.position.x / Terrain.TERRAIN_SIZE) + 1
+
+        #print("Checking On Check: " + str(checkXLeft) + ", " + str(checkYTop) + " to " + str(checkXRight) + ", " + str(checkYBottom))
+
+        #For all Terrain x positions to check
+        for x in range(checkXLeft, checkXRight + 1):
+            xLeft, xRight = x * Terrain.TERRAIN_SIZE, (x + 1) * Terrain.TERRAIN_SIZE
+            #If x is a valid key in self.terrainTypes and x is between the left and right Terrain x values
+            if x in self.terrainTypes.keys() and xLeft < entityXRight and entityXLeft < xRight:
+                #For all Terrain y positions to check
+                for y in range(checkYBottom, checkYTop + 1):
+                    #If y is a valid key in self.terrainTypes
+                    if y in self.terrainTypes[x].keys():
+                        yTop, yBottom = -y * Terrain.TERRAIN_SIZE, (-y - 1) * Terrain.TERRAIN_SIZE
+                        #If y is between the bottom and top Terrain y values, return the Terrains position
+                        if yTop > -entityYBottom and yBottom > -entityYTop:
+                            return Vector2f(x * Terrain.TERRAIN_SIZE, -y * Terrain.TERRAIN_SIZE)
 
         return None
 
