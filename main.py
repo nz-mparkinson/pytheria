@@ -164,23 +164,23 @@ class Game:
         self.screen.blit(self.background, (0, 0))
 
         #Calculate the Player position relative to the centre of the screen
-        xPos, yPos = self.player.position.x - self.widthHalf, self.player.position.y - self.heightHalf
+        playerX, playerY = self.player.position.x - self.widthHalf, self.player.position.y - self.heightHalf
 
         #Draw all Terrain
         for node in self.world.terrain:
-            self.screen.blit(node.image, (node.position.x - xPos, node.position.y - yPos))
+            self.screen.blit(node.image, (node.position.x - playerX, node.position.y - playerY))
         #Draw all Entitys
         for node in self.world.entitys:
             if node is not self.player:
-                self.screen.blit(node.image, (node.position.x - xPos, node.position.y - yPos))
+                self.screen.blit(node.image, (node.position.x - playerX, node.position.y - playerY))
         #Draw the Player in the centre of the screen
         self.screen.blit(self.player.image, (self.widthHalf, self.heightHalf))
         #Draw all Ammo
         for node in self.world.ammo:
-            self.screen.blit(node.image, (node.position.x - xPos, node.position.y - yPos))
+            self.screen.blit(node.image, (node.position.x - playerX, node.position.y - playerY))
         #Draw all Effects
         for node in self.world.effects:
-            self.screen.blit(node.image, (node.position.x - xPos, node.position.y - yPos))
+            self.screen.blit(node.image, (node.position.x - playerX, node.position.y - playerY))
 
         #Draw the FPS
         fps = self.font.render("FPS: {:6.3}{}TIME: {:6.3}".format(self.clock.get_fps(), " "*5, self.playTime), True, (0, 255, 0))
@@ -188,9 +188,10 @@ class Game:
 
         #If a Node is selected, draw its name
         if self.selectedNode:
-            selectedText = self.font.render("Selected: " + self.selectedNode.name, True, (0, 255, 0))
+            selectedX, selectedY = int(self.selectedNode.position.x / Terrain.TERRAIN_SIZE), int(self.selectedNode.position.y / Terrain.TERRAIN_SIZE)
+            selectedText = self.font.render("Selected: " + self.selectedNode.name + " (" + str(selectedX) + " ," + str(selectedY) + ")", True, (0, 255, 0))
             self.screen.blit(selectedText, (self.width - selectedText.get_width(), self.height - selectedText.get_height()))
-            self.screen.blit(self.reticle.image, (self.selectedNode.position.x - xPos, self.selectedNode.position.y - yPos))
+            self.screen.blit(self.reticle.image, (self.selectedNode.position.x - playerX, self.selectedNode.position.y - playerY))
 
         #Draw the GUI Nodes
         for node in self.gui.nodes:
