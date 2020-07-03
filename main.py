@@ -77,7 +77,7 @@ class Game:
                 self.world.nodeMove(self.player, 5, 0)
             #If up key down, move the player up
             if keys[pygame.K_UP]:
-                self.world.nodeMove(self.player, 0, -5)
+                self.world.nodeMove(self.player, 0, -7)
             #If down key down, move the player down
             elif keys[pygame.K_DOWN]:
                 self.world.nodeMove(self.player, 0, 5)
@@ -168,19 +168,21 @@ class Game:
 
         #Draw all Terrain
         for node in self.world.terrain:
-            self.screen.blit(node.image, (node.position.x - playerX, node.position.y - playerY))
+            self.screen.blit(node.image, (int(node.position.x - playerX), int(node.position.y - playerY)))
         #Draw all Entitys
         for node in self.world.entitys:
             if node is not self.player:
-                self.screen.blit(node.image, (node.position.x - playerX, node.position.y - playerY))
+                self.screen.blit(node.image, (int(node.position.x - playerX), int(node.position.y - playerY)))
         #Draw the Player in the centre of the screen
         self.screen.blit(self.player.image, (self.widthHalf, self.heightHalf))
+        print("Player Position: " + str(self.player.position.x) +", "+ str(-self.player.position.y))
         #Draw all Ammo
         for node in self.world.ammo:
-            self.screen.blit(node.image, (node.position.x - playerX, node.position.y - playerY))
+            self.screen.blit(node.image, (int(node.position.x - playerX), int(node.position.y - playerY)))
+            print("Ammo Position: " + str(int(node.position.x)) + ", " + str(int(-node.position.y)))
         #Draw all Effects
         for node in self.world.effects:
-            self.screen.blit(node.image, (node.position.x - playerX, node.position.y - playerY))
+            self.screen.blit(node.image, (int(node.position.x - playerX), int(node.position.y - playerY)))
 
         #Draw the FPS
         fps = self.font.render("FPS: {:6.3}{}TIME: {:6.3}".format(self.clock.get_fps(), " "*5, self.playTime), True, (0, 255, 0))
@@ -189,9 +191,9 @@ class Game:
         #If a Node is selected, draw its name
         if self.selectedNode:
             selectedX, selectedY = int(self.selectedNode.position.x / Terrain.TERRAIN_SIZE), int(self.selectedNode.position.y / Terrain.TERRAIN_SIZE)
-            selectedText = self.font.render("Selected: " + self.selectedNode.name + " (" + str(selectedX) + " ," + str(selectedY) + ")", True, (0, 255, 0))
+            selectedText = self.font.render("Selected: " + self.selectedNode.name + " (" + str(selectedX) + " ," + str(-selectedY) + ")", True, (0, 255, 0))
             self.screen.blit(selectedText, (self.width - selectedText.get_width(), self.height - selectedText.get_height()))
-            self.screen.blit(self.reticle.image, (self.selectedNode.position.x - playerX, self.selectedNode.position.y - playerY))
+            self.screen.blit(self.reticle.image, (int(self.selectedNode.position.x - playerX), int(self.selectedNode.position.y - playerY)))
 
         #Draw the GUI Nodes
         for node in self.gui.nodes:
