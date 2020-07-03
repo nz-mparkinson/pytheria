@@ -16,7 +16,7 @@ class World:
     #Physics
     FRICTION_DEFAULT = 320		#The rate at which objects slow while on Terrain TODO
     GRAVITY_DEFAULT = 80		#The rate at which objects accelerate downwards
-    MAX_SPEED_DEFAULT = 640		#The max speed an object can travel
+    MAX_SPEED_DEFAULT = 320		#The max speed an object can travel
 
     #World generation
     WORLD_DEFAULT_HEIGHT = 64		#The initial height of Terrain in a new World, aka sea level
@@ -46,8 +46,7 @@ class World:
         self.terrainNodes = {}		#Viewable Terrain, lazy loaded/pruned, derived from self.terrainTypes, used for collision detection
         self.terrainTypes = {}		#Terrain stored as enums, with the shape { xPos -> { yPos -> Terrain Type } }, ground/sea level having a yPos of 0
 
-        self.collidables = []		#TODO remove in favour of seperate checks for Entity/Terrain?
-        self.selectables = []
+        self.selectables = []		#Objects that are selectable by the Player, Entitys/Terrain
 
         #Create the World and ensure the Terrain is visible
         self.createWorld()
@@ -74,6 +73,10 @@ class World:
             #Add Terrain to the left/right
             self.createTerrain(-i - 1, terrainHeightLeft)
             self.createTerrain(i, terrainHeightRight)
+
+        #Add floating Terrain as a test
+        self.terrainTypes[-1][5] = TerrainType.DIRT
+        self.terrainTypes[0][5] = TerrainType.DIRT
 
         #Add an enemy Entity
         self.addEntity(Entity.Entity(50, 0, 0, 0, 0, Team.ENEMY, EntityType.ROBOT))
@@ -112,13 +115,11 @@ class World:
     #Add an Entity to the World
     def addEntity(self, node):
         self.entitys.append(node)
-        self.collidables.append(node)
         self.selectables.append(node)
 
-    #Add an Terrain to the World TODO note visible only
+    #Add an Terrain to the World, note: visible Terrain only
     def addTerrain(self, node):
         self.terrain.append(node)
-        self.collidables.append(node)
         self.selectables.append(node)
 
     #Ensure that only the Terrain that should be visible is
@@ -129,7 +130,7 @@ class World:
         checkXLeft = int(xPos / Terrain.TERRAIN_SIZE) - self.WORLD_VIEW_WIDTH - 1	#TODO adjustment for drawing from top left
         checkXRight = int(xPos / Terrain.TERRAIN_SIZE) + self.WORLD_VIEW_WIDTH
 
-        #print("Ensure Visible: " + str(checkXLeft) + ", " + str(checkYTop) + " to " + str(checkXRight) + ", " + str(checkYBottom))
+        #print("ensureTerrainVisible check: " + str(checkXLeft) + ", " + str(checkYTop) + " to " + str(checkXRight) + ", " + str(checkYBottom))
 
         #For all Terrain x positions to check
         for x in range(checkXLeft, checkXRight + 1):
@@ -326,7 +327,7 @@ class World:
         entityXLeft = entity.position.x + entity.width * 0.25
         entityXRight = entity.position.x + entity.width * 0.75
 
-        #print("Checking On Entity: " + str(entityXLeft) + ", " + str(entityYTop) + " to " + str(entityXRight) + ", " + str(entityYBottom))
+        #print("isEntityOnTerrain entity: " + str(entityXLeft) + ", " + str(entityYTop) + " to " + str(entityXRight) + ", " + str(entityYBottom))
 
         #Calculate the max x/y positions for Terrain to check if Entity on top of, converting from pixel position, note: y-axis is negative for pixel position
         checkYTop = int(-entity.position.y / Terrain.TERRAIN_SIZE) + 1
@@ -334,7 +335,7 @@ class World:
         checkXLeft = int(entity.position.x / Terrain.TERRAIN_SIZE) - 1
         checkXRight = int(entity.position.x / Terrain.TERRAIN_SIZE) + 1
 
-        #print("Checking On Check: " + str(checkXLeft) + ", " + str(checkYTop) + " to " + str(checkXRight) + ", " + str(checkYBottom))
+        #print("isEntityOnTerrain check: " + str(checkXLeft) + ", " + str(checkYTop) + " to " + str(checkXRight) + ", " + str(checkYBottom))
 
         #For all Terrain x positions to check
         for x in range(checkXLeft, checkXRight + 1):
@@ -353,77 +354,99 @@ class World:
         return None
 
     #Move a Node
-    def nodeMove(self, node, x, y):
-        #Calculate facts about the Node position used for detecting whether the Node will collide with the Collidable
-        nodeYTop = y + node.position.y
-        nodeYBottom = y + node.position.y + node.height
-        nodeXLeft = x + node.position.x
-        nodeXRight = x + node.position.x + node.width
+    def nodeMove(self, node, dirX, dirY):
+        #Calculate facts about the new Node position used for detecting whether the Node will collide with something
+        #TODO rename newYTop?
+        nodeYTop = -node.position.y - dirY
+        nodeYBottom = -node.position.y - node.height - dirY
+        nodeXLeft = node.position.x + dirX
+        nodeXRight = node.position.x + node.width + dirX
 
-        #For all Collidable nodes
-        for collidable in self.collidables:
-            #Skip if the Node and Collidable are on the same team
-            if collidable.team == node.team:
-                pass
-            #Skip if the Node and Collidable are both Entitys
-            elif collidable.nodeType == NodeType.ENTITY and node.nodeType == NodeType.ENTITY:
-                pass
-            #Skip if the Node is too far left
-            elif collidable.position.x + collidable.width <= nodeXLeft:
-                pass
-            #Skip if the Node is too far right
-            elif collidable.position.x >= nodeXRight:
-                pass
-            #Skip if the Node is too far down
-            elif collidable.position.y + collidable.height <= nodeYTop:
-                pass
-            #Skip if the Node is too far up
-            elif collidable.position.y >= nodeYBottom:
-                pass
-            #If the Node is an Ammo
-            elif node.nodeType == NodeType.AMMO:
-                #Move the Ammo
-                node.move(x, y)
+        #print("nodeMove node: " + str(nodeXLeft) + ", " + str(nodeYTop) + " to " + str(nodeXRight) + ", " + str(nodeYBottom))
 
+        #Calculate the max x/y positions for Terrain to check if Node will collide width, converting from pixel position, note: y-axis is negative for pixel position
+        checkYTop = int(nodeYTop / Terrain.TERRAIN_SIZE) + 1
+        checkYBottom = int(nodeYBottom / Terrain.TERRAIN_SIZE) - 1
+        checkXLeft = int(nodeXLeft / Terrain.TERRAIN_SIZE) - 1
+        checkXRight = int(nodeXLeft / Terrain.TERRAIN_SIZE) + 1
+
+        #print("nodeMove check: " + str(checkXLeft) + ", " + str(checkYTop) + " to " + str(checkXRight) + ", " + str(checkYBottom))
+
+        collision = False
+
+        #For all Terrain x positions to check
+        for x in range(checkXLeft, checkXRight + 1):
+            xLeft, xRight = x * Terrain.TERRAIN_SIZE, (x + 1) * Terrain.TERRAIN_SIZE
+            #If x is a valid key in self.terrainTypes and x is between the left and right Terrain x values
+            if x in self.terrainTypes.keys() and xLeft < nodeXRight and xRight > nodeXLeft:
+                #For all Terrain y positions to check
+                for y in range(checkYBottom, checkYTop + 1):
+                    #If y is a valid key in self.terrainTypes
+                    if y in self.terrainTypes[x].keys():
+                        yTop, yBottom = y * Terrain.TERRAIN_SIZE, (y - 1) * Terrain.TERRAIN_SIZE
+                        #if node.nodeType == NodeType.AMMO:
+                            #print("\tAmmo check: " + str(x) + "," + str(y))
+                            #print("\t" + str(xLeft) +" < "+ str(nodeXRight) +" and "+ str(xRight) +" > "+ str(nodeXLeft))
+                            #print("\t" + str(yTop) +" > "+ str(nodeYBottom) +" and "+ str(yBottom) +" < "+ str(nodeYTop))
+                        #If y is between the bottom and top Terrain y values and collision is False
+                        if collision is False and yTop > nodeYBottom and yBottom < nodeYTop:
+                            collision = True
+
+                            print("Hit: " + str(x) + ", " + str(y))
+                            print("\t" + str(xLeft) +" < "+ str(nodeXRight) +" and "+ str(xRight) +" > "+ str(nodeXLeft))
+                            print("\t" + str(yTop) +" > "+ str(nodeYBottom) +" and "+ str(yBottom) +" < "+ str(nodeYTop))
+                            print("DirX: " + str(dirX))
+
+                            #Depending on whether the Node is moving left/right/up/down and the collision happens, set move values and direction
+                            if dirX < 0 and xRight <= node.position.x:
+                                dirX = xRight - node.position.x
+                                if dirX > 0:
+                                    dirX = 0
+                                node.direction.x = 0
+                                #print("Hit1: " + str(dirX))
+                            elif dirX > 0 and xLeft >= node.position.x + node.width:
+                                dirX = xLeft - node.position.x - node.width
+                                if dirX < 0:
+                                    dirX = 0
+                                node.direction.x = 0
+                                #print("Hit2")
+                            if -dirY > 0 and yBottom >= -node.position.y:
+                                dirY = yBottom - -node.position.y
+                                dirY = -dirY
+                                if -dirY < 0:
+                                    dirY = 0
+                                node.direction.y = 0
+                                print("Hit3: " + str(dirY))
+                            elif -dirY < 0 and yTop <= -node.position.y - node.height:
+                                dirY = yTop - node.position.y + node.height
+                                dirY = -dirY
+                                if -dirY > 0:
+                                    dirY = 0
+                                node.direction.y = 0
+                                print("Hit4: " + str(dirY))
+
+        #If Node is an ammo
+        if node.nodeType == NodeType.AMMO:
+            #If no collision has happened, check all Entitys for a collision
+            if collision is False:
+                for entity in self.entitys:
+                    if node.team is not entity.team and False: #TODO hit
+                        self.entityHit(entity, node.damage)
+                        collision = True
+
+            #If a collision has happened
+            if collision is True:
                 #Create an Effect/Sound for the explosion
-                self.addEffect(Effect.Explosion(node.width, node.height, node.position.x, node.position.y))
+                self.addEffect(Effect.Explosion(node.width, node.height, nodeXLeft, -nodeYTop))
                 #TODO add sound
-
-                #If the Collidable is an Entity, damage the Entity
-                if collidable.nodeType == NodeType.ENTITY:
-                    self.entityHit(collidable, node.damage)
 
                 #Remove the Ammo and return
                 self.removeAmmo(node)
                 return
-            #Otherwise the Node will collide with the Collidable, handle accordlingly, note: setting values exactly due to float rounding
-            else:
-                #Calculate how close the Node is to each edge of the Node
-                leftDelta = abs(collidable.position.x + collidable.width - node.position.x)
-                rightDelta = abs(collidable.position.x - node.position.x - node.width)
-                upDelta = abs(collidable.position.y + collidable.height - node.position.y)
-                downDelta = abs(collidable.position.y - node.position.y - node.height)
 
-                #If the Node is moving too far left, set its horizontal position and direction
-                if leftDelta < rightDelta and leftDelta < upDelta and leftDelta < downDelta:
-                    x = collidable.position.x + collidable.width - node.position.x
-                    node.direction.x = 0
-                #If the Node is moving too far right, set its horizontal position and direction
-                elif rightDelta < leftDelta and rightDelta < upDelta and rightDelta < downDelta:
-                    x = collidable.position.x - node.position.x - node.width
-                    node.direction.x = 0
-                #If the Node is moving too far up, set its vertical position and direction
-                elif upDelta < leftDelta and upDelta < rightDelta and upDelta < downDelta:
-                    y = collidable.position.y + collidable.height - node.position.y
-                    node.direction.y = 0
-                #If the Node is moving too far down, set its vertical position and direction
-                elif downDelta < leftDelta and downDelta < rightDelta and downDelta < upDelta:
-                    y = collidable.position.y - node.position.y - node.height
-                    node.direction.y = 0
-
-        #If x or y are non 0, move the Node
-        if x != 0 or y != 0:
-            node.move(x, y)
+        #If dirX or dirY are non 0, move the Node
+        if dirX != 0 or dirY != 0:
+            node.move(dirX, dirY)
 
     #Remove an Ammo from the World
     def removeAmmo(self, node):
@@ -436,13 +459,11 @@ class World:
     #Remove an Entity from the World
     def removeEntity(self, node):
         self.entitys.remove(node)
-        self.collidables.remove(node)
         self.selectables.remove(node)
 
     #Remove an Terrain from the World
     def removeTerrain(self, node):
         self.terrain.remove(node)
-        self.collidables.remove(node)
         self.selectables.remove(node)
 
     #Update the World, apply Gravity, Direction etc.
