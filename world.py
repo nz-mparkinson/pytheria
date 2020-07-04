@@ -35,7 +35,7 @@ class World:
     def __init__(self, name, seedValue):
         #Set World fields
         self.name = name
-        self.seedValue = seedValue
+        self.seedValue = seedValue	#The original seedValue
 
         #Initialize World fields
         self.ammo = []			#Ammo
@@ -85,12 +85,15 @@ class World:
         terrainHeight = self.WORLD_DEFAULT_HEIGHT
         #If posX is left of the default area, use the previous left Terrain to calculate the new height
         if posX < -self.WORLD_DEFAULT_HEIGHT_WIDTH:
-            previousHeight = self.WORLD_DEFAULT_HEIGHT + max(self.terrainTypes[posX + 1].keys())
+            previousHeight = self.WORLD_DEFAULT_HEIGHT + max(self.terrainTypes[posX + 1].keys()) + 1
+            random.seed(int(self.seedValue * posX))
             terrainHeight = previousHeight + random.randrange(-self.WORLD_DEFAULT_HEIGHT_STEP, self.WORLD_DEFAULT_HEIGHT_STEP + 1)
         #If posX is right of the default area, use the previous right Terrain to calculate the new height
         elif self.WORLD_DEFAULT_HEIGHT_WIDTH < posX:
-            previousHeight = self.WORLD_DEFAULT_HEIGHT + max(self.terrainTypes[posX - 1].keys())
+            previousHeight = self.WORLD_DEFAULT_HEIGHT + max(self.terrainTypes[posX - 1].keys()) + 1
+            random.seed(str(self.seedValue * posX))
             terrainHeight = previousHeight + random.randrange(-self.WORLD_DEFAULT_HEIGHT_STEP, self.WORLD_DEFAULT_HEIGHT_STEP + 1)
+
         #Ensure the new Terrain height is within limits
         if terrainHeight < self.WORLD_DEFAULT_HEIGHT - self.WORLD_DEFAULT_HEIGHT_RANGE:
             terrainHeight = self.WORLD_DEFAULT_HEIGHT - self.WORLD_DEFAULT_HEIGHT_RANGE
@@ -100,7 +103,7 @@ class World:
         #print("\tHeight: " + str(terrainHeight))
 
         #For the height of the Terrain, add Terrain
-        for i in range(-self.WORLD_DEFAULT_HEIGHT, -self.WORLD_DEFAULT_HEIGHT + terrainHeight + 1):
+        for i in range(-self.WORLD_DEFAULT_HEIGHT, -self.WORLD_DEFAULT_HEIGHT + terrainHeight):
            self.terrainTypes[posX][i] = TerrainType.DIRT
 
     #Add an Ammo to the World
