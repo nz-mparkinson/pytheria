@@ -27,9 +27,9 @@ class Node:
         #Set the Node fields
         self.nodeType = nodeType
         self.width = width
-        self.widthHalf = width / 2
+        self.widthHalf = width // 2
         self.height = height
-        self.heightHalf = height / 2
+        self.heightHalf = height // 2
         self.position = Vector2f(posX, posY)
         self.rotation = rotation
         self.direction = Vector2f(dirX, dirY)
@@ -154,9 +154,9 @@ class Node:
         self.position.x -= (width - self.width) / 2
         self.position.y -= (height - self.height) / 2
         self.width = width
-        self.widthHalf = width / 2
+        self.widthHalf = width // 2
         self.height = height
-        self.heightHalf = height / 2
+        self.heightHalf = height // 2
         self.image = pygame.transform.scale(self.imageOriginal, (width, height))
         self.imageFlip = False
 

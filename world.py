@@ -221,6 +221,15 @@ class World:
             if enemy:
                 self.entityHit(enemy, entity.meleeDamage)
 
+            #Because position tracks the top left corner of the object the following calculatings are required
+            posX = entity.position.x - entity.widthHalf * 0.25
+            if entity.movement.x > 0:
+                posX = entity.position.x + entity.widthHalf * 0.75
+            posY = entity.position.y + entity.heightHalf // 2
+
+            #Add an Effect
+            self.addEffect(Effect.Melee(entity.widthHalf, entity.height // 3, posX, posY, entity.movement.x, 0))
+
     #Have an Entity attack using Ranged
     def entityAttackRanged(self, entity, targetX, targetY):
         #If the Entity can attack using ranged
