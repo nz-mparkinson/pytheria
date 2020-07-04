@@ -175,7 +175,7 @@ class Game:
                 self.screen.blit(node.image, (int(node.position.x - playerX), int(node.position.y - playerY)))
         #Draw the Player in the centre of the screen
         self.screen.blit(self.player.image, (self.widthHalf, self.heightHalf))
-        print("Player Position: " + str(self.player.position.x) +", "+ str(-self.player.position.y))
+        #print("Player Position: " + str(self.player.position.x) +", "+ str(-self.player.position.y))
         #Draw all Ammo
         for node in self.world.ammo:
             self.screen.blit(node.image, (int(node.position.x - playerX), int(node.position.y - playerY)))

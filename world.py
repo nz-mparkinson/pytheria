@@ -23,8 +23,8 @@ class World:
     WORLD_DEFAULT_HEIGHT_RANGE = 16	#The initial max variation in Terrain height in a new World
     WORLD_DEFAULT_HEIGHT_STEP = 4	#The initial max variation in Terrain height compared to the next Terrain in a new World    
     WORLD_DEFAULT_HEIGHT_WIDTH = 4	#The initial width of Terrain in a new World that is always the default height
-    WORLD_DEFAULT_WIDTH = 256		#The initial width of Terrain in a new World
-    
+    WORLD_DEFAULT_WIDTH = 32		#The initial width of Terrain in a new World
+
     #World limits
     WORLD_HEIGHT_MAX = 128		#The max height of the world
     WORLD_VIEW_HEIGHT = 7		#The max height to display
@@ -84,10 +84,10 @@ class World:
     #Create Terrain at posX with height
     def createTerrain(self, posX, height):
         #print("Creating Terrain Types: " + str(posX) + " - " + str(height))
-        
+
         #Initialize the terrainTypes dict for posX
         self.terrainTypes[posX] = {}
-        
+
         #For the height of the Terrain, add Terrain
         for i in range(-self.WORLD_DEFAULT_HEIGHT, -self.WORLD_DEFAULT_HEIGHT + height):
            self.terrainTypes[posX][i] = TerrainType.DIRT
@@ -103,6 +103,36 @@ class World:
             newHeight = self.WORLD_DEFAULT_HEIGHT + self.WORLD_DEFAULT_HEIGHT_RANGE
 
         return newHeight
+
+    #Generate new Terrain at posX
+    def generateTerrain(self, posX):
+        #Initialize the terrainTypes dict for posX
+        self.terrainTypes[posX] = {}
+
+        #print("Generating Terrain for posX: " + str(posX))
+
+        #Get the new Terrain height
+        terrainHeight = self.WORLD_DEFAULT_HEIGHT
+        #If posX is left of the default area, use the previous left Terrain to calculate the new height
+        if posX < -self.WORLD_DEFAULT_HEIGHT_WIDTH:
+            previousHeight = self.WORLD_DEFAULT_HEIGHT + max(self.terrainTypes[posX + 1].keys())
+            print(previousHeight)
+            terrainHeight = previousHeight + random.randrange(-self.WORLD_DEFAULT_HEIGHT_STEP, self.WORLD_DEFAULT_HEIGHT_STEP + 1)
+        #If posX is right of the default area, use the previous right Terrain to calculate the new height
+        elif self.WORLD_DEFAULT_HEIGHT_WIDTH < posX:
+            previousHeight = self.WORLD_DEFAULT_HEIGHT + max(self.terrainTypes[posX - 1].keys())
+            terrainHeight = previousHeight + random.randrange(-self.WORLD_DEFAULT_HEIGHT_STEP, self.WORLD_DEFAULT_HEIGHT_STEP + 1)
+        #Ensure the new Terrain height is within limits
+        if terrainHeight < self.WORLD_DEFAULT_HEIGHT - self.WORLD_DEFAULT_HEIGHT_RANGE:
+            terrainHeight = self.WORLD_DEFAULT_HEIGHT - self.WORLD_DEFAULT_HEIGHT_RANGE
+        elif terrainHeight > self.WORLD_DEFAULT_HEIGHT + self.WORLD_DEFAULT_HEIGHT_RANGE:
+            terrainHeight = self.WORLD_DEFAULT_HEIGHT + self.WORLD_DEFAULT_HEIGHT_RANGE
+
+        print("\tHeight: " + str(terrainHeight))
+
+        #For the height of the Terrain, add Terrain
+        for i in range(-self.WORLD_DEFAULT_HEIGHT, -self.WORLD_DEFAULT_HEIGHT + terrainHeight):
+           self.terrainTypes[posX][i] = TerrainType.DIRT
 
     #Add an Ammo to the World
     def addAmmo(self, node):
@@ -141,7 +171,7 @@ class World:
 
             #If x isn't a valid key in self.terrainTypes
             if x not in self.terrainTypes.keys():
-                print("TODO generate more Terrain")
+                self.generateTerrain(x)
 
             #If x is a valid key in self.terrainTypes
             if x in self.terrainTypes.keys():
@@ -394,10 +424,10 @@ class World:
                         if collision is False and yTop > nodeYBottom and yBottom < nodeYTop:
                             collision = True
 
-                            print("Hit: " + str(x) + ", " + str(y))
-                            print("\t" + str(xLeft) +" < "+ str(nodeXRight) +" and "+ str(xRight) +" > "+ str(nodeXLeft))
-                            print("\t" + str(yTop) +" > "+ str(nodeYBottom) +" and "+ str(yBottom) +" < "+ str(nodeYTop))
-                            print("DirX: " + str(dirX))
+                            #print("Hit: " + str(x) + ", " + str(y))
+                            #print("\t" + str(xLeft) +" < "+ str(nodeXRight) +" and "+ str(xRight) +" > "+ str(nodeXLeft))
+                            #print("\t" + str(yTop) +" > "+ str(nodeYBottom) +" and "+ str(yBottom) +" < "+ str(nodeYTop))
+                            #print("DirX: " + str(dirX))
 
                             #Depending on whether the Node is moving left/right/up/down and the collision happens, set move values and direction
                             if dirX < 0 and xRight <= node.position.x:
