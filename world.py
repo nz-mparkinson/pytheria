@@ -124,7 +124,8 @@ class World:
 
     #Ensure that only the Terrain that should be visible is
     def ensureTerrainVisible(self, xPos, yPos):
-        #Calculate the max x/y positions for Terrain that should be visible, converting from pixel position, note: y-axis is negative for pixel position
+        #Calculate the max x/y positions for Terrain that should be visible, converting from pixel position
+        #Note: y-axis is negative for pixel position
         checkYTop = int(-yPos / Terrain.TERRAIN_SIZE) + self.WORLD_VIEW_HEIGHT + 1	#TODO adjustment for drawing from top left
         checkYBottom = int(-yPos / Terrain.TERRAIN_SIZE) - self.WORLD_VIEW_HEIGHT
         checkXLeft = int(xPos / Terrain.TERRAIN_SIZE) - self.WORLD_VIEW_WIDTH - 1	#TODO adjustment for drawing from top left
@@ -152,7 +153,7 @@ class World:
                         self.terrainNodes[x][y] = Terrain.Terrain(x * Terrain.TERRAIN_SIZE, -y * Terrain.TERRAIN_SIZE, self.terrainTypes[x][y])
                         self.addTerrain(self.terrainNodes[x][y])
 
-        #For all Terrain positions
+        #For all Terrain x positions
         for x in list(self.terrainNodes.keys()):
             #If Terrain x position should be pruned, do so
             if x < checkXLeft or checkXRight < x:
@@ -160,7 +161,7 @@ class World:
                     self.removeTerrain(self.terrainNodes[x][y])
                     del self.terrainNodes[x][y]
                 del self.terrainNodes[x]
-            #Otherwise, check all Terrain y positions for the x position
+            #Otherwise, for all Terrain y positions
             else:
                 for y in list(self.terrainNodes[x].keys()):
                     #If Terrain y position should be pruned, do so
@@ -320,20 +321,21 @@ class World:
 
     #Test whether the Entity is on Terrain, returns the Terrain if it is, else None
     def isEntityOnTerrain(self, entity):
-        #Calculate facts about the Entity position used for detecting whether the Entity is on solid Terrain
+        #Calculate facts about the Entity position used for detecting whether the Entity is on Terrain, note: reduced width and entityYBottom + 1 so can check for collision
+        #Note: y-axis is negative for pixel position
         #TODO magic values
-        entityYTop = entity.position.y + entity.height * 0.5
-        entityYBottom = entity.position.y + entity.height
+        entityYTop = -entity.position.y - entity.height * 0.5
+        entityYBottom = -entity.position.y - entity.height - 1
         entityXLeft = entity.position.x + entity.width * 0.25
         entityXRight = entity.position.x + entity.width * 0.75
 
         #print("isEntityOnTerrain entity: " + str(entityXLeft) + ", " + str(entityYTop) + " to " + str(entityXRight) + ", " + str(entityYBottom))
 
-        #Calculate the max x/y positions for Terrain to check if Entity on top of, converting from pixel position, note: y-axis is negative for pixel position
-        checkYTop = int(-entity.position.y / Terrain.TERRAIN_SIZE) + 1
-        checkYBottom = int(-entity.position.y / Terrain.TERRAIN_SIZE) - 1
-        checkXLeft = int(entity.position.x / Terrain.TERRAIN_SIZE) - 1
-        checkXRight = int(entity.position.x / Terrain.TERRAIN_SIZE) + 1
+        #Calculate the max x/y positions for Terrain around Entity to check if Entity on top of, converting from pixel position
+        checkYTop = int(entityYTop / Terrain.TERRAIN_SIZE) + 1
+        checkYBottom = int(entityYBottom / Terrain.TERRAIN_SIZE) - 1
+        checkXLeft = int(entityXLeft / Terrain.TERRAIN_SIZE) - 1
+        checkXRight = int(entityXRight / Terrain.TERRAIN_SIZE) + 1
 
         #print("isEntityOnTerrain check: " + str(checkXLeft) + ", " + str(checkYTop) + " to " + str(checkXRight) + ", " + str(checkYBottom))
 
@@ -341,14 +343,14 @@ class World:
         for x in range(checkXLeft, checkXRight + 1):
             xLeft, xRight = x * Terrain.TERRAIN_SIZE, (x + 1) * Terrain.TERRAIN_SIZE
             #If x is a valid key in self.terrainTypes and x is between the left and right Terrain x values
-            if x in self.terrainTypes.keys() and xLeft < entityXRight and entityXLeft < xRight:
+            if x in self.terrainTypes.keys() and xLeft < entityXRight and xRight > entityXLeft:
                 #For all Terrain y positions to check
                 for y in range(checkYBottom, checkYTop + 1):
                     #If y is a valid key in self.terrainTypes
                     if y in self.terrainTypes[x].keys():
-                        yTop, yBottom = -y * Terrain.TERRAIN_SIZE, (-y - 1) * Terrain.TERRAIN_SIZE
+                        yTop, yBottom = y * Terrain.TERRAIN_SIZE, (y - 1) * Terrain.TERRAIN_SIZE
                         #If y is between the bottom and top Terrain y values, return the Terrains position
-                        if yTop > -entityYBottom and yBottom > -entityYTop:
+                        if yTop > entityYBottom and yBottom < entityYTop:
                             return Vector2f(x * Terrain.TERRAIN_SIZE, -y * Terrain.TERRAIN_SIZE)
 
         return None
@@ -356,6 +358,7 @@ class World:
     #Move a Node
     def nodeMove(self, node, dirX, dirY):
         #Calculate facts about the new Node position used for detecting whether the Node will collide with something
+        #Note: y-axis is negative for pixel position
         #TODO rename newYTop?
         nodeYTop = -node.position.y - dirY
         nodeYBottom = -node.position.y - node.height - dirY
@@ -364,7 +367,7 @@ class World:
 
         #print("nodeMove node: " + str(nodeXLeft) + ", " + str(nodeYTop) + " to " + str(nodeXRight) + ", " + str(nodeYBottom))
 
-        #Calculate the max x/y positions for Terrain to check if Node will collide width, converting from pixel position, note: y-axis is negative for pixel position
+        #Calculate the max x/y positions for Terrain around Node to check if Node will collide width, converting from pixel position
         checkYTop = int(nodeYTop / Terrain.TERRAIN_SIZE) + 1
         checkYBottom = int(nodeYBottom / Terrain.TERRAIN_SIZE) - 1
         checkXLeft = int(nodeXLeft / Terrain.TERRAIN_SIZE) - 1
