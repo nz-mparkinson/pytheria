@@ -94,7 +94,7 @@ class Entity(Node):
     def attackMelee(self):
         if self.meleeTimeLeft < 0:
             #Set meleeTimeLeft
-            self.meleeTimeLeft += self.meleeRateOfFire
+            self.meleeTimeLeft = self.meleeRateOfFire
 
             return True
 
@@ -104,7 +104,7 @@ class Entity(Node):
     def attackRanged(self):
         if self.rangedTimeLeft < 0 and self.hasRangedAmmo():
             #Set rangedTimeLeft
-            self.rangedTimeLeft += self.rangedRateOfFire
+            self.rangedTimeLeft = self.rangedRateOfFire
             #Rmove ranged Ammo
             self.rangedAmmo -= self.rangedAmmoCost
 
@@ -116,7 +116,7 @@ class Entity(Node):
     def attackSpell(self):
         if self.spellTimeLeft < 0 and self.hasSpellMana():
             #Set spellTimeLeft
-            self.spellTimeLeft += self.spellRateOfFire
+            self.spellTimeLeft = self.spellRateOfFire
             #Remove Spell mana cost
             self.manaCurrent -= self.spellManaCost
 
