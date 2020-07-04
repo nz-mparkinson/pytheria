@@ -137,8 +137,8 @@ class Game:
             pos = pygame.mouse.get_pos()
 
             #Calculate the mouse position in the world
-            posX = self.player.position.x + pos[0] - self.widthHalf
-            posY = self.player.position.y + pos[1] - self.heightHalf
+            posX = self.player.position.x + self.player.widthHalf + pos[0] - self.widthHalf
+            posY = self.player.position.y + self.player.heightHalf + pos[1] - self.heightHalf
 
             #Get the Node near the mouse
             temp = self.world.getClosestNode(Vector2f(posX, posY), self.SELECT_RANGE)
