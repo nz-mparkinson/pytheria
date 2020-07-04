@@ -27,7 +27,7 @@ class World:
     
     #World limits
     WORLD_HEIGHT_MAX = 128		#The max height of the world
-    WORLD_VIEW_HEIGHT = 7		#the max height to display
+    WORLD_VIEW_HEIGHT = 7		#The max height to display
     WORLD_VIEW_WIDTH = 10		#The max width to display
     WORLD_WIDTH_MAX = 1024		#The max width of the world
 
@@ -44,7 +44,7 @@ class World:
 
         self.terrain = []		#Viewable Terrain, lazy loaded/pruned, derived from self.terrainTypes, used for bulk updates/draw calls
         self.terrainNodes = {}		#Viewable Terrain, lazy loaded/pruned, derived from self.terrainTypes, used for collision detection
-        self.terrainTypes = {}		#Terrain stored as enums, with the shape { xPos -> { yPos -> Terrain Type } }, ground/sea level having a yPos of 0
+        self.terrainTypes = {}		#Terrain stored as enums, with the shape { posX -> { posY -> Terrain Type } }, ground/sea level having a posY of 0
 
         self.selectables = []		#Objects that are selectable by the Player, Entitys/Terrain
 
@@ -81,16 +81,16 @@ class World:
         #Add an enemy Entity
         self.addEntity(Entity.Entity(50, 0, 0, 0, 0, Team.ENEMY, EntityType.ROBOT))
 
-    #Create Terrain at xPos with height
-    def createTerrain(self, xPos, height):
-        #print("Creating Terrain Types: " + str(xPos) + " - " + str(height))
+    #Create Terrain at posX with height
+    def createTerrain(self, posX, height):
+        #print("Creating Terrain Types: " + str(posX) + " - " + str(height))
         
-        #Initialize the terrainTypes dict for xPos
-        self.terrainTypes[xPos] = {}
+        #Initialize the terrainTypes dict for posX
+        self.terrainTypes[posX] = {}
         
         #For the height of the Terrain, add Terrain
         for i in range(-self.WORLD_DEFAULT_HEIGHT, -self.WORLD_DEFAULT_HEIGHT + height):
-           self.terrainTypes[xPos][i] = TerrainType.DIRT
+           self.terrainTypes[posX][i] = TerrainType.DIRT
 
     #Create the next Terrain height
     def createTerrainHeight(self, previousHeight):
@@ -123,13 +123,13 @@ class World:
         self.selectables.append(node)
 
     #Ensure that only the Terrain that should be visible is
-    def ensureTerrainVisible(self, xPos, yPos):
+    def ensureTerrainVisible(self, posX, posY):
         #Calculate the max x/y positions for Terrain that should be visible, converting from pixel position
         #Note: y-axis is negative for pixel position
-        checkYTop = int(-yPos / Terrain.TERRAIN_SIZE) + self.WORLD_VIEW_HEIGHT + 1	#TODO adjustment for drawing from top left
-        checkYBottom = int(-yPos / Terrain.TERRAIN_SIZE) - self.WORLD_VIEW_HEIGHT
-        checkXLeft = int(xPos / Terrain.TERRAIN_SIZE) - self.WORLD_VIEW_WIDTH - 1	#TODO adjustment for drawing from top left
-        checkXRight = int(xPos / Terrain.TERRAIN_SIZE) + self.WORLD_VIEW_WIDTH
+        checkYTop = int(-posY / Terrain.TERRAIN_SIZE) + self.WORLD_VIEW_HEIGHT + 1	#TODO adjustment for drawing from top left
+        checkYBottom = int(-posY / Terrain.TERRAIN_SIZE) - self.WORLD_VIEW_HEIGHT
+        checkXLeft = int(posX / Terrain.TERRAIN_SIZE) - self.WORLD_VIEW_WIDTH - 1	#TODO adjustment for drawing from top left
+        checkXRight = int(posX / Terrain.TERRAIN_SIZE) + self.WORLD_VIEW_WIDTH
 
         #print("ensureTerrainVisible check: " + str(checkXLeft) + ", " + str(checkYTop) + " to " + str(checkXRight) + ", " + str(checkYBottom))
 
