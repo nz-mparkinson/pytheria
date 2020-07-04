@@ -62,17 +62,10 @@ class World:
         self.gravity = self.GRAVITY_DEFAULT
         self.maxSpeed = self.MAX_SPEED_DEFAULT
 
-        #Add Terrain with random heights to the left/right of the Player
-        terrainHeightLeft, terrainHeightRight = self.WORLD_DEFAULT_HEIGHT, self.WORLD_DEFAULT_HEIGHT
+        #Add Terrain to the left/right of the Player
         for i in range(0, self.WORLD_DEFAULT_WIDTH):
-            #If far enough from the Player start position, get the new height for the next Terrain on the left/right
-            if i > self.WORLD_DEFAULT_HEIGHT_WIDTH:
-                terrainHeightLeft = self.createTerrainHeight(terrainHeightLeft)
-                terrainHeightRight = self.createTerrainHeight(terrainHeightRight)
-
-            #Add Terrain to the left/right
-            self.createTerrain(-i - 1, terrainHeightLeft)
-            self.createTerrain(i, terrainHeightRight)
+            self.generateTerrain(-i - 1)
+            self.generateTerrain(i)
 
         #Add floating Terrain as a test
         self.terrainTypes[-1][5] = TerrainType.DIRT
@@ -80,29 +73,6 @@ class World:
 
         #Add an enemy Entity
         self.addEntity(Entity.Entity(50, 0, 0, 0, 0, Team.ENEMY, EntityType.ROBOT))
-
-    #Create Terrain at posX with height
-    def createTerrain(self, posX, height):
-        #print("Creating Terrain Types: " + str(posX) + " - " + str(height))
-
-        #Initialize the terrainTypes dict for posX
-        self.terrainTypes[posX] = {}
-
-        #For the height of the Terrain, add Terrain
-        for i in range(-self.WORLD_DEFAULT_HEIGHT, -self.WORLD_DEFAULT_HEIGHT + height):
-           self.terrainTypes[posX][i] = TerrainType.DIRT
-
-    #Create the next Terrain height
-    def createTerrainHeight(self, previousHeight):
-        newHeight = previousHeight + random.randrange(-self.WORLD_DEFAULT_HEIGHT_STEP, self.WORLD_DEFAULT_HEIGHT_STEP + 1)
-
-        #Ensure newHeight is within limits
-        if newHeight < self.WORLD_DEFAULT_HEIGHT - self.WORLD_DEFAULT_HEIGHT_RANGE:
-            newHeight = self.WORLD_DEFAULT_HEIGHT - self.WORLD_DEFAULT_HEIGHT_RANGE
-        elif newHeight > self.WORLD_DEFAULT_HEIGHT + self.WORLD_DEFAULT_HEIGHT_RANGE:
-            newHeight = self.WORLD_DEFAULT_HEIGHT + self.WORLD_DEFAULT_HEIGHT_RANGE
-
-        return newHeight
 
     #Generate new Terrain at posX
     def generateTerrain(self, posX):
@@ -116,7 +86,6 @@ class World:
         #If posX is left of the default area, use the previous left Terrain to calculate the new height
         if posX < -self.WORLD_DEFAULT_HEIGHT_WIDTH:
             previousHeight = self.WORLD_DEFAULT_HEIGHT + max(self.terrainTypes[posX + 1].keys())
-            print(previousHeight)
             terrainHeight = previousHeight + random.randrange(-self.WORLD_DEFAULT_HEIGHT_STEP, self.WORLD_DEFAULT_HEIGHT_STEP + 1)
         #If posX is right of the default area, use the previous right Terrain to calculate the new height
         elif self.WORLD_DEFAULT_HEIGHT_WIDTH < posX:
@@ -128,10 +97,10 @@ class World:
         elif terrainHeight > self.WORLD_DEFAULT_HEIGHT + self.WORLD_DEFAULT_HEIGHT_RANGE:
             terrainHeight = self.WORLD_DEFAULT_HEIGHT + self.WORLD_DEFAULT_HEIGHT_RANGE
 
-        print("\tHeight: " + str(terrainHeight))
+        #print("\tHeight: " + str(terrainHeight))
 
         #For the height of the Terrain, add Terrain
-        for i in range(-self.WORLD_DEFAULT_HEIGHT, -self.WORLD_DEFAULT_HEIGHT + terrainHeight):
+        for i in range(-self.WORLD_DEFAULT_HEIGHT, -self.WORLD_DEFAULT_HEIGHT + terrainHeight + 1):
            self.terrainTypes[posX][i] = TerrainType.DIRT
 
     #Add an Ammo to the World
