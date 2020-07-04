@@ -359,7 +359,6 @@ class World:
     def nodeMove(self, node, dirX, dirY):
         #Calculate facts about the new Node position used for detecting whether the Node will collide with something
         #Note: y-axis is negative for pixel position
-        #TODO rename newYTop?
         nodeYTop = -node.position.y - dirY
         nodeYBottom = -node.position.y - node.height - dirY
         nodeXLeft = node.position.x + dirX
@@ -433,7 +432,9 @@ class World:
             #If no collision has happened, check all Entitys for a collision
             if collision is False:
                 for entity in self.entitys:
-                    if node.team is not entity.team and False: #TODO hit
+                    xLeft, xRight = entity.position.x, entity.position.x + entity.width
+                    yTop, yBottom = -entity.position.y, -entity.position.y - entity.height
+                    if node.team is not entity.team and xLeft < nodeXRight and xRight > nodeXLeft and yTop > nodeYBottom and yBottom < nodeYTop:
                         self.entityHit(entity, node.damage)
                         collision = True
 
