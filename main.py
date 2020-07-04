@@ -105,8 +105,8 @@ class Game:
             pressed1, pressed2, pressed3 = pygame.mouse.get_pressed()
 
             #Calculate the mouse position in the world
-            posX = self.player.position.x + pos[0] - self.widthHalf
-            posY = self.player.position.y + pos[1] - self.heightHalf
+            posX = self.player.position.x + self.player.widthHalf + pos[0] - self.widthHalf
+            posY = self.player.position.y + self.player.heightHalf + pos[1] - self.heightHalf
 
             #If the left mouse pressed, attack
             if pressed1:
@@ -164,7 +164,7 @@ class Game:
         self.screen.blit(self.background, (0, 0))
 
         #Calculate the Player position relative to the centre of the screen
-        playerX, playerY = self.player.position.x - self.widthHalf, self.player.position.y - self.heightHalf
+        playerX, playerY = self.player.position.x + self.player.widthHalf - self.widthHalf, self.player.position.y + self.player.heightHalf - self.heightHalf
 
         #Draw all Terrain
         for node in self.world.terrain:
@@ -174,7 +174,7 @@ class Game:
             if node is not self.player:
                 self.screen.blit(node.image, (int(node.position.x - playerX), int(node.position.y - playerY)))
         #Draw the Player in the centre of the screen
-        self.screen.blit(self.player.image, (self.widthHalf, self.heightHalf))
+        self.screen.blit(self.player.image, (self.widthHalf - self.player.widthHalf, self.heightHalf - self.player.heightHalf))
         #print("Player Position: " + str(self.player.position.x) +", "+ str(-self.player.position.y))
         #Draw all Ammo
         for node in self.world.ammo:

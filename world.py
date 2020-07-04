@@ -28,7 +28,7 @@ class World:
     #World limits
     WORLD_HEIGHT_MAX = 128		#The max height of the world
     WORLD_VIEW_HEIGHT = 7		#The max height to display
-    WORLD_VIEW_WIDTH = 10		#The max width to display
+    WORLD_VIEW_WIDTH = 11		#The max width to display
     WORLD_WIDTH_MAX = 1024		#The max width of the world
 
     #Define the constructor
@@ -128,9 +128,9 @@ class World:
     def ensureTerrainVisible(self, posX, posY):
         #Calculate the max x/y positions for Terrain that should be visible, converting from pixel position
         #Note: y-axis is negative for pixel position
-        checkYTop = int(-posY / Terrain.TERRAIN_SIZE) + self.WORLD_VIEW_HEIGHT + 1	#TODO adjustment for drawing from top left
+        checkYTop = int(-posY / Terrain.TERRAIN_SIZE) + self.WORLD_VIEW_HEIGHT
         checkYBottom = int(-posY / Terrain.TERRAIN_SIZE) - self.WORLD_VIEW_HEIGHT
-        checkXLeft = int(posX / Terrain.TERRAIN_SIZE) - self.WORLD_VIEW_WIDTH - 1	#TODO adjustment for drawing from top left
+        checkXLeft = int(posX / Terrain.TERRAIN_SIZE) - self.WORLD_VIEW_WIDTH
         checkXRight = int(posX / Terrain.TERRAIN_SIZE) + self.WORLD_VIEW_WIDTH
 
         #print("ensureTerrainVisible check: " + str(checkXLeft) + ", " + str(checkYTop) + " to " + str(checkXRight) + ", " + str(checkYBottom))
