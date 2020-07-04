@@ -413,21 +413,21 @@ class World:
                                 if dirX < 0:
                                     dirX = 0
                                 node.direction.x = 0
-                                #print("Hit2")
+                                #print("Hit2" + str(dirX))
                             if -dirY > 0 and yBottom >= -node.position.y:
                                 dirY = yBottom - -node.position.y
                                 dirY = -dirY
                                 if -dirY < 0:
                                     dirY = 0
                                 node.direction.y = 0
-                                print("Hit3: " + str(dirY))
+                                #print("Hit3 dirY: " + str(dirY))
                             elif -dirY < 0 and yTop <= -node.position.y - node.height:
-                                dirY = yTop - node.position.y + node.height
+                                dirY = yTop - -node.position.y + node.height
                                 dirY = -dirY
                                 if -dirY > 0:
                                     dirY = 0
                                 node.direction.y = 0
-                                print("Hit4: " + str(dirY))
+                                #print("Hit4: " + str(dirY))
 
         #If Node is an ammo
         if node.nodeType == NodeType.AMMO:
