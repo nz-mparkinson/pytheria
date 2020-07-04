@@ -85,11 +85,15 @@ class World:
         terrainHeight = self.WORLD_DEFAULT_HEIGHT
         #If posX is left of the default area, use the previous left Terrain to calculate the new height
         if posX < -self.WORLD_DEFAULT_HEIGHT_WIDTH:
+            if (posX + 1) not in self.terrainTypes.keys():
+                self.generateTerrain(posX + 1)
             previousHeight = self.WORLD_DEFAULT_HEIGHT + max(self.terrainTypes[posX + 1].keys()) + 1
             random.seed(int(self.seedValue * posX))
             terrainHeight = previousHeight + random.randrange(-self.WORLD_DEFAULT_HEIGHT_STEP, self.WORLD_DEFAULT_HEIGHT_STEP + 1)
         #If posX is right of the default area, use the previous right Terrain to calculate the new height
         elif self.WORLD_DEFAULT_HEIGHT_WIDTH < posX:
+            if (posX - 1) not in self.terrainTypes.keys():
+                self.generateTerrain(posX - 1)
             previousHeight = self.WORLD_DEFAULT_HEIGHT + max(self.terrainTypes[posX - 1].keys()) + 1
             random.seed(str(self.seedValue * posX))
             terrainHeight = previousHeight + random.randrange(-self.WORLD_DEFAULT_HEIGHT_STEP, self.WORLD_DEFAULT_HEIGHT_STEP + 1)
