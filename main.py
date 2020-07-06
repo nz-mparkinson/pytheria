@@ -9,7 +9,7 @@ from world import *
 
 #Define a class for the Game
 class Game:
-    SELECT_RANGE = 4
+    SELECT_RANGE = 1
 
     #Define the constructor
     def __init__(self, width, height, maxFPS):

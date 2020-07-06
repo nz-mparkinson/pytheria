@@ -309,7 +309,7 @@ class World:
 
     #Get the closest Entity optionally within a range and not belonging to the same team as entity
     def getClosestEntity(self, entity, range):
-        return self.getClosestNode(entity.position, range, entity.team)
+        return self.getClosestNode(entity.getCentre(), range, entity.team)
 
     #Get the closest Node, optionally with range and !team
     def getClosestNode(self, position, range, team):
@@ -318,12 +318,31 @@ class World:
 
         #For all selectable Nodes eg. Entity/Terrain
         for node in self.selectables:
-            #If team isn't set or Node has no Team or Node team isn't team
+            #If team isn't set or Node has a Team and Node team isn't team
             if team is None or (node.team is not None and node.team != team):
-                if closestNode is None or closestDistanceSQ > position.getLengthTo(node.getCentre()) - node.widthHalf:
-                    if range is None or range >= position.getLengthTo(node.getCentre()) - node.widthHalf:
+                #Find the closest x within the Nodes area
+                closeX = position.x
+                if closeX < node.position.x:
+                    closeX = node.position.x
+                elif closeX > node.position.x + node.width:
+                    closeX = node.position.x + node.width
+
+                #Find the closest y within the Nodes area
+                closeY = position.y
+                if closeY < node.position.y:
+                    closeY = node.position.y
+                elif closeY > node.position.y + node.height:
+                    closeY = node.position.y + node.height
+
+                #Calculate the distance from position to the closest point within the Nodes area
+                nodeDistanceSQ = position.getLengthToSQ(Vector2f(closeX, closeY))
+
+                #If closestNode isn't set or node is closer
+                if closestNode is None or closestDistanceSQ > nodeDistanceSQ:
+                    #If range isn't set or range is bigger than nodeDistanceSQ
+                    if range is None or range * range >= nodeDistanceSQ:
                         closestNode = node
-                        closestDistanceSQ = position.getLengthTo(node.getCentre()) - node.widthHalf
+                        closestDistanceSQ = nodeDistanceSQ
 
         return closestNode
 
