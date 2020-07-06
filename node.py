@@ -19,7 +19,7 @@ class Team(Enum):
     FRIEND = 1
     ENEMY = 2
 
-#Define a class for Nodes, objects within the game
+#Define a class for Nodes, visible objects within the game
 class Node:
     #Define the constructor
     def __init__(self, nodeType, width, height, posX, posY, rotation, dirX, dirY, imageString, team, name):
@@ -49,7 +49,7 @@ class Node:
 
     #Define a Node factory
     def Node(width, height, posX, posY, imageString):
-        return Node(NodeType.EFFECT, width, height, posX, posY, 0, 0, 0, imageString, -1, "Node")
+        return Node(NodeType.EFFECT, width, height, posX, posY, 0, 0, 0, imageString, None, "Node")
 
     #Accelerate the Node in a direction
     def accelerate(self, x, y):
@@ -65,7 +65,7 @@ class Node:
         if self.direction.getLengthSQ() > maxSpeed * maxSpeed:
             self.direction.setLength(maxSpeed)
 
-    #Flip the Node image
+    #Flip the Node image horizontally
     def flipImage(self):
         self.image = pygame.transform.flip(self.image, 1, 0)
 
@@ -75,16 +75,16 @@ class Node:
         else:
             self.imageFlip = True
 
-    #Get centre positon
-    def getCentre(self):
+    #Get center positon
+    def getCenter(self):
         return Vector2f(self.position.x + self.widthHalf, self.position.y + self.heightHalf)
 
-    #Get centre positon x
-    def getCentreX(self):
+    #Get center positon x
+    def getCenterX(self):
         return self.position.x + self.widthHalf
 
-    #Get centre positon
-    def getCentreY(self):
+    #Get center positon
+    def getCenterY(self):
         return self.position.y + self.heightHalf
 
     #Get whether a Node is inside another Node
@@ -129,7 +129,7 @@ class Node:
     #Set the Node height
     def setHeight(self, height):
         self.height = height
-        self.heightHalf = height / 2
+        self.heightHalf = height // 2
         self.image = pygame.transform.scale(self.image, (self.width, height))
 
     #set the Node image
@@ -171,7 +171,7 @@ class Node:
     #Set the Node width
     def setWidth(self, width):
         self.width = width
-        self.widthHalf = width / 2
+        self.widthHalf = width // 2
         self.image = pygame.transform.scale(self.image, (width, self.height))
 
     #Update the Node status

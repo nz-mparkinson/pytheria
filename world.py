@@ -187,10 +187,8 @@ class World:
 
         #If the entity has a target
         if target:
-            #Get the targets relative positon, adjusting for position being top left
-            relativePosition = target.position - entity.position
-            relativePosition.x += target.widthHalf - entity.widthHalf
-            relativePosition.y += target.heightHalf - entity.heightHalf
+            #Get the targets relative positon
+            relativePosition = target.getCenter() - entity.getCenter()
 
             #Move towards it
             if relativePosition.x < 0:
@@ -203,11 +201,11 @@ class World:
                 if entity.attackType is AttackType.MELEE:
                     self.entityAttackMelee(entity)
                 elif entity.attackType is AttackType.RANGED:
-                    self.entityAttackRanged(entity, target.position.x, target.position.y)
+                    self.entityAttackRanged(entity, target.getCenterX(), target.getCenterY())
                 elif entity.attackType is AttackType.SPELL:
-                    self.entityAttackSpell(entity, target.position.x, target.position.y)
+                    self.entityAttackSpell(entity, target.getCenterX(), target.getCenterY())
                 elif entity.attackType is AttackType.SUMMON:
-                    self.entityAttackSummon(entity, target.position.x, target.position.y)
+                    self.entityAttackSummon(entity, target.getCenterX(), target.getCenterY())
 
             #TODO AI, jump only when required
             #self.entityJump(entity)
@@ -227,7 +225,7 @@ class World:
             posX = entity.position.x - entity.widthHalf * 0.25
             if entity.movement.x > 0:
                 posX = entity.position.x + entity.widthHalf * 0.75
-            posY = entity.position.y + entity.heightHalf // 2
+            posY = entity.position.y + entity.heightHalf * 0.5
 
             #Add an Effect
             self.addEffect(Effect.Melee(entity.widthHalf, entity.height // 3, posX, posY, entity.movement.x, 0))
@@ -236,11 +234,11 @@ class World:
     def entityAttackRanged(self, entity, targetX, targetY):
         #If the Entity can attack using ranged
         if entity.attackRanged():
-            #Because position tracks the top left corner of the object the following calculatings are required
-            posX = entity.position.x + entity.widthHalf - Ammo.AMMO_SIZE_HALF
-            posY = entity.position.y + entity.heightHalf - Ammo.AMMO_SIZE_HALF
-            dirX = targetX - entity.position.x - entity.widthHalf
-            dirY = targetY - entity.position.y - entity.heightHalf
+            #Get the position and direction relative to the Entity position
+            posX = entity.getCenterX() - Ammo.AMMO_SIZE_HALF
+            posY = entity.getCenterY() - Ammo.AMMO_SIZE_HALF
+            dirX = targetX - entity.getCenterX()
+            dirY = targetY - entity.getCenterY()
 
             #Create the Ammo
             self.addAmmo(Ammo.Ammo(posX, posY, dirX, dirY, entity.team, AmmoType.RANGED, entity.rangedDamage, entity.rangedRange, entity.rangedSpeed))
@@ -249,11 +247,11 @@ class World:
     def entityAttackSpell(self, entity, targetX, targetY):
         #If the Entity can attack using a spell
         if entity.attackSpell():
-            #Because position tracks the top left corner of the object the following calculatings are required
-            posX = entity.position.x + entity.widthHalf - Ammo.AMMO_SIZE_HALF
-            posY = entity.position.y + entity.heightHalf - Ammo.AMMO_SIZE_HALF
-            dirX = targetX - entity.position.x - entity.widthHalf
-            dirY = targetY - entity.position.y - entity.heightHalf
+            #Get the position and direction relative to the Entity position
+            posX = entity.getCenterX() - Ammo.AMMO_SIZE_HALF
+            posY = entity.getCenterY() - Ammo.AMMO_SIZE_HALF
+            dirX = targetX - entity.getCenterX()
+            dirY = targetY - entity.getCenterY()
 
             #Create the Ammo
             self.addAmmo(Ammo.Ammo(posX, posY, dirX, dirY, entity.team, AmmoType.SPELL, entity.spellDamage, entity.spellRange, entity.spellSpeed))
@@ -263,8 +261,8 @@ class World:
         #If the Entity can attack using a spell
         if entity.attackSpell():
             #Because position tracks the top left corner of the object the following calculatings are required
-            posX = targetX - entity.widthHalf
-            posY = targetY - entity.heightHalf
+            posX = targetX - Entity.WIDTH_DEFAULT
+            posY = targetY - Entity.HEIGHT_DEFAULT
 
             #Add an Effect/Entity
             self.addEffect(Effect.ExplosionVertical(entity.width, entity.height, posX, posY))
@@ -309,7 +307,7 @@ class World:
 
     #Get the closest Entity optionally within a range and not belonging to the same team as entity
     def getClosestEntity(self, entity, range):
-        return self.getClosestNode(entity.getCentre(), range, entity.team)
+        return self.getClosestNode(entity.getCenter(), range, entity.team)
 
     #Get the closest Node, optionally with range and !team
     def getClosestNode(self, position, range, team):
