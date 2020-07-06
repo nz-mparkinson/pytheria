@@ -187,8 +187,10 @@ class World:
 
         #If the entity has a target
         if target:
-            #Get its relative positon
+            #Get the targets relative positon, adjusting for position being top left
             relativePosition = target.position - entity.position
+            relativePosition.x += target.widthHalf - entity.widthHalf
+            relativePosition.y += target.heightHalf - entity.heightHalf
 
             #Move towards it
             if relativePosition.x < 0:
