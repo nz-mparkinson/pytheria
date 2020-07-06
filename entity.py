@@ -10,6 +10,11 @@ class AttackType(Enum):
     SPELL = 3
     SUMMON = 4
 
+#Define an Enum for EntityImage
+class EntityImage(Enum):
+    HUMAN = "./resources/entity_human.png"
+    ROBOT = "./resources/entity_robot.png"
+
 #Define an Enum for EntityState
 class EntityState(Enum):
     NORMAL = 1
@@ -20,11 +25,6 @@ class EntityState(Enum):
 class EntityType(Enum):
     HUMAN = 1
     ROBOT = 2
-
-#Define an Enum for EntityImage
-class EntityImage(Enum):
-    HUMAN = "./resources/entity_human.png"
-    ROBOT = "./resources/entity_robot.png"
 
 #Define a class for Entitys
 class Entity(Node):
@@ -40,6 +40,8 @@ class Entity(Node):
         self.type = type
 
         #Set Entity fields
+        self.attackRange = 20
+        self.attackRangeSQ = self.attackRange * self.attackRange
         self.attackStyle = AttackType.MELEE
         self.attackType = AttackType.MELEE
         self.healthCurrent = 10
@@ -68,9 +70,6 @@ class Entity(Node):
         self.spellTimeLeft = -1
         self.state = EntityState.NORMAL
 
-        self.attackRange = self.meleeRange
-        self.attackRangeSQ = self.meleeRange * self.meleeRange
-
         #Set Entity pointers
         self.healthBar = None
         self.target = None
@@ -92,8 +91,8 @@ class Entity(Node):
 
     #Have the Entity attack using Melee, returning True if successful
     def attackMelee(self):
+        #If can attack using Melee, set meleeTimeLeft
         if self.meleeTimeLeft < 0:
-            #Set meleeTimeLeft
             self.meleeTimeLeft = self.meleeRateOfFire
 
             return True
@@ -102,10 +101,9 @@ class Entity(Node):
 
     #Have the Entity attack using Ranged, returning True if successful
     def attackRanged(self):
+        #If can attack using Ranged, set rangedTimeLeft and remove Ranged Ammo
         if self.rangedTimeLeft < 0 and self.hasRangedAmmo():
-            #Set rangedTimeLeft
             self.rangedTimeLeft = self.rangedRateOfFire
-            #Rmove ranged Ammo
             self.rangedAmmo -= self.rangedAmmoCost
 
             return True
@@ -114,10 +112,9 @@ class Entity(Node):
 
     #Have the Entity attack using Spell, returning True if successful
     def attackSpell(self):
+        #If can attack using Spell, set spellTimeLeft and remove Spell mana cost
         if self.spellTimeLeft < 0 and self.hasSpellMana():
-            #Set spellTimeLeft
             self.spellTimeLeft = self.spellRateOfFire
-            #Remove Spell mana cost
             self.manaCurrent -= self.spellManaCost
 
             return True
@@ -126,21 +123,24 @@ class Entity(Node):
 
     #Get whether the Entity can attack with the current attackType
     def canAttack(self):
+        #Depending on the attackType and whether the Entity can attack, return True
         if self.attackType is AttackType.MELEE and self.meleeTimeLeft < 0:
             return True
-        if self.attackType is AttackType.RANGED and self.rangedTimeLeft < 0 and self.hasRangedAmmo():
+        elif self.attackType is AttackType.RANGED and self.rangedTimeLeft < 0 and self.hasRangedAmmo():
             return True
-        if self.attackType is AttackType.SPELL and self.spellTimeLeft < 0 and self.hasSpellMana():
+        elif self.attackType is AttackType.SPELL and self.spellTimeLeft < 0 and self.hasSpellMana():
             return True
-        if self.attackType is AttackType.SUMMON and self.spellTimeLeft < 0 and self.hasSpellMana():
+        elif self.attackType is AttackType.SUMMON and self.spellTimeLeft < 0 and self.hasSpellMana():
             return True
 
         return False
 
-    #Damage the Entity, return true if the Entity dies
+    #Damage the Entity and update its state if it dies
     def damage(self, damage):
         if self.state is EntityState.NORMAL:
             self.healthCurrent -= damage
+            if self.healthCurrent < 0:
+                self.state = EntityState.DEAD
 
     #Get the Entitys jump height
     def getJumpHeight(self):
@@ -226,8 +226,7 @@ class Entity(Node):
         self.spellTimeLeft -= frameDeltaTime
 
         #If the Entity is dead, return True
-        if self.healthCurrent <= 0:
-            self.state = EntityState.DEAD
+        if self.state is EntityState.DEAD:
             return True
 
         #Regen health

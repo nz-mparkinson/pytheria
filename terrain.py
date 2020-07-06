@@ -3,19 +3,6 @@
 #Import libraries
 from node import *
 
-#Define an Enum for TerrainType
-class TerrainType(Enum):
-    WATER = 1
-    SAND = 2
-    DIRT = 3
-    COPPER = 4
-    TIN = 5
-    IRON = 6
-    COAL = 7
-    SILVER = 8
-    GOLD = 9
-    PLATINUM = 10
-
 #Define an Enum for TerrainImage
 class TerrainImage(Enum):
     WATER = "./resources/terrain_water.png"
@@ -28,6 +15,19 @@ class TerrainImage(Enum):
     SILVER = "./resources/terrain_silver.png"
     GOLD = "./resources/terrain_gold.png"
     PLATINUM = "./resources/terrain_platinum.png"
+
+#Define an Enum for TerrainType
+class TerrainType(Enum):
+    WATER = 1
+    SAND = 2
+    DIRT = 3
+    COPPER = 4
+    TIN = 5
+    IRON = 6
+    COAL = 7
+    SILVER = 8
+    GOLD = 9
+    PLATINUM = 10
 
 #Define a class for Terrain
 class Terrain(Node):

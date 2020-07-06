@@ -3,15 +3,15 @@
 #Import libraries
 from node import *
 
-#Define an Enum for AmmoType
-class AmmoType(Enum):
-    RANGED = 1
-    SPELL = 2
-
 #Define an Enum for AmmoImage
 class AmmoImage(Enum):
     RANGED = "./resources/circle_128.png"
     SPELL = "./resources/circle_128.png"
+
+#Define an Enum for AmmoType
+class AmmoType(Enum):
+    RANGED = 1
+    SPELL = 2
 
 #Define a class for Ammo
 class Ammo(Node):
