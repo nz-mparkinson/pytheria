@@ -183,7 +183,7 @@ class World:
 
         #If the Entity has no target, find the closest enemy
         if not target:
-            target = self.getClosestEntity(entity, None, entity.team)
+            target = self.getClosestEntity(entity, None)
 
         #If the entity has a target
         if target:
@@ -217,7 +217,7 @@ class World:
         #If the Entity can attack using melee
         if entity.attackMelee():
             #Find the closest enemy
-            enemy = self.getClosestEntity(entity, entity.meleeRange, entity.team)
+            enemy = self.getClosestEntity(entity, entity.meleeRange)
 
             #If the enemy was in range, hit
             if enemy:
@@ -307,34 +307,29 @@ class World:
             entity.direction.y = 0
             #entity.jump()   #TODO remove?
 
-    #Get the closest Entity optionally with range and not belonging to the same team
-    def getClosestEntity(self, entity, range, team):
-        closestDistanceSQ = None
-        closestEntity = None
+    #Get the closest Entity optionally within a range and not belonging to the same team as entity
+    def getClosestEntity(self, entity, range):
+        return self.getClosestNode(entity.position, range, entity.team)
 
-        #For all Entitys, find the closest
-        for node in self.entitys:
-            if team is None or node.team != team:
-                if closestEntity is None or closestDistanceSQ > entity.position.getLengthToSQ(node.position):
-                    if range is None or range * range >= entity.position.getLengthToSQ(node.position):
-                        closestEntity = node
-                        closestDistanceSQ = entity.position.getLengthToSQ(node.position)
-
-        return closestEntity
-
-    #Get the closest Node thats selectable, optionally with range
-    def getClosestNode(self, position, range):
+    #Get the closest Node, optionally with range and !team
+    def getClosestNode(self, position, range, team):
         closestDistanceSQ = None
         closestNode = None
 
-        #For all selectable Nodes, find the closest
+        #For all selectable Nodes eg. Entity/Terrain
         for node in self.selectables:
-            if closestNode is None or closestDistanceSQ > position.getLengthTo(node.getCentre()) - node.widthHalf:
-               if range is None or range >= position.getLengthTo(node.getCentre()) - node.widthHalf:
-                   closestNode = node
-                   closestDistanceSQ = position.getLengthTo(node.getCentre()) - node.widthHalf
+            #If team isn't set or Node has no Team or Node team isn't team
+            if team is None or (node.team is not None and node.team != team):
+                if closestNode is None or closestDistanceSQ > position.getLengthTo(node.getCentre()) - node.widthHalf:
+                    if range is None or range >= position.getLengthTo(node.getCentre()) - node.widthHalf:
+                        closestNode = node
+                        closestDistanceSQ = position.getLengthTo(node.getCentre()) - node.widthHalf
 
         return closestNode
+
+    #Get the closest Node thats selectable, optionally with range
+    def getClosestSelectable(self, position, range):
+        return self.getClosestNode(position, range, None)
 
     #Test whether the Entity is on Terrain, returns the Terrain if it is, else None
     def isEntityOnTerrain(self, entity):

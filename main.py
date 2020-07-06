@@ -136,19 +136,20 @@ class Game:
         if event.type == pygame.MOUSEMOTION:
             pos = pygame.mouse.get_pos()
 
-            #Calculate the mouse position in the world
+            #Calculate the mouse position in the World
             posX = self.player.position.x + self.player.widthHalf + pos[0] - self.widthHalf
             posY = self.player.position.y + self.player.heightHalf + pos[1] - self.heightHalf
 
-            #Get the Node near the mouse
-            temp = self.world.getClosestNode(Vector2f(posX, posY), self.SELECT_RANGE)
+            #Get the Node closest to the mouse
+            closest = self.world.getClosestSelectable(Vector2f(posX, posY), self.SELECT_RANGE)
 
-            #Set the Reticle size
-            if temp and temp is not self.selectedNode:
-                self.reticle.setSize(temp.width, temp.height)
+            #If a Node was found and is different from the previous selectedNode, set the new reticle size
+            if closest and closest is not self.selectedNode:
+                self.reticle.setSize(closest.width, closest.height)
                 self.reticle.setColour(Effect.COLOUR_RETICLE[0], Effect.COLOUR_RETICLE[1], Effect.COLOUR_RETICLE[2])
 
-            self.selectedNode = temp
+            #Update selectedNode
+            self.selectedNode = closest
 
         #Remember the key state for the next call
         self.keysPrevious = pygame.key.get_pressed()

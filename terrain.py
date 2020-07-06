@@ -36,7 +36,7 @@ class Terrain(Node):
 
     #Define the constructor
     def __init__(self, posX, posY, imageString, name, type):
-        super().__init__(NodeType.TERRAIN, self.TERRAIN_SIZE, self.TERRAIN_SIZE, posX, posY, 0, 0, 0, imageString, -1, name)
+        super().__init__(NodeType.TERRAIN, self.TERRAIN_SIZE, self.TERRAIN_SIZE, posX, posY, 0, 0, 0, imageString, None, name)
 
         #Set Node fields
         self.type = type
