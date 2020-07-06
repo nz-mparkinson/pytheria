@@ -9,7 +9,7 @@ from world import *
 
 #Define a class for the Game
 class Game:
-    SELECT_RANGE = 1
+    SELECT_RANGE = 1			#How far away an object can be from the mouse and still be selected
 
     #Define the constructor
     def __init__(self, width, height, maxFPS):
@@ -27,7 +27,7 @@ class Game:
         self.running = False
         self.size = width, height
 
-        #Initialize Game pointers
+        #Declare Game pointers
         self.background = None
         self.clock = None
         self.font = None
@@ -44,16 +44,15 @@ class Game:
         #Initialize PyGame
         pygame.init()
         pygame.key.set_repeat(True)
-        
+
+        #Get ready for the Game to start
         self.clock = pygame.time.Clock()
         self.font = pygame.font.SysFont('mono', 20, bold=True)
         self.screen = pygame.display.set_mode(self.size, pygame.HWSURFACE | pygame.DOUBLEBUF)
         self.background = pygame.Surface(self.screen.get_size()).convert()
         self.reticle = Effect.Reticle(self.SELECT_RANGE, self.SELECT_RANGE, 0, 0)
         self.keysPrevious = pygame.key.get_pressed()
-
         self.gui = GUI(self.width, self.height)
-
         self.running = True
 
     #Define a function for event handling
@@ -170,26 +169,30 @@ class Game:
         #Draw all Terrain
         for node in self.world.terrain:
             self.screen.blit(node.image, (int(node.position.x - playerX), int(node.position.y - playerY)))
+
         #Draw all Entitys
         for node in self.world.entitys:
             if node is not self.player:
                 self.screen.blit(node.image, (int(node.position.x - playerX), int(node.position.y - playerY)))
+
         #Draw the Player in the centre of the screen
         self.screen.blit(self.player.image, (int(self.widthHalf - self.player.widthHalf), int(self.heightHalf - self.player.heightHalf)))
         #print("Player Position: " + str(self.player.position.x) +", "+ str(-self.player.position.y))
+
         #Draw all Ammo
         for node in self.world.ammo:
             self.screen.blit(node.image, (int(node.position.x - playerX), int(node.position.y - playerY)))
             print("Ammo Position: " + str(int(node.position.x)) + ", " + str(int(-node.position.y)))
+
         #Draw all Effects
         for node in self.world.effects:
             self.screen.blit(node.image, (int(node.position.x - playerX), int(node.position.y - playerY)))
 
-        #Draw the FPS
+        #Draw the FPS readout
         fps = self.font.render("FPS: {:6.3}{}TIME: {:6.3}".format(self.clock.get_fps(), " "*5, self.playTime), True, (0, 255, 0))
         self.screen.blit(fps, (0, 0))
 
-        #If a Node is selected, draw its name
+        #If a Node is selected, draw its name and position
         if self.selectedNode:
             selectedX, selectedY = int(self.selectedNode.position.x / Terrain.TERRAIN_SIZE), int(self.selectedNode.position.y / Terrain.TERRAIN_SIZE)
             selectedText = self.font.render("Selected: " + self.selectedNode.name + " (" + str(selectedX) + " ," + str(-selectedY) + ")", True, (0, 255, 0))

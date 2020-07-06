@@ -12,7 +12,7 @@ A Terraria like game, implemented in Python using PyGame.
 ## Controls
 
  * Escape - Quit
- 
+
  * Left - Move Left
  * Right - Move Right
  * Up - Move Up
@@ -23,8 +23,8 @@ A Terraria like game, implemented in Python using PyGame.
  * Right Mouse Button - Interact/Mine Terrain/Place Terrain
  * Mouse Wheel - Switch Attack Type
 
- * J - Switch Attack Type Item
- * K - Switch Attack Type Item
+ * J - Switch Attack Style
+ * K - Switch Attack Style
  * H - Switch Attack Type
  * L - Switch Attack Type
 

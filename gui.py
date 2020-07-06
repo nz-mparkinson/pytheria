@@ -42,14 +42,14 @@ class GUI(Node):
         self.nodes = []
         self.selectionTimeLeft = -1
 
-        #Set GUI pointers
+        #Declare GUI pointers
         self.attackTypeReadout = None
         #self.attackTypeReadoutNext = None
-        #self.attackTypeReadoutNextNext = None
+        #self.attackTypeReadoutPrevious = None
         self.attackTypeValue = None
         self.attackStyleReadout = None
         #self.attackStyleReadoutNext = None
-        #self.attackStyleReadoutNextNext = None
+        #self.attackStyleReadoutPrevious = None
         self.attackStyleValue = None
 
         #Create health/mana readouts
@@ -58,11 +58,11 @@ class GUI(Node):
         self.nodes.append(self.healthReadout)
         self.nodes.append(self.manaReadout)
 
-        #Add attackType readout
+        #Create attackType readout
         self.attackTypeReadout = Node.Node(int(self.width * self.SIZE_ATTACK_TYPE), int(self.height * self.SIZE_ATTACK_TYPE * self.aspectRatio), int(self.width * self.POSITION_X_ATTACK_TYPE), int(self.height * self.POSITION_Y_ATTACK_TYPE), self.IMAGE_MELEE)
         self.nodes.append(self.attackTypeReadout)
 
-        #Add attackStyle readout
+        #Create attackStyle readout
         self.attackStyleReadout = Node.Node(int(self.width * self.SIZE_ATTACK_STYLE), int(self.height * self.SIZE_ATTACK_STYLE * self.aspectRatio), int(self.width * self.POSITION_X_ATTACK_STYLE), int(self.height * self.POSITION_Y_ATTACK_STYLE), self.IMAGE_MELEE)
         self.nodes.append(self.attackStyleReadout)
 
@@ -75,20 +75,7 @@ class GUI(Node):
             self.healthReadout.setWidth(int(self.width * self.WIDTH_HEALTH_BAR * player.getHealthPercentage()))
             self.manaReadout.setWidth(int(self.width * self.WIDTH_MANA_BAR * player.getManaPercentage()))
 
-            #If the Player attackType is different then the GUI, update the GUI
-            if self.attackTypeValue is not player.attackType:
-                self.attackTypeValue = player.attackType
-
-                #Depending on the AttackType set the image
-                if self.attackTypeValue is AttackType.MELEE:
-                    self.attackTypeReadout.setImage(self.IMAGE_MELEE)
-                elif self.attackTypeValue is AttackType.RANGED:
-                    self.attackTypeReadout.setImage(self.IMAGE_RANGED)
-                elif self.attackTypeValue is AttackType.SPELL:
-                    self.attackTypeReadout.setImage(self.IMAGE_SPELL)
-                elif self.attackTypeValue is AttackType.SUMMON:
-                    self.attackTypeReadout.setImage(self.IMAGE_SUMMON)
-            #If the Player attackStyle is different then the GUI, update the GUI
+            #If the Player attackStyle is different from the GUI, update the GUI
             if self.attackStyleValue is not player.attackStyle:
                 self.attackStyleValue = player.attackStyle
 
@@ -101,6 +88,20 @@ class GUI(Node):
                     self.attackStyleReadout.setImage(self.IMAGE_SPELL)
                 elif self.attackStyleValue is AttackType.SUMMON:
                     self.attackStyleReadout.setImage(self.IMAGE_SUMMON)
+
+            #If the Player attackType is different from the GUI, update the GUI
+            if self.attackTypeValue is not player.attackType:
+                self.attackTypeValue = player.attackType
+
+                #Depending on the AttackType set the image
+                if self.attackTypeValue is AttackType.MELEE:
+                    self.attackTypeReadout.setImage(self.IMAGE_MELEE)
+                elif self.attackTypeValue is AttackType.RANGED:
+                    self.attackTypeReadout.setImage(self.IMAGE_RANGED)
+                elif self.attackTypeValue is AttackType.SPELL:
+                    self.attackTypeReadout.setImage(self.IMAGE_SPELL)
+                elif self.attackTypeValue is AttackType.SUMMON:
+                    self.attackTypeReadout.setImage(self.IMAGE_SUMMON)
 
 
 

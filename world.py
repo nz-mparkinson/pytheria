@@ -8,7 +8,7 @@ from effect import *
 from entity import *
 from terrain import *
 
-#Define a class for World, which manages all Nodes in a locale
+#Define a class for World, to manage all Nodes in a locale
 class World:
     #GUI
     HEIGHT_HEALTH_BAR = 0.125
@@ -494,7 +494,7 @@ class World:
         self.entitys.remove(node)
         self.selectables.remove(node)
 
-    #Remove an Terrain from the World
+    #Remove an Terrain from the World, note: visible Terrain only
     def removeTerrain(self, node):
         self.terrain.remove(node)
         self.selectables.remove(node)

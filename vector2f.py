@@ -92,13 +92,13 @@ class Vector2f:
     def getLengthSQ(self):
         return self.x * self.x + self.y * self.y
 
-    #Get the Vector length between this vector and the other
+    #Get the distance between the Vector and another
     def getLengthTo(self, other):
         deltaX = other.x - self.x
         deltaY = other.y - self.y
         return math.sqrt(deltaX * deltaX + deltaY * deltaY)
 
-    #Get the Vector length between this vector and the other squared
+    #Get the distance between the Vector and another squared
     def getLengthToSQ(self, other):
         deltaX = other.x - self.x
         deltaY = other.y - self.y
@@ -119,7 +119,7 @@ class Vector2f:
 
     #Set the Vector length
     def setLength(self, length):
-        #Check the Vector2f has length, otherwise its not scalable
+        #Check the Vector has length, otherwise its not scalable
         if self.x != 0 or self.y != 0:
             #Get the factor to scale the Vector2f to length
             factor = length / self.getLength()
@@ -128,7 +128,7 @@ class Vector2f:
             self.x *= factor
             self.y *= factor
 
-    #Conver the Vector to a String
+    #Convert the Vector to a String
     def toString(self):
         return str(self.x) + ", " + str(self.y)
 
