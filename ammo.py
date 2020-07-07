@@ -15,24 +15,24 @@ class AmmoType(Enum):
 
 #Define a class for Ammo
 class Ammo(Node):
-    AMMO_SIZE = 16
-    AMMO_SIZE_HALF = 8
+    AMMO_SIZE = 16					#The size of the Ammo
+    AMMO_SIZE_HALF = 8					#The size of the Ammo halved
 
     #Define the constructor
     def __init__(self, posX, posY, dirX, dirY, imageString, team, type, damage, range, speed):
         super().__init__(NodeType.AMMO, self.AMMO_SIZE, self.AMMO_SIZE, posX, posY, Vector2f(dirX, dirY).getAngle(), dirX, dirY, imageString, team, "Ammo")
 
         #Set Node fields
-        self.type = type
+        self.type = type				#The Ammo type
 
         #Set Ammo fields
-        self.damage = damage
+        self.damage = damage				#The Ammo damage
 
         #Set the Ammo speed
         self.direction.setLength(speed)
 
         #Derive how long the Ammo lasts
-        self.timeLeft = range / speed
+        self.timeLeft = range / speed			#The Ammo timeLeft
 
     #Define a Ammo factory
     def Ammo(posX, posY, dirX, dirY, team, type, damage, range, speed):

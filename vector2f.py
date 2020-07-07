@@ -7,8 +7,8 @@ import math
 class Vector2f:
     #Define the constructor
     def __init__(self, x, y):
-        self.x = x
-        self.y = y
+        self.x = x					#The Vectors position on the x-axis
+        self.y = y					#The Vectors position on the y-axis
 
     #Define the + operator
     def __add__(self, other):

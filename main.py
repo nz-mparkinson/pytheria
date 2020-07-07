@@ -9,35 +9,35 @@ from world import *
 
 #Define a class for the Game
 class Game:
-    SELECT_RANGE = 1			#How far away an object can be from the mouse and still be selected
+    SELECT_RANGE = 1					#How far away an object can be from the mouse and still be selected
 
     #Define the constructor
     def __init__(self, width, height, maxFPS):
 
         #Set Game fields
-        self.height = height
-        self.heightHalf = height // 2
-        self.maxFPS = maxFPS
-        self.width = width
-        self.widthHalf = width // 2
+        self.height = height				#The height of the screen
+        self.heightHalf = height // 2			#The height of the screen halved
+        self.maxFPS = maxFPS				#The max FPS for the game
+        self.width = width				#The width of the screen
+        self.widthHalf = width // 2			#The width of the screen halved
 
         #Initialize Game fields
-        self.frameDeltaTime = 0
-        self.playTime = 0.0
-        self.running = False
-        self.size = width, height
+        self.frameDeltaTime = 0				#The current frameDeltaTime
+        self.playTime = 0.0				#How long the Game has been played
+        self.running = False				#Whether the Game is running
+        self.size = width, height			#The size of the screen
 
         #Declare Game pointers
-        self.background = None
-        self.clock = None
-        self.font = None
-        self.gui = None
-        self.keysPrevious = None
-        self.player = None
-        self.reticle = None
-        self.screen = None
-        self.selectedNode = None
-        self.world = None
+        self.background = None				#The background image
+        self.clock = None				#The Game clock
+        self.font = None				#The Game font
+        self.gui = None					#The Game GUI
+        self.keysPrevious = None			#The previous keys pressed
+        self.player = None				#The Player
+        self.reticle = None				#The Reticle
+        self.screen = None				#The screen
+        self.selectedNode = None			#The selectedNode
+        self.world = None				#The World
 
     #Define a function for initializing the Game
     def on_init(self):

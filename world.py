@@ -11,42 +11,43 @@ from terrain import *
 #Define a class for World, to manage all Nodes in a locale
 class World:
     #GUI
-    HEIGHT_HEALTH_BAR = 0.125
+    HEIGHT_HEALTH_BAR = 0.125				#The height of Entity health bars compared to Entity height as a percentage
 
     #Physics
-    FRICTION_DEFAULT = 320		#The rate at which objects slow while on Terrain TODO
-    GRAVITY_DEFAULT = 80		#The rate at which objects accelerate downwards
-    MAX_SPEED_DEFAULT = 320		#The max speed an object can travel
+    FRICTION_DEFAULT = 320				#The rate at which objects slow while on Terrain TODO
+    GRAVITY_DEFAULT = 80				#The rate at which objects accelerate downwards
+    MAX_SPEED_DEFAULT = 320				#The max speed an object can travel
 
     #World generation
-    WORLD_DEFAULT_HEIGHT = 64		#The initial height of Terrain in a new World, aka sea level
-    WORLD_DEFAULT_HEIGHT_RANGE = 16	#The initial max variation in Terrain height in a new World
-    WORLD_DEFAULT_HEIGHT_STEP = 4	#The initial max variation in Terrain height compared to the next Terrain in a new World    
-    WORLD_DEFAULT_HEIGHT_WIDTH = 4	#The initial width of Terrain in a new World that is always the default height
-    WORLD_DEFAULT_WIDTH = 32		#The initial width of Terrain in a new World
+    WORLD_DEFAULT_HEIGHT = 64				#The initial height of Terrain in a new World, aka sea level
+    WORLD_DEFAULT_HEIGHT_RANGE = 16			#The initial max variation in Terrain height in a new World
+    WORLD_DEFAULT_HEIGHT_STEP = 4			#The initial max variation in Terrain height compared to the next Terrain in a new World    
+    WORLD_DEFAULT_HEIGHT_WIDTH = 4			#The initial width of Terrain in a new World that is always the default height
+    WORLD_DEFAULT_WIDTH = 32				#The initial width of Terrain in a new World
 
     #World limits
-    WORLD_HEIGHT_MAX = 128		#The max height of the world
-    WORLD_VIEW_HEIGHT = 7		#The max height to display
-    WORLD_VIEW_WIDTH = 11		#The max width to display
-    WORLD_WIDTH_MAX = 1024		#The max width of the world
+    WORLD_HEIGHT_MAX = 128				#The max height of the world
+    WORLD_VIEW_HEIGHT = 7				#The max height to display
+    WORLD_VIEW_WIDTH = 11				#The max width to display
+    WORLD_WIDTH_MAX = 1024				#The max width of the world
 
     #Define the constructor
     def __init__(self, name, seedValue):
         #Set World fields
-        self.name = name
-        self.seedValue = seedValue	#The original seedValue
+        self.name = name				#The Worlds name
+        self.seedValue = seedValue			#The original seedValue
 
         #Initialize World fields
-        self.ammo = []			#Ammo
-        self.effects = []		#Effects
-        self.entitys = []		#Entitys
-
-        self.terrain = []		#Viewable Terrain, lazy loaded/pruned, derived from self.terrainTypes, used for bulk updates/draw calls
-        self.terrainNodes = {}		#Viewable Terrain, lazy loaded/pruned, derived from self.terrainTypes, used for collision detection
-        self.terrainTypes = {}		#Terrain stored as enums, with the shape { posX -> { posY -> Terrain Type } }, ground/sea level having a posY of 0
-
-        self.selectables = []		#Objects that are selectable by the Player, Entitys/Terrain
+        self.ammo = []					#Ammo
+        self.effects = []				#Effects
+        self.entitys = []				#Entitys
+        self.friction = -1				#The Worlds friction
+        self.gravity = -1				#The Worlds gravity
+        self.maxSpeed = -1				#The Worlds maxSpeed
+        self.selectables = []				#Objects that are selectable by the Player, Entitys/Terrain
+        self.terrain = []				#Viewable Terrain, lazy loaded/pruned, derived from self.terrainTypes, used for bulk updates/draw calls
+        self.terrainNodes = {}				#Viewable Terrain, lazy loaded/pruned, derived from self.terrainTypes, used for collision detection
+        self.terrainTypes = {}				#All Terrain, enums, with the shape { x -> { y -> Terrain Type } }, ground/sea level having a y of 0
 
         #Create the World and ensure the Terrain is visible
         self.createWorld()

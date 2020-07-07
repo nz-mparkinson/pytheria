@@ -15,42 +15,43 @@ class EffectType(Enum):
 
 #Define a class for Effect
 class Effect(Node):
-    COLOUR_HEALTH_BAR = (0, 255, 0)
-    COLOUR_MANA_BAR = (0, 0, 255)
-    COLOUR_RETICLE = (204, 204, 204)
-    IMAGE_EXPLOSION = "./resources/circle_128.png"
-    IMAGE_EXPLOSION_VERTICAL = "./resources/square.png"
-    IMAGE_HEALTH_BAR = "./resources/square.png"
-    IMAGE_IMPLOSION = "./resources/circle_128.png"
-    IMAGE_MANA_BAR = "./resources/square.png"
-    IMAGE_MELEE = "./resources/square.png"
-    IMAGE_RETICLE = "./resources/box.png"
-    SIZE_MOD_EXPLOSION = 5
-    SIZE_MOD_EXPLOSION_VERTICAL = 5
-    SIZE_MOD_IMPLOSION = 5
-    SIZE_MOD_MELEE = 1.5
-    TIME_EXPLOSION = 0.2
-    TIME_EXPLOSION_VERTICAL = 0.5
-    TIME_HEALTH_BAR = 3
-    TIME_IMPLOSION = 0.5
-    TIME_MANA_BAR = 3
-    TIME_MELEE = 0.5
-    TRANSPARENCY_EXPLOSION = 150
-    TRANSPARENCY_EXPLOSION_VERTICAL = 150
-    TRANSPARENCY_IMPLOSION = 150
-    TRANSPARENCY_MELEE = 150
+    COLOUR_HEALTH_BAR = (0, 255, 0)			#The colour of the Health Bar Effect
+    COLOUR_MANA_BAR = (0, 0, 255)			#The colour of the Mana Bar Effect
+    COLOUR_RETICLE = (204, 204, 204)			#The colour of the Reticle Effect
+    IMAGE_EXPLOSION = "./resources/circle_128.png"	#The image for the Explosion Effect
+    IMAGE_EXPLOSION_VERTICAL = "./resources/square.png"	#The image for the Explosion Vertical Effect
+    IMAGE_HEALTH_BAR = "./resources/square.png"		#The image for the Health Bar Effect
+    IMAGE_IMPLOSION = "./resources/circle_128.png"	#The image for the Implosion Effect
+    IMAGE_MANA_BAR = "./resources/square.png"		#The image for the Mana Bar Effect
+    IMAGE_MELEE = "./resources/square.png"		#The image for the Melee Effect
+    IMAGE_RETICLE = "./resources/box.png"		#The image for the Reticle Effect
+    SIZE_MOD_EXPLOSION = 5				#The size multiplier the Explosion Effect grows to
+    SIZE_MOD_EXPLOSION_VERTICAL = 5			#The size multiplier the Explosion Vertical Effect grows to
+    SIZE_MOD_IMPLOSION = 5				#The size multiplier the Implosion Effect grows to
+    SIZE_MOD_MELEE = 1.5				#The size multiplier the Melee Effect grows to
+    TIME_EXPLOSION = 0.2				#The time the Explosion Effect lasts
+    TIME_EXPLOSION_VERTICAL = 0.5			#The time the Explosion Vertical Effect lasts
+    TIME_HEALTH_BAR = 3					#The time the Health Bar Effect lasts
+    TIME_IMPLOSION = 0.5				#The time the Implosion Effect lasts
+    TIME_MANA_BAR = 3					#The time the Mana Bar Effect lasts
+    TIME_MELEE = 0.5					#The time the Melee Effect lasts
+    TRANSPARENCY_EXPLOSION = 150			#The initial transparency of the Explosion Effect
+    TRANSPARENCY_EXPLOSION_VERTICAL = 150		#The initial transparency of the Explosion Vertical Effect
+    TRANSPARENCY_IMPLOSION = 150			#The initial transparency of the Implosion Effect
+    TRANSPARENCY_MELEE = 150				#The initial transparency of the Melee Effect
 
     #Define the constructor
     def __init__(self, width, height, posX, posY, dirX, dirY, imageString, type):
         super().__init__(NodeType.EFFECT, width, height, posX, posY, 0, dirX, dirY, imageString, -1, "Effect")
 
         #Set Node fields
-        self.type = type
+        self.type = type				#The Effect type
 
         #Set Effect fields
-        self.entity = None
-        self.heightOriginal = height
-        self.widthOriginal = width
+        self.entity = None				#The referenced Entity
+        self.heightOriginal = height			#The Effects original height
+        self.timeLeft = -1				#The Effects timeLeft
+        self.widthOriginal = width			#The Effects original width
 
         #Depending on the Effect type, set timeLeft etc.
         if self.type is EffectType.EXPLOSION:

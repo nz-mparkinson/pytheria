@@ -31,15 +31,15 @@ class TerrainType(Enum):
 
 #Define a class for Terrain
 class Terrain(Node):
-    TERRAIN_SIZE = 32
-    TERRAIN_SIZE_HALF = 16
+    TERRAIN_SIZE = 32					#The size of Terrain
+    TERRAIN_SIZE_HALF = 16				#The size of Terrain halved
 
     #Define the constructor
     def __init__(self, posX, posY, imageString, name, type):
         super().__init__(NodeType.TERRAIN, self.TERRAIN_SIZE, self.TERRAIN_SIZE, posX, posY, 0, 0, 0, imageString, None, name)
 
         #Set Node fields
-        self.type = type
+        self.type = type				#The Terrain type
 
     #Define a Terrain factory
     def Terrain(posX, posY, type):

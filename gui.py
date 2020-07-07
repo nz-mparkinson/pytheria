@@ -9,48 +9,55 @@ from entity import *
 
 #Define a class for the GUI
 class GUI(Node):
-    HEIGHT_HEALTH_BAR = 0.025
-    HEIGHT_MANA_BAR = 0.025
-    IMAGE_MELEE = "./resources/hud_melee.png"
-    IMAGE_RANGED = "./resources/hud_ranged.png"
-    IMAGE_SPELL = "./resources/hud_spell.png"
-    IMAGE_SUMMON = "./resources/hud_summon.png"
-    POSITION_X_ATTACK_STYLE = 0.825
-    POSITION_X_ATTACK_TYPE = 0.075
-    POSITION_X_HEALTH_BAR = 0.25
-    POSITION_X_MANA_BAR = 0.25
-    POSITION_Y_ATTACK_STYLE = 0.8
-    POSITION_Y_ATTACK_TYPE = 0.8
-    POSITION_Y_HEALTH_BAR = 0.9
-    POSITION_Y_MANA_BAR = 0.87
-    SIZE_ATTACK_STYLE = 0.1
-    SIZE_ATTACK_TYPE = 0.1
-    WIDTH_HEALTH_BAR = 0.5
-    WIDTH_MANA_BAR = 0.5
+    HEIGHT_HEALTH_BAR = 0.025				#The height of the Health Bar readout
+    HEIGHT_MANA_BAR = 0.025				#The height of the Mana Bar readout
+    IMAGE_MELEE = "./resources/hud_melee.png"		#The image for the Melee Attack Type
+    IMAGE_RANGED = "./resources/hud_ranged.png"		#The image for the Ranged Attack Type
+    IMAGE_SPELL = "./resources/hud_spell.png"		#The image for the Spell Attack Type
+    IMAGE_SUMMON = "./resources/hud_summon.png"		#The image for the Summon Attack Type
+    POSITION_X_ATTACK_STYLE = 0.825			#The x position of the Attack Style readout
+    POSITION_X_ATTACK_TYPE = 0.075			#The x position of the Attack Type readout
+    POSITION_X_HEALTH_BAR = 0.25			#The x position of the Health Bar readout
+    POSITION_X_MANA_BAR = 0.25				#The x position of the Mana Bar readout
+    POSITION_Y_ATTACK_STYLE = 0.8			#The y position of the Attack Style readout
+    POSITION_Y_ATTACK_TYPE = 0.8			#The y position of the Attack Type readout
+    POSITION_Y_HEALTH_BAR = 0.9				#The y position of the Health Bar readout
+    POSITION_Y_MANA_BAR = 0.87				#The y position of the Mana Bar readout
+    SIZE_ATTACK_STYLE = 0.1				#The size of the Attack Style readout
+    SIZE_ATTACK_TYPE = 0.1				#The size of the Attack Type readout
+    WIDTH_HEALTH_BAR = 0.5				#The width of the Health Bar readout
+    WIDTH_MANA_BAR = 0.5				#The width of the Mana Bar readout
 
     #Define the constructor
     def __init__(self, width, height):
 
         #Set GUI fields
-        self.aspectRatio = width / height
-        self.height = height
-        self.heightHalf = height // 2
-        self.width = width
-        self.widthHalf = width // 2
+        self.aspectRatio = width / height		#The aspect ratio of the GUI
+        self.height = height				#The screen height
+        self.heightHalf = height // 2			#The screen height halved
+        self.width = width				#The screen width
+        self.widthHalf = width // 2			#The screen width halved
 
         #Initialize GUI fields
-        self.nodes = []
-        self.selectionTimeLeft = -1
+        self.nodes = []					#The Nodes in the GUI
 
         #Declare GUI pointers
-        self.attackTypeReadout = None
-        #self.attackTypeReadoutNext = None
-        #self.attackTypeReadoutPrevious = None
-        self.attackTypeValue = None
-        self.attackStyleReadout = None
-        #self.attackStyleReadoutNext = None
-        #self.attackStyleReadoutPrevious = None
-        self.attackStyleValue = None
+        self.attackStyleReadout = None			#The current attackStyle readout
+        #self.attackStyleReadoutNext = None		#The next attackStyle readout
+        #self.attackStyleReadoutPrevious = None		#The previous attackStyle readout
+        self.attackStyleValue = None			#The current attackStyle value
+        self.attackTypeReadout = None			#The current attackType readout
+        #self.attackTypeReadoutNext = None		#The next attackType readout
+        #self.attackTypeReadoutPrevious = None		#The previous attackType readout
+        self.attackTypeValue = None			#The current attackType value
+        self.healthReadout = None			#The health readout
+        self.manaReadout = None				#The mana readout
+
+        #Create attackStyle/attackType readouts
+        self.attackStyleReadout = Node.Node(int(self.width * self.SIZE_ATTACK_STYLE), int(self.height * self.SIZE_ATTACK_STYLE * self.aspectRatio), int(self.width * self.POSITION_X_ATTACK_STYLE), int(self.height * self.POSITION_Y_ATTACK_STYLE), self.IMAGE_MELEE)
+        self.attackTypeReadout = Node.Node(int(self.width * self.SIZE_ATTACK_TYPE), int(self.height * self.SIZE_ATTACK_TYPE * self.aspectRatio), int(self.width * self.POSITION_X_ATTACK_TYPE), int(self.height * self.POSITION_Y_ATTACK_TYPE), self.IMAGE_MELEE)
+        self.nodes.append(self.attackStyleReadout)
+        self.nodes.append(self.attackTypeReadout)
 
         #Create health/mana readouts
         self.healthReadout = Effect.HealthBar(int(self.width * self.WIDTH_HEALTH_BAR), int(self.height * self.HEIGHT_HEALTH_BAR), int(self.width * self.POSITION_X_HEALTH_BAR), int(self.height * self.POSITION_Y_HEALTH_BAR))
@@ -58,18 +65,8 @@ class GUI(Node):
         self.nodes.append(self.healthReadout)
         self.nodes.append(self.manaReadout)
 
-        #Create attackType readout
-        self.attackTypeReadout = Node.Node(int(self.width * self.SIZE_ATTACK_TYPE), int(self.height * self.SIZE_ATTACK_TYPE * self.aspectRatio), int(self.width * self.POSITION_X_ATTACK_TYPE), int(self.height * self.POSITION_Y_ATTACK_TYPE), self.IMAGE_MELEE)
-        self.nodes.append(self.attackTypeReadout)
-
-        #Create attackStyle readout
-        self.attackStyleReadout = Node.Node(int(self.width * self.SIZE_ATTACK_STYLE), int(self.height * self.SIZE_ATTACK_STYLE * self.aspectRatio), int(self.width * self.POSITION_X_ATTACK_STYLE), int(self.height * self.POSITION_Y_ATTACK_STYLE), self.IMAGE_MELEE)
-        self.nodes.append(self.attackStyleReadout)
-
     #Update the GUI
     def update(self, player, frameDeltaTime):
-        self.selectionTimeLeft -= frameDeltaTime
-
         #If there is a player, update the health/mana bar
         if player:
             self.healthReadout.setWidth(int(self.width * self.WIDTH_HEALTH_BAR * player.getHealthPercentage()))

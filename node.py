@@ -25,24 +25,26 @@ class Node:
     def __init__(self, nodeType, width, height, posX, posY, rotation, dirX, dirY, imageString, team, name):
 
         #Set the Node fields
-        self.nodeType = nodeType
-        self.width = width
-        self.widthHalf = width // 2
-        self.height = height
-        self.heightHalf = height // 2
-        self.position = Vector2f(posX, posY)
-        self.rotation = rotation
-        self.direction = Vector2f(dirX, dirY)
-        self.team = team
-        self.name = name
+        self.nodeType = nodeType			#The Node type
+        self.width = width				#The Nodes width
+        self.widthHalf = width // 2			#The Nodes width halved
+        self.height = height				#The Nodes height
+        self.heightHalf = height // 2			#The Nodes height halved
+        self.position = Vector2f(posX, posY)		#The Nodes position
+        self.rotation = rotation			#The Nodes rotation
+        self.direction = Vector2f(dirX, dirY)		#The Nodes direction
+        self.team = team				#The Nodes team
+        self.name = name				#The Nodes name
 
         #Initialize Node fields
-        self.movement = Vector2f(0, 0)
+        self.image = None				#The Nodes image
+        self.imageFlip = False				#Whether the images has been flipped horizontally
+        self.imageOriginal = None			#The Nodes image original
+        self.movement = Vector2f(0, 0)			#The Nodes last movement direction
 
         #Load the image, note: keeping a copy of the original as rotating the image looses quality
         self.imageOriginal = pygame.image.load(imageString).convert_alpha()
         self.image = self.imageOriginal
-        self.imageFlip = False
 
         #Set the Node rotation/size
         self.setRotation(rotation)

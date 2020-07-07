@@ -28,51 +28,51 @@ class EntityType(Enum):
 
 #Define a class for Entitys
 class Entity(Node):
-    HEIGHT_DEFAULT = 48
-    JUMP_HEIGHT_MOD = 2.5
-    WIDTH_DEFAULT = 24
+    HEIGHT_DEFAULT = 48					#The default height for Entitys
+    JUMP_HEIGHT_MOD = 2.5				#The jump height multiplier
+    WIDTH_DEFAULT = 24					#The default width for Entitys
 
     #Define the constructor
     def __init__(self, width, height, posX, posY, rotation, dirX, dirY, imageString, team, name, type):
         super().__init__(NodeType.ENTITY, width, height, posX, posY, rotation, dirX, dirY, imageString, team, name)
 
         #Set Node fields
-        self.type = type
+        self.type = type				#The Entity type
 
         #Set Entity fields
-        self.attackRange = 20
-        self.attackRangeSQ = self.attackRange * self.attackRange
-        self.attackStyle = AttackType.MELEE
-        self.attackType = AttackType.MELEE
-        self.healthCurrent = 10
-        self.healthMax = 10
-        self.healthRegen = 1
-        self.manaCurrent = 10
-        self.manaMax = 10
-        self.manaRegen = 1
-        self.meleeDamage = 1
-        self.meleeRange = 20
-        self.meleeRateOfFire = 1
-        self.meleeTimeLeft = -1
-        self.rangedAmmo = 10
-        self.rangedAmmoCost = 1
-        self.rangedDamage = 1
-        self.rangedRange = 200
-        self.rangedRateOfFire = 1
-        self.rangedSpeed = 200
-        self.rangedTimeLeft = -1
-        self.speed = 25
-        self.spellDamage = 1
-        self.spellManaCost = 1
-        self.spellRange = 200
-        self.spellRateOfFire = 1
-        self.spellSpeed = 300
-        self.spellTimeLeft = -1
-        self.state = EntityState.NORMAL
+        self.attackRange = 20				#The Entitys current attackRange
+        self.attackRangeSQ = 400			#The Entitys current attackRange squared
+        self.attackStyle = AttackType.MELEE		#The Entitys current attackStyle
+        self.attackType = AttackType.MELEE		#The Entitys current attackType
+        self.healthCurrent = 10				#The Entitys current health
+        self.healthMax = 10				#The Entitys max health
+        self.healthRegen = 1				#The Entitys health regen
+        self.manaCurrent = 10				#The Entitys current mana
+        self.manaMax = 10				#The Entitys max mana
+        self.manaRegen = 1				#The Entitys mana regen
+        self.meleeDamage = 1				#The Entitys melee damage
+        self.meleeRange = 20				#The Entitys melee range
+        self.meleeRateOfFire = 1			#The Entitys melee rate of fire
+        self.meleeTimeLeft = -1				#The Entitys melee timeLeft
+        self.rangedAmmo = 10				#The Entitys Ranged Ammo
+        self.rangedAmmoCost = 1				#The Entitys Ranged Ammo cost
+        self.rangedDamage = 1				#The Entitys Ranged damage
+        self.rangedRange = 200				#The Entitys Ranged range
+        self.rangedRateOfFire = 1			#The Entitys Ranged rate of fire
+        self.rangedSpeed = 200				#The Entitys Ranged speed
+        self.rangedTimeLeft = -1			#The Entitys Ranged timeLeft
+        self.speed = 25					#The Entitys speed
+        self.spellDamage = 1				#The Entitys Spell damage
+        self.spellManaCost = 1				#The Entitys Spell mana cost
+        self.spellRange = 200				#The Entitys Spell range
+        self.spellRateOfFire = 1			#The Entitys Spell rate of fire
+        self.spellSpeed = 300				#The Entitys Spell speed
+        self.spellTimeLeft = -1				#The Entitys Spell timeLeft
+        self.state = EntityState.NORMAL			#The Entitys state
 
         #Set Entity pointers
-        self.healthBar = None
-        self.target = None
+        self.healthBar = None				#The Entitys healthBar
+        self.target = None				#The Entitys target
 
     #Define a Entity factory
     def Entity(posX, posY, rotation, dirX, dirY, team, type):
