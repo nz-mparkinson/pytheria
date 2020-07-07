@@ -104,8 +104,8 @@ class Game:
             pressed1, pressed2, pressed3 = pygame.mouse.get_pressed()
 
             #Calculate the mouse position in the world
-            posX = self.player.position.x + self.player.widthHalf + pos[0] - self.widthHalf
-            posY = self.player.position.y + self.player.heightHalf + pos[1] - self.heightHalf
+            posX = self.player.getCenterX() + pos[0] - self.widthHalf
+            posY = self.player.getCenterY() + pos[1] - self.heightHalf
 
             #If the left mouse pressed, attack
             if pressed1:
@@ -136,8 +136,8 @@ class Game:
             pos = pygame.mouse.get_pos()
 
             #Calculate the mouse position in the World
-            posX = self.player.position.x + self.player.widthHalf + pos[0] - self.widthHalf
-            posY = self.player.position.y + self.player.heightHalf + pos[1] - self.heightHalf
+            posX = self.player.getCenterX() + pos[0] - self.widthHalf
+            posY = self.player.getCenterY() + pos[1] - self.heightHalf
 
             #Get the Node closest to the mouse
             closest = self.world.getClosestSelectable(Vector2f(posX, posY), self.SELECT_RANGE)
@@ -164,7 +164,7 @@ class Game:
         self.screen.blit(self.background, (0, 0))
 
         #Calculate the Player position relative to the centre of the screen
-        playerX, playerY = self.player.position.x + self.player.widthHalf - self.widthHalf, self.player.position.y + self.player.heightHalf - self.heightHalf
+        playerX, playerY = self.player.getCenterX() - self.widthHalf, self.player.getCenterY() - self.heightHalf
 
         #Draw all Terrain
         for node in self.world.terrain:
@@ -177,12 +177,12 @@ class Game:
 
         #Draw the Player in the centre of the screen
         self.screen.blit(self.player.image, (int(self.widthHalf - self.player.widthHalf), int(self.heightHalf - self.player.heightHalf)))
-        #print("Player Position: " + str(self.player.position.x) +", "+ str(-self.player.position.y))
+        #print("Player Position: " + str(self.player.position.x) +", "+ str(self.player.position.y))
 
         #Draw all Ammo
         for node in self.world.ammo:
             self.screen.blit(node.image, (int(node.position.x - playerX), int(node.position.y - playerY)))
-            print("Ammo Position: " + str(int(node.position.x)) + ", " + str(int(-node.position.y)))
+            print("Ammo Position: " + str(int(node.position.x)) + ", " + str(int(node.position.y)))
 
         #Draw all Effects
         for node in self.world.effects:
@@ -195,7 +195,7 @@ class Game:
         #If a Node is selected, draw its name and position
         if self.selectedNode:
             selectedX, selectedY = int(self.selectedNode.position.x / Terrain.TERRAIN_SIZE), int(self.selectedNode.position.y / Terrain.TERRAIN_SIZE)
-            selectedText = self.font.render("Selected: " + self.selectedNode.name + " (" + str(selectedX) + " ," + str(-selectedY) + ")", True, (0, 255, 0))
+            selectedText = self.font.render("Selected: " + self.selectedNode.name + " (" + str(selectedX) + " ," + str(selectedY) + ")", True, (0, 255, 0))
             self.screen.blit(selectedText, (self.width - selectedText.get_width(), self.height - selectedText.get_height()))
             self.screen.blit(self.reticle.image, (int(self.selectedNode.position.x - playerX), int(self.selectedNode.position.y - playerY)))
 

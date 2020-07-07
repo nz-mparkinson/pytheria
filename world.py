@@ -47,7 +47,7 @@ class World:
         self.selectables = []				#Objects that are selectable by the Player, Entitys/Terrain
         self.terrain = []				#Viewable Terrain, lazy loaded/pruned, derived from self.terrainTypes, used for bulk updates/draw calls
         self.terrainNodes = {}				#Viewable Terrain, lazy loaded/pruned, derived from self.terrainTypes, used for collision detection
-        self.terrainTypes = {}				#All Terrain, enums, with the shape { x -> { y -> Terrain Type } }, ground/sea level having a y of 0
+        self.terrainTypes = {}				#All Terrain, enums, with the shape { x -> { y -> Terrain Type } }, note: the y-axis is inverted, -1 is up
 
         #Create the World and ensure the Terrain is visible
         self.createWorld()
@@ -69,8 +69,8 @@ class World:
             self.generateTerrain(i)
 
         #Add floating Terrain as a test
-        self.terrainTypes[-1][5] = TerrainType.DIRT
-        self.terrainTypes[0][5] = TerrainType.DIRT
+        self.terrainTypes[-1][-5] = TerrainType.DIRT
+        self.terrainTypes[0][-5] = TerrainType.DIRT
 
         #Add an enemy Entity
         self.addEntity(Entity.Entity(50, 0, 0, 0, 0, Team.ENEMY, EntityType.ROBOT))
@@ -88,14 +88,14 @@ class World:
         if posX < -self.WORLD_DEFAULT_HEIGHT_WIDTH:
             if (posX + 1) not in self.terrainTypes.keys():
                 self.generateTerrain(posX + 1)
-            previousHeight = self.WORLD_DEFAULT_HEIGHT + max(self.terrainTypes[posX + 1].keys()) + 1
+            previousHeight = self.WORLD_DEFAULT_HEIGHT - min(self.terrainTypes[posX + 1].keys())
             random.seed(int(self.seedValue * posX))
             terrainHeight = previousHeight + random.randrange(-self.WORLD_DEFAULT_HEIGHT_STEP, self.WORLD_DEFAULT_HEIGHT_STEP + 1)
         #If posX is right of the default area, use the previous right Terrain to calculate the new height
         elif self.WORLD_DEFAULT_HEIGHT_WIDTH < posX:
             if (posX - 1) not in self.terrainTypes.keys():
                 self.generateTerrain(posX - 1)
-            previousHeight = self.WORLD_DEFAULT_HEIGHT + max(self.terrainTypes[posX - 1].keys()) + 1
+            previousHeight = self.WORLD_DEFAULT_HEIGHT - min(self.terrainTypes[posX - 1].keys())
             random.seed(str(self.seedValue * posX))
             terrainHeight = previousHeight + random.randrange(-self.WORLD_DEFAULT_HEIGHT_STEP, self.WORLD_DEFAULT_HEIGHT_STEP + 1)
 
@@ -108,7 +108,7 @@ class World:
         #print("\tHeight: " + str(terrainHeight))
 
         #For the height of the Terrain, add Terrain
-        for i in range(-self.WORLD_DEFAULT_HEIGHT, -self.WORLD_DEFAULT_HEIGHT + terrainHeight):
+        for i in range(self.WORLD_DEFAULT_HEIGHT - terrainHeight, self.WORLD_DEFAULT_HEIGHT):
            self.terrainTypes[posX][i] = TerrainType.DIRT
 
     #Add an Ammo to the World
@@ -132,9 +132,8 @@ class World:
     #Ensure that only the Terrain that should be visible is
     def ensureTerrainVisible(self, posX, posY):
         #Calculate the max x/y positions for Terrain that should be visible, converting from pixel position
-        #Note: y-axis is negative for pixel position
-        checkYTop = int(-posY / Terrain.TERRAIN_SIZE) + self.WORLD_VIEW_HEIGHT
-        checkYBottom = int(-posY / Terrain.TERRAIN_SIZE) - self.WORLD_VIEW_HEIGHT
+        checkYTop = int(posY / Terrain.TERRAIN_SIZE) - self.WORLD_VIEW_HEIGHT
+        checkYBottom = int(posY / Terrain.TERRAIN_SIZE) + self.WORLD_VIEW_HEIGHT
         checkXLeft = int(posX / Terrain.TERRAIN_SIZE) - self.WORLD_VIEW_WIDTH
         checkXRight = int(posX / Terrain.TERRAIN_SIZE) + self.WORLD_VIEW_WIDTH
 
@@ -153,11 +152,11 @@ class World:
             #If x is a valid key in self.terrainTypes
             if x in self.terrainTypes.keys():
                 #For all Terrain y positions to check
-                for y in range(checkYBottom, checkYTop + 1):
+                for y in range(checkYTop, checkYBottom + 1):
                     #If the Terrain for y hasn't be loaded, load it
                     if y not in self.terrainNodes[x].keys() and y in self.terrainTypes[x].keys():
                         #print("Loading: " + str(x) + ", " + str(y))
-                        self.terrainNodes[x][y] = Terrain.Terrain(x * Terrain.TERRAIN_SIZE, -y * Terrain.TERRAIN_SIZE, self.terrainTypes[x][y])
+                        self.terrainNodes[x][y] = Terrain.Terrain(x * Terrain.TERRAIN_SIZE, y * Terrain.TERRAIN_SIZE, self.terrainTypes[x][y])
                         self.addTerrain(self.terrainNodes[x][y])
 
         #For all Terrain x positions
@@ -172,7 +171,7 @@ class World:
             else:
                 for y in list(self.terrainNodes[x].keys()):
                     #If Terrain y position should be pruned, do so
-                    if y < checkYBottom or checkYTop < y:
+                    if y > checkYBottom or checkYTop > y:
                         self.removeTerrain(self.terrainNodes[x][y])
                         del self.terrainNodes[x][y]
 
@@ -223,7 +222,7 @@ class World:
                 self.entityHit(enemy, entity.meleeDamage)
 
             #Because position tracks the top left corner of the object the following calculatings are required
-            posX = entity.position.x - entity.widthHalf * 0.25
+            posX = entity.position.x + entity.widthHalf * 0.25
             if entity.movement.x > 0:
                 posX = entity.position.x + entity.widthHalf * 0.75
             posY = entity.position.y + entity.heightHalf * 0.5
@@ -352,18 +351,17 @@ class World:
     #Test whether the Entity is on Terrain, returns the Terrain if it is, else None
     def isEntityOnTerrain(self, entity):
         #Calculate facts about the Entity position used for detecting whether the Entity is on Terrain, note: reduced width and entityYBottom + 1 so can check for collision
-        #Note: y-axis is negative for pixel position
         #TODO magic values
-        entityYTop = -entity.position.y - entity.height * 0.5
-        entityYBottom = -entity.position.y - entity.height - 1
+        entityYTop = entity.position.y + entity.height * 0.5
+        entityYBottom = entity.position.y + entity.height + 1
         entityXLeft = entity.position.x + entity.width * 0.25
         entityXRight = entity.position.x + entity.width * 0.75
 
         #print("isEntityOnTerrain entity: " + str(entityXLeft) + ", " + str(entityYTop) + " to " + str(entityXRight) + ", " + str(entityYBottom))
 
         #Calculate the max x/y positions for Terrain around Entity to check if Entity on top of, converting from pixel position
-        checkYTop = int(entityYTop / Terrain.TERRAIN_SIZE) + 1
-        checkYBottom = int(entityYBottom / Terrain.TERRAIN_SIZE) - 1
+        checkYTop = int(entityYTop / Terrain.TERRAIN_SIZE) - 1
+        checkYBottom = int(entityYBottom / Terrain.TERRAIN_SIZE) + 1
         checkXLeft = int(entityXLeft / Terrain.TERRAIN_SIZE) - 1
         checkXRight = int(entityXRight / Terrain.TERRAIN_SIZE) + 1
 
@@ -375,30 +373,29 @@ class World:
             #If x is a valid key in self.terrainTypes and x is between the left and right Terrain x values
             if x in self.terrainTypes.keys() and xLeft < entityXRight and xRight > entityXLeft:
                 #For all Terrain y positions to check
-                for y in range(checkYBottom, checkYTop + 1):
+                for y in range(checkYTop, checkYBottom + 1):
                     #If y is a valid key in self.terrainTypes
                     if y in self.terrainTypes[x].keys():
-                        yTop, yBottom = y * Terrain.TERRAIN_SIZE, (y - 1) * Terrain.TERRAIN_SIZE
+                        yTop, yBottom = y * Terrain.TERRAIN_SIZE, (y + 1) * Terrain.TERRAIN_SIZE
                         #If y is between the bottom and top Terrain y values, return the Terrains position
-                        if yTop > entityYBottom and yBottom < entityYTop:
-                            return Vector2f(x * Terrain.TERRAIN_SIZE, -y * Terrain.TERRAIN_SIZE)
+                        if yTop < entityYBottom and yBottom > entityYTop:
+                            return Vector2f(x * Terrain.TERRAIN_SIZE, y * Terrain.TERRAIN_SIZE)
 
         return None
 
     #Move a Node
     def nodeMove(self, node, dirX, dirY):
         #Calculate facts about the new Node position used for detecting whether the Node will collide with something
-        #Note: y-axis is negative for pixel position
-        nodeYTop = -node.position.y - dirY
-        nodeYBottom = -node.position.y - node.height - dirY
+        nodeYTop = node.position.y + dirY
+        nodeYBottom = node.position.y + node.height + dirY
         nodeXLeft = node.position.x + dirX
         nodeXRight = node.position.x + node.width + dirX
 
         #print("nodeMove node: " + str(nodeXLeft) + ", " + str(nodeYTop) + " to " + str(nodeXRight) + ", " + str(nodeYBottom))
 
         #Calculate the max x/y positions for Terrain around Node to check if Node will collide width, converting from pixel position
-        checkYTop = int(nodeYTop / Terrain.TERRAIN_SIZE) + 1
-        checkYBottom = int(nodeYBottom / Terrain.TERRAIN_SIZE) - 1
+        checkYTop = int(nodeYTop / Terrain.TERRAIN_SIZE) - 1
+        checkYBottom = int(nodeYBottom / Terrain.TERRAIN_SIZE) + 1
         checkXLeft = int(nodeXLeft / Terrain.TERRAIN_SIZE) - 1
         checkXRight = int(nodeXLeft / Terrain.TERRAIN_SIZE) + 1
 
@@ -412,16 +409,16 @@ class World:
             #If x is a valid key in self.terrainTypes and x is between the left and right Terrain x values
             if x in self.terrainTypes.keys() and xLeft < nodeXRight and xRight > nodeXLeft:
                 #For all Terrain y positions to check
-                for y in range(checkYBottom, checkYTop + 1):
+                for y in range(checkYTop, checkYBottom + 1):
                     #If y is a valid key in self.terrainTypes
                     if y in self.terrainTypes[x].keys():
-                        yTop, yBottom = y * Terrain.TERRAIN_SIZE, (y - 1) * Terrain.TERRAIN_SIZE
+                        yTop, yBottom = y * Terrain.TERRAIN_SIZE, (y + 1) * Terrain.TERRAIN_SIZE
                         #if node.nodeType == NodeType.AMMO:
                             #print("\tAmmo check: " + str(x) + "," + str(y))
                             #print("\t" + str(xLeft) +" < "+ str(nodeXRight) +" and "+ str(xRight) +" > "+ str(nodeXLeft))
                             #print("\t" + str(yTop) +" > "+ str(nodeYBottom) +" and "+ str(yBottom) +" < "+ str(nodeYTop))
                         #If y is between the bottom and top Terrain y values and collision is False
-                        if collision is False and yTop > nodeYBottom and yBottom < nodeYTop:
+                        if collision is False and yTop < nodeYBottom and yBottom > nodeYTop:
                             collision = True
 
                             #print("Hit: " + str(x) + ", " + str(y))
@@ -442,17 +439,15 @@ class World:
                                     dirX = 0
                                 node.direction.x = 0
                                 #print("Hit2" + str(dirX))
-                            if -dirY > 0 and yBottom >= -node.position.y:
-                                dirY = yBottom - -node.position.y
-                                dirY = -dirY
-                                if -dirY < 0:
+                            if dirY < 0 and yBottom <= node.position.y:
+                                dirY = yBottom - node.position.y
+                                if dirY > 0:
                                     dirY = 0
                                 node.direction.y = 0
                                 #print("Hit3 dirY: " + str(dirY))
-                            elif -dirY < 0 and yTop <= -node.position.y - node.height:
-                                dirY = yTop - -node.position.y + node.height
-                                dirY = -dirY
-                                if -dirY > 0:
+                            elif dirY > 0 and yTop >= node.position.y + node.height:
+                                dirY = yTop - node.position.y - node.height
+                                if dirY < 0:
                                     dirY = 0
                                 node.direction.y = 0
                                 #print("Hit4: " + str(dirY))
@@ -463,8 +458,8 @@ class World:
             if collision is False:
                 for entity in self.entitys:
                     xLeft, xRight = entity.position.x, entity.position.x + entity.width
-                    yTop, yBottom = -entity.position.y, -entity.position.y - entity.height
-                    if node.team is not entity.team and xLeft < nodeXRight and xRight > nodeXLeft and yTop > nodeYBottom and yBottom < nodeYTop:
+                    yTop, yBottom = entity.position.y, entity.position.y + entity.height
+                    if node.team is not entity.team and xLeft < nodeXRight and xRight > nodeXLeft and yTop < nodeYBottom and yBottom > nodeYTop:
                         self.entityHit(entity, node.damage)
                         collision = True
 

@@ -30,7 +30,7 @@ class Node:
         self.widthHalf = width // 2			#The Nodes width halved
         self.height = height				#The Nodes height
         self.heightHalf = height // 2			#The Nodes height halved
-        self.position = Vector2f(posX, posY)		#The Nodes position
+        self.position = Vector2f(posX, posY)		#The Nodes position, note: the y-axis is inverted, -1 is up
         self.rotation = rotation			#The Nodes rotation
         self.direction = Vector2f(dirX, dirY)		#The Nodes direction
         self.team = team				#The Nodes team
