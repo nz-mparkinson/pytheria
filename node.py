@@ -127,12 +127,16 @@ class Node:
         arr[:,:,0] = red
         arr[:,:,1] = green
         arr[:,:,2] = blue
+        arr = pygame.surfarray.pixels3d(self.imageOriginal)
+        arr[:,:,0] = red
+        arr[:,:,1] = green
+        arr[:,:,2] = blue
 
     #Set the Node height
     def setHeight(self, height):
         self.height = height
         self.heightHalf = height // 2
-        self.image = pygame.transform.scale(self.image, (self.width, height))
+        self.image = pygame.transform.scale(self.imageOriginal, (self.width, height))
 
     #set the Node image
     def setImage(self, imageString):
@@ -174,7 +178,7 @@ class Node:
     def setWidth(self, width):
         self.width = width
         self.widthHalf = width // 2
-        self.image = pygame.transform.scale(self.image, (width, self.height))
+        self.image = pygame.transform.scale(self.imageOriginal, (width, self.height))
 
     #Update the Node status
     def update(self, frameDeltaTime):
