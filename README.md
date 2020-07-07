@@ -7,7 +7,6 @@ A Terraria like game, implemented in Python using PyGame.
 
  * Python 3
  * PyGame
- * NumPy
 
 ## Controls
 
